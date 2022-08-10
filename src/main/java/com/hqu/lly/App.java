@@ -22,7 +22,7 @@ public class App extends Application {
         URL resource = getClass().getClassLoader().getResource("main.fxml");
         fxmlLoader.setLocation(resource);
         Parent root = fxmlLoader.load();
-        Scene scene = new Scene(root, 640, 360);
+        Scene scene = new Scene(root, 640, 400);
         DarculaFX.applyDarculaStyle(scene);
 
         MainController controller = fxmlLoader.getController();

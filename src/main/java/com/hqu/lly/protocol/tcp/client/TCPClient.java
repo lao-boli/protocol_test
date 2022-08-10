@@ -1,7 +1,6 @@
 package com.hqu.lly.protocol.tcp.client;
 
 import com.hqu.lly.protocol.tcp.client.handler.TCPClientMessageHandler;
-import com.hqu.lly.protocol.tcp.server.handler.TCPMessageHandler;
 import com.hqu.lly.service.UIService;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
@@ -10,17 +9,12 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
-import javafx.concurrent.Task;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.FutureTask;
-import java.util.function.Supplier;
 
 /**
  * <p>
@@ -74,12 +68,9 @@ public class TCPClient implements Callable<Channel>  {
             //绑定服务器
             ChannelFuture channelFuture = bootstrap.connect(host, Integer.parseInt(port)).sync();
             this.channel = channelFuture.channel();
-            this.channel.closeFuture().addListener(new ChannelFutureListener() {
-                @Override
-                public void operationComplete(ChannelFuture future) throws Exception {
-                    log.debug("处理关闭之后的操作");
-                    eventLoopGroup.shutdownGracefully();
-                }
+            this.channel.closeFuture().addListener((ChannelFutureListener) future -> {
+                log.debug("处理关闭之后的操作");
+                eventLoopGroup.shutdownGracefully();
             });
         } catch (Exception e) {
             e.printStackTrace();

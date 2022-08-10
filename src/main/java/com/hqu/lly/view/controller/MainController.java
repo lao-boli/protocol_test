@@ -1,21 +1,23 @@
 package com.hqu.lly.view.controller;
 
-import com.hqu.lly.protocol.tcp.client.TCPClient;
-import com.hqu.lly.service.UIService;
-import io.netty.channel.Channel;
-import javafx.application.Platform;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+import com.hqu.lly.constant.ContentPaneConsts;
+import com.hqu.lly.service.SwitchPaneService;
+import com.hqu.lly.service.impl.ContentPaneManager;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.FutureTask;
 
 /**
  * <p>
@@ -28,108 +30,88 @@ import java.util.concurrent.FutureTask;
  */
 @Slf4j
 public class MainController implements Initializable {
-    @FXML
-    private Button tcp;
 
     @FXML
-    private TextField clientInput;
+    private TabPane mainTabPane;
 
     @FXML
-    private Button confirmButton;
+    private Tab createTab;
 
-
-    @FXML
-    private ListView<String> msgList;
     @FXML
     private TreeView<String> menuTree;
 
     @FXML
-    private TextArea msgInput;
+    private SplitPane mainSplitPane;
 
     @FXML
-    private Button sendMsgButton;
+    private AnchorPane mainPane;
 
-    @FXML
-    private Button disconnectButton;
-
-    private TCPClient tcpClient = new TCPClient();
-
-    ObservableList<String> items = FXCollections.observableArrayList() ;
-
-    @FXML
-    void confirmAddr(MouseEvent event) {
-
-        String[] hostAndPort = clientInput.getText().split(":");
-
-        tcpClient.setHost(hostAndPort[0]);
-        tcpClient.setPort(hostAndPort[1]);
-        tcpClient.setUiService(new UIService() {
-            @Override
-            public void updateMsgList(String msg) {
-
-                Platform.runLater(() -> {
-
-                    items.add("received: " + msg);
-                    msgList.setItems(items);
-                });
-
-            }
-        });
-
-
-        FutureTask<Channel> channel = new FutureTask<Channel>(tcpClient);
-
-        new Thread(channel).start();
-        try {
-            channel.get();
-            Platform.runLater(() ->{
-                confirmButton.setDisable(true);
-                disconnectButton.setDisable(false);
-                sendMsgButton.setDisable(false);
-            });
-        } catch (ExecutionException | InterruptedException e) {
-            e.printStackTrace();
-        }
-
-
-    }
-
-    @FXML
-    void disconnect(MouseEvent event) {
-
-        tcpClient.destroy();
-
-        Platform.runLater(() ->{
-            confirmButton.setDisable(false);
-            disconnectButton.setDisable(true);
-            sendMsgButton.setDisable(true);
-        });
-    }
-
-    @FXML
-    void sendMsg(MouseEvent event) {
-        tcpClient.sendMessage(msgInput.getText());
-        items.add("send:" + msgInput.getText());
-        Platform.runLater(() -> {
-            msgList.setItems(items);
-        });
-
-    }
-
+    @SneakyThrows
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+
+        initSideBar();
+
+    }
+
+    private void initSideBar() {
         TreeItem<String> root = new TreeItem<>("root");
         TreeItem<String> tcp = new TreeItem<>("tcp");
         TreeItem<String> udp = new TreeItem<>("udp");
         TreeItem<String> webSocket = new TreeItem<>("webSocket");
-        root.getChildren().add(tcp);
-        root.getChildren().add(udp);
-        root.getChildren().add(webSocket);
+
+        List<TreeItem<String>> firstMenuItems = new ArrayList<>();
+        firstMenuItems.add(tcp);
+        firstMenuItems.add(udp);
+        firstMenuItems.add(webSocket);
+
+        int i = 0;
+        firstMenuItems.forEach(item -> {
+
+            LeafTreeItem<String> server = new LeafTreeItem<>("server", new ContentPaneManager(mainPane, ContentPaneConsts.TCP_SERVER_PANE,"tabPane.fxml"));
+
+            LeafTreeItem<String> client = new LeafTreeItem<>("client",new ContentPaneManager(mainPane, ContentPaneConsts.TCP_CLIENT_PANE,"tabPane.fxml"));
+
+            item.getChildren().add(server);
+            item.getChildren().add(client);
+
+            item.setExpanded(true);
+        });
+
+
+        root.getChildren().addAll(firstMenuItems);
 
         root.setExpanded(true);
 
         this.menuTree.setRoot(root);
-        menuTree.setShowRoot(false);
 
+        menuTree.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                Object selectedItem = menuTree.getSelectionModel().getSelectedItem();
+                if (selectedItem instanceof LeafTreeItem){
+                    ((LeafTreeItem<?>) selectedItem).switchPane();
+                }
+            }
+        });
+        menuTree.setShowRoot(false);
+    }
+
+    class LeafTreeItem<T> extends TreeItem{
+
+        private SwitchPaneService switchPaneService;
+
+
+
+        public LeafTreeItem(T name , SwitchPaneService switchPaneService) {
+
+            super(name);
+            this.switchPaneService = switchPaneService;
+        }
+
+        public void switchPane(){
+            switchPaneService.switchPane();
+            log.info("switch pane");
+        }
     }
 }
