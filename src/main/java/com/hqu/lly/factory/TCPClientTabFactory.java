@@ -1,5 +1,6 @@
 package com.hqu.lly.factory;
 
+import com.hqu.lly.protocol.tcp.client.TCPClient;
 import com.hqu.lly.view.controller.ClientController;
 import javafx.event.Event;
 import javafx.event.EventHandler;
@@ -37,6 +38,7 @@ public class TCPClientTabFactory implements TabFactory{
             tab.setContent(contentPane);
 
             if (controller instanceof ClientController) {
+                ((ClientController) controller).setClient(new TCPClient());
                 tab.setOnClosed(event -> ((ClientController) controller).destroy());
             }
         } catch (IOException e) {

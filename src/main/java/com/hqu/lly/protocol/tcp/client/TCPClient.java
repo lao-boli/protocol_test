@@ -1,5 +1,6 @@
 package com.hqu.lly.protocol.tcp.client;
 
+import com.hqu.lly.common.BaseClient;
 import com.hqu.lly.protocol.tcp.client.handler.TCPClientMessageHandler;
 import com.hqu.lly.service.UIService;
 import io.netty.bootstrap.Bootstrap;
@@ -29,7 +30,7 @@ import java.util.concurrent.Callable;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class TCPClient implements Callable<Channel>  {
+public class TCPClient extends BaseClient {
 
     private Channel channel;
 
@@ -42,6 +43,7 @@ public class TCPClient implements Callable<Channel>  {
 
     private EventLoopGroup eventLoopGroup ;
 
+    @Override
     public void sendMessage(String message){
         channel.writeAndFlush(message);
     }
@@ -49,6 +51,12 @@ public class TCPClient implements Callable<Channel>  {
 
     @Override
     public Channel call() throws Exception {
+        init();
+        return channel;
+    }
+
+    @Override
+    public void init() {
 
         EventLoopGroup eventLoopGroup = new NioEventLoopGroup();
         this.eventLoopGroup = eventLoopGroup;
@@ -76,14 +84,25 @@ public class TCPClient implements Callable<Channel>  {
             e.printStackTrace();
             eventLoopGroup.shutdownGracefully();
         }
-        return channel;
     }
 
+    @Override
     public void destroy() {
         if (null == channel){
            return;
         }
         channel.close();
+    }
+
+    @Override
+    public void setAddress(String host, String port) {
+        this.host = host;
+        this.port = port;
+    }
+
+    @Override
+    public void setService(UIService uiService) {
+        this.uiService = uiService;
     }
 
 }
