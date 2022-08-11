@@ -1,4 +1,4 @@
-package com.hqu.lly.protocol.websocket.group;
+package com.hqu.lly.protocol.websocket.server.group;
 
 import io.netty.channel.Channel;
 import io.netty.channel.group.ChannelGroup;

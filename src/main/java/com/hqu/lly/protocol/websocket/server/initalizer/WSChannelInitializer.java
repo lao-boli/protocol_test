@@ -1,6 +1,6 @@
-package com.hqu.lly.protocol.websocket.initalizer;
+package com.hqu.lly.protocol.websocket.server.initalizer;
 
-import com.hqu.lly.protocol.websocket.handler.PathVariableHandler;
+import com.hqu.lly.protocol.websocket.server.handler.PathVariableHandler;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.http.HttpObjectAggregator;
@@ -10,6 +10,7 @@ import io.netty.handler.codec.http.cors.CorsConfigBuilder;
 import io.netty.handler.codec.http.cors.CorsHandler;
 import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
 import io.netty.handler.stream.ChunkedWriteHandler;
+
 public class WSChannelInitializer extends ChannelInitializer<SocketChannel> {
 
 //    @Autowired

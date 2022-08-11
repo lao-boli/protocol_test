@@ -1,6 +1,6 @@
-package com.hqu.lly.protocol.websocket.handler;
+package com.hqu.lly.protocol.websocket.server.handler;
 
-import com.hqu.lly.protocol.websocket.group.WSChannelGroup;
+import com.hqu.lly.protocol.websocket.server.group.WSChannelGroup;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
