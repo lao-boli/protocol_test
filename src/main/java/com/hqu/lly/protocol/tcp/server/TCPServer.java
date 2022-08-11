@@ -33,20 +33,20 @@ public class TCPServer implements Callable<Channel> {
 
     private ChannelService channelService;
 
-    private NioEventLoopGroup boss;
+    private NioEventLoopGroup bossGroup;
 
-    private NioEventLoopGroup worker;
+    private NioEventLoopGroup workerGroup;
 
     private Channel channel;
 
     public void init() {
 
-        boss = new NioEventLoopGroup();
-        worker = new NioEventLoopGroup();
+        bossGroup = new NioEventLoopGroup();
+        workerGroup = new NioEventLoopGroup();
         try {
             ServerBootstrap serverBootstrap = new ServerBootstrap();
             serverBootstrap.channel(NioServerSocketChannel.class);
-            serverBootstrap.group(boss, worker);
+            serverBootstrap.group(bossGroup, workerGroup);
             serverBootstrap.childHandler(new ChannelInitializer<SocketChannel>() {
                 @Override
                 protected void initChannel(SocketChannel ch) throws Exception {
@@ -58,13 +58,13 @@ public class TCPServer implements Callable<Channel> {
             });
             channel = serverBootstrap.bind(Integer.parseInt(port)).sync().channel();
             channel.closeFuture().addListener((ChannelFutureListener) channelFuture -> {
-                boss.shutdownGracefully();
-                worker.shutdownGracefully();
+                bossGroup.shutdownGracefully();
+                workerGroup.shutdownGracefully();
             });
         } catch (InterruptedException e) {
 
-            boss.shutdownGracefully();
-            worker.shutdownGracefully();
+            bossGroup.shutdownGracefully();
+            workerGroup.shutdownGracefully();
             log.error("server error", e);
         }
     }
