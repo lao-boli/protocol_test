@@ -1,5 +1,6 @@
 package com.hqu.lly.view.controller;
 
+import com.hqu.lly.common.BaseClient;
 import com.hqu.lly.protocol.tcp.client.TCPClient;
 import com.hqu.lly.service.UIService;
 import io.netty.channel.Channel;
@@ -12,6 +13,7 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
+import lombok.Setter;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
@@ -36,8 +38,8 @@ public class ClientController {
     @FXML
     private ListView<String> msgList;
 
-
-    private TCPClient tcpClient = new TCPClient();
+    @Setter
+    private BaseClient client;
 
     ObservableList<String> items = FXCollections.observableArrayList() ;
 
@@ -46,9 +48,8 @@ public class ClientController {
 
         String[] hostAndPort = clientInput.getText().split(":");
 
-        tcpClient.setHost(hostAndPort[0]);
-        tcpClient.setPort(hostAndPort[1]);
-        tcpClient.setUiService(new UIService() {
+        client.setAddress(hostAndPort[0],hostAndPort[1]);
+        client.setService(new UIService() {
             @Override
             public void updateMsgList(String msg) {
 
@@ -62,7 +63,7 @@ public class ClientController {
         });
 
 
-        FutureTask<Channel> channel = new FutureTask<Channel>(tcpClient);
+        FutureTask<Channel> channel = new FutureTask<Channel>(client);
 
         new Thread(channel).start();
         try {
@@ -82,7 +83,7 @@ public class ClientController {
     @FXML
     void disconnect(MouseEvent event) {
 
-        tcpClient.destroy();
+        client.destroy();
 
         Platform.runLater(() ->{
             confirmButton.setDisable(false);
@@ -93,7 +94,7 @@ public class ClientController {
 
     @FXML
     void sendMsg(MouseEvent event) {
-        tcpClient.sendMessage(msgInput.getText());
+        client.sendMessage(msgInput.getText());
         items.add("send:" + msgInput.getText());
         Platform.runLater(() -> {
             msgList.setItems(items);
@@ -102,7 +103,7 @@ public class ClientController {
     }
 
     public void destroy(){
-       tcpClient.destroy();
+       client.destroy();
     }
 
 }

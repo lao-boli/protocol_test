@@ -51,6 +51,8 @@ public class TabPaneController implements Initializable {
         mainTabPane.getTabs().add(mainTabPane.getTabs().size() - 1,tab );
 
         mainTabPane.getSelectionModel().select(tab);
+
+
     }
 
     @Override
