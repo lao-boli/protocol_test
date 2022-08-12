@@ -57,8 +57,21 @@ public class MainController implements Initializable {
     private void initSideBar() {
         TreeItem<String> root = new TreeItem<>("root");
         TreeItem<String> tcp = new TreeItem<>("tcp");
+
+        LeafTreeItem<String> tcpServer = new LeafTreeItem<>("server", new ContentPaneManager(mainPane, ContentPaneConsts.TCP_SERVER_PANE,"tabPane.fxml"));
+
+        LeafTreeItem<String> tcpClient = new LeafTreeItem<>("client",new ContentPaneManager(mainPane, ContentPaneConsts.TCP_CLIENT_PANE,"tabPane.fxml"));
+        tcp.getChildren().add(tcpServer);
+        tcp.getChildren().add(tcpClient);
         TreeItem<String> udp = new TreeItem<>("udp");
         TreeItem<String> webSocket = new TreeItem<>("webSocket");
+
+        LeafTreeItem<String> server = new LeafTreeItem<>("server", new ContentPaneManager(mainPane, ContentPaneConsts.WEB_SOCKET_SERVER_PANE,"tabPane.fxml"));
+
+        LeafTreeItem<String> client = new LeafTreeItem<>("client",new ContentPaneManager(mainPane, ContentPaneConsts.WEB_SOCKET_CLIENT_PANE,"tabPane.fxml"));
+
+        webSocket.getChildren().add(server);
+        webSocket.getChildren().add(client);
 
         List<TreeItem<String>> firstMenuItems = new ArrayList<>();
         firstMenuItems.add(tcp);
@@ -68,12 +81,14 @@ public class MainController implements Initializable {
         int i = 0;
         firstMenuItems.forEach(item -> {
 
+/*
             LeafTreeItem<String> server = new LeafTreeItem<>("server", new ContentPaneManager(mainPane, ContentPaneConsts.WEB_SOCKET_SERVER_PANE,"tabPane.fxml"));
 
             LeafTreeItem<String> client = new LeafTreeItem<>("client",new ContentPaneManager(mainPane, ContentPaneConsts.WEB_SOCKET_CLIENT_PANE,"tabPane.fxml"));
 
             item.getChildren().add(server);
             item.getChildren().add(client);
+*/
 
             item.setExpanded(true);
         });

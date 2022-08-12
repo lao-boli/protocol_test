@@ -3,6 +3,7 @@ package com.hqu.lly.protocol.tcp.client;
 import com.hqu.lly.common.BaseClient;
 import com.hqu.lly.protocol.tcp.client.handler.TCPClientMessageHandler;
 import com.hqu.lly.service.UIService;
+import com.hqu.lly.utils.MsgFormatUtil;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -47,6 +48,7 @@ public class TCPClient extends BaseClient {
     @Override
     public void sendMessage(String message){
         channel.writeAndFlush(message);
+        uiService.updateMsgList(MsgFormatUtil.formatSendMsg(message,channel.remoteAddress().toString()));
     }
 
 

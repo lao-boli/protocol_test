@@ -36,7 +36,7 @@ public class TCPServerController implements Initializable {
     private Button sendMsgButton;
 
     @FXML
-    private Button disconnectButton;
+    private Button closeServerButton;
 
     @FXML
     private ListView<String> msgListBox;
@@ -57,6 +57,12 @@ public class TCPServerController implements Initializable {
     @FXML
     void closeServer(MouseEvent event) {
         server.destroy();
+
+        Platform.runLater(() ->{
+            confirmButton.setDisable(false);
+            closeServerButton.setDisable(true);
+            sendMsgButton.setDisable(true);
+        });
     }
 
 
@@ -105,7 +111,7 @@ public class TCPServerController implements Initializable {
             channel.get();
             Platform.runLater(() ->{
                 confirmButton.setDisable(true);
-                disconnectButton.setDisable(false);
+                closeServerButton.setDisable(false);
                 sendMsgButton.setDisable(false);
             });
         } catch (ExecutionException | InterruptedException e) {

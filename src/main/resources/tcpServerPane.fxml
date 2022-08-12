@@ -14,7 +14,7 @@
       <Button fx:id="confirmButton" layoutX="115.0" layoutY="19.0" mnemonicParsing="false" onMouseClicked="#startServer" text="确定" />
       <TextArea fx:id="msgInput" layoutX="12.0" layoutY="257.0" prefHeight="52.0" prefWidth="430.0" text="test text 123" wrapText="true" />
       <Button fx:id="sendMsgButton" disable="true" layoutX="378.0" layoutY="317.0" mnemonicParsing="false" onMouseClicked="#sendMsg" text="发送消息" />
-      <Button fx:id="disconnectButton" disable="true" layoutX="163.0" layoutY="19.0" mnemonicParsing="false" onMouseClicked="#closeServer" text="关闭服务" />
+      <Button fx:id="closeServerButton" disable="true" layoutX="163.0" layoutY="19.0" mnemonicParsing="false" onMouseClicked="#closeServer" text="关闭服务" />
       <ListView fx:id="msgListBox" layoutX="15.0" layoutY="85.0" prefHeight="159.0" prefWidth="425.0" />
       <ListView fx:id="clientListBox" layoutX="251.0" layoutY="14.0" prefHeight="57.0" prefWidth="189.0" />
    </children>
