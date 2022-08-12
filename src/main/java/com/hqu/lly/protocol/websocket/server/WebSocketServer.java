@@ -11,6 +11,7 @@ import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
@@ -77,16 +78,19 @@ public class WebSocketServer extends BaseServer {
             return;
         }
         channel.close();
-        log.info("tcp server closed");
+        log.info("webSocket server closed");
     }
 
     @Override
     public void setService(UIService uiService) {
        this.channelService = (ChannelService) uiService;
+       this.wsChannelInitializer.setChannelService(channelService);
     }
 
     @Override
     public void sendMessage(String message, Channel channel) {
 
+        channel.writeAndFlush(new TextWebSocketFrame(message));
+        channelService.updateMsgList(message);
     }
 }

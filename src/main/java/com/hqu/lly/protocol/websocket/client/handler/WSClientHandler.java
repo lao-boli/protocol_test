@@ -1,6 +1,8 @@
 package com.hqu.lly.protocol.websocket.client.handler;
 
 import com.hqu.lly.protocol.websocket.server.group.WSChannelGroup;
+import com.hqu.lly.service.UIService;
+import com.hqu.lly.utils.MsgFormatUtil;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
@@ -20,16 +22,33 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class WSClientHandler extends SimpleChannelInboundHandler<TextWebSocketFrame> {
 
+    private UIService uiService;
+    public WSClientHandler(UIService uiService) {
+       this.uiService = uiService;
+    }
+
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         Channel channel = ctx.channel();
-        log.info("有服务端建立连接 " + "服务端address: " + channel.remoteAddress().toString());
+        String serverAddr = channel.remoteAddress().toString();
+        log.info("有服务端建立连接 " + "服务端address: " + serverAddr);
         log.info("服务端channel Id:" + channel.id().toString());
+
+        uiService.updateMsgList("服务端address: " + serverAddr);
     }
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, TextWebSocketFrame msg) throws Exception {
-        log.info(msg.text());
+
+        String serverAddr = ctx.channel().remoteAddress().toString();
+
+        String receiveText = msg.text();
+
+        String formattedReceiveText = MsgFormatUtil.formatReceiveMsg(receiveText, serverAddr);
+
+        uiService.updateMsgList(formattedReceiveText);
+
+        log.info(formattedReceiveText);
     }
 
 

@@ -3,6 +3,7 @@ package com.hqu.lly.protocol.websocket.client;
 import com.hqu.lly.common.BaseClient;
 import com.hqu.lly.protocol.websocket.client.handler.WSClientHandler;
 import com.hqu.lly.service.UIService;
+import com.hqu.lly.utils.MsgFormatUtil;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -57,7 +58,7 @@ public class WebSocketClient extends BaseClient {
                     ch.pipeline().addLast("http-chunked", new ChunkedWriteHandler());
                     ch.pipeline().addLast("ws", new WebSocketClientProtocolHandler(uri,
                             WebSocketVersion.V13, "", true, new DefaultHttpHeaders(), Integer.MAX_VALUE));
-                    ch.pipeline().addLast("handler", new WSClientHandler());
+                    ch.pipeline().addLast("handler", new WSClientHandler(uiService));
                 }
             });
             ChannelFuture f = b.connect(host, port).sync();
@@ -103,6 +104,8 @@ public class WebSocketClient extends BaseClient {
     public void sendMessage(String message) {
 
         channel.writeAndFlush(new TextWebSocketFrame(message));
+
+        uiService.updateMsgList(MsgFormatUtil.formatSendMsg(message,channel.remoteAddress().toString()));
     }
 
     @Override

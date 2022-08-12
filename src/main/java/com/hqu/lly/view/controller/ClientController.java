@@ -15,6 +15,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import lombok.Setter;
 
+import java.net.URI;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 
@@ -41,21 +42,25 @@ public class ClientController {
     @Setter
     private BaseClient client;
 
+    @Setter
+    private String protocol;
+
     ObservableList<String> items = FXCollections.observableArrayList() ;
 
     @FXML
     void confirmAddr(MouseEvent event) {
 
-        String[] hostAndPort = clientInput.getText().split(":");
+        URI uri = URI.create(protocol + clientInput.getText());
 
-        client.setAddress(hostAndPort[0],hostAndPort[1]);
+        client.setURI(uri);
+
         client.setService(new UIService() {
             @Override
             public void updateMsgList(String msg) {
 
                 Platform.runLater(() -> {
 
-                    items.add("received: " + msg);
+                    items.add(msg);
                     msgList.setItems(items);
                 });
 
@@ -95,10 +100,6 @@ public class ClientController {
     @FXML
     void sendMsg(MouseEvent event) {
         client.sendMessage(msgInput.getText());
-        items.add("send:" + msgInput.getText());
-        Platform.runLater(() -> {
-            msgList.setItems(items);
-        });
 
     }
 

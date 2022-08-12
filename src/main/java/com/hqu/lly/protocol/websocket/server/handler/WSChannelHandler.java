@@ -2,6 +2,8 @@ package com.hqu.lly.protocol.websocket.server.handler;
 
 import com.google.gson.*;
 import com.hqu.lly.protocol.websocket.server.group.WSChannelGroup;
+import com.hqu.lly.service.ChannelService;
+import com.hqu.lly.utils.MsgFormatUtil;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -27,23 +29,50 @@ public class WSChannelHandler extends SimpleChannelInboundHandler<TextWebSocketF
             .serializeNulls()
             .create();
 
+    private ChannelService channelService;
+
     public WSChannelHandler() {
+    }
+
+    public WSChannelHandler(ChannelService channelService) {
+        this.channelService = channelService;
     }
 
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         Channel channel = ctx.channel();
+
+        String clientAddr = channel.remoteAddress().toString();
+
+        channelService.addChannel(channel);
+
         log.info("有客户端建立连接");
-        log.info("客户端address: " + channel.remoteAddress().toString());
+        log.info("客户端address: " + clientAddr);
         log.info("客户端channel Id:" + channel.id().toString());
     }
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, TextWebSocketFrame msg) throws Exception {
-        String body = msg.text();
-        ctx.channel().writeAndFlush(new TextWebSocketFrame(msg.text()));
-        log.info(body);
+
+        String clientAddr = ctx.channel().remoteAddress().toString();
+
+        String receiveText = msg.text();
+
+        String formatReceiveMsg = MsgFormatUtil.formatReceiveMsg(receiveText, clientAddr);
+
+        channelService.updateMsgList(formatReceiveMsg);
+
+        String responseText = "your message is " + msg.text();
+
+        ctx.channel().writeAndFlush(new TextWebSocketFrame(responseText));
+
+        String formatSendMsg = MsgFormatUtil.formatSendMsg(responseText, clientAddr);
+
+        channelService.updateMsgList(formatSendMsg);
+
+        log.info(formatSendMsg);
+
     }
 
     private void sendTo(String msg, String username) {
@@ -56,7 +85,9 @@ public class WSChannelHandler extends SimpleChannelInboundHandler<TextWebSocketF
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         Channel channel = ctx.channel();
-        log.info("客户端断开连接... 客户端 address: " + channel.remoteAddress());
+        String clientAddr = channel.remoteAddress().toString();
+        log.info("客户端断开连接... 客户端 address: " + clientAddr);
+        channelService.removeChannel(channel);
         WSChannelGroup.channelGroup.remove(channel);
         String userId = WSChannelGroup.channelUserGroup.remove(channel);
 //        WSChannelGroup.userChannelGroup.remove(userId, channel);
@@ -65,7 +96,7 @@ public class WSChannelHandler extends SimpleChannelInboundHandler<TextWebSocketF
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         Channel channel = ctx.channel();
-        log.info(channel.remoteAddress()+" 连接异常,断开连接...");
+        log.info(channel.remoteAddress() + " 连接异常,断开连接...");
         cause.printStackTrace();
         ctx.channel().writeAndFlush(new TextWebSocketFrame("服务端500 关闭连接"));
         ctx.channel().closeFuture();

@@ -2,6 +2,7 @@ package com.hqu.lly.protocol.websocket.server.initalizer;
 
 import com.hqu.lly.protocol.websocket.server.handler.PathVariableHandler;
 import com.hqu.lly.protocol.websocket.server.handler.WSChannelHandler;
+import com.hqu.lly.service.ChannelService;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.http.HttpObjectAggregator;
@@ -11,6 +12,7 @@ import io.netty.handler.codec.http.cors.CorsConfigBuilder;
 import io.netty.handler.codec.http.cors.CorsHandler;
 import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
 import io.netty.handler.stream.ChunkedWriteHandler;
+import lombok.Setter;
 
 public class WSChannelInitializer extends ChannelInitializer<SocketChannel> {
 
@@ -18,6 +20,8 @@ public class WSChannelInitializer extends ChannelInitializer<SocketChannel> {
 //    private PathVariableHandler pathVariableHandler  ;
 
 
+    @Setter
+    private ChannelService channelService;
 
     @Override
     protected void initChannel(SocketChannel ch) throws Exception {
@@ -35,6 +39,6 @@ public class WSChannelInitializer extends ChannelInitializer<SocketChannel> {
         ch.pipeline().addLast("websocket", new WebSocketServerProtocolHandler("/",null,true,65536*10));
         //自定义消息处理器
 
-        ch.pipeline().addLast("msg",new WSChannelHandler());
+        ch.pipeline().addLast("msg",new WSChannelHandler(channelService));
     }
 }
