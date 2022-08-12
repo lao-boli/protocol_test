@@ -21,7 +21,7 @@ import java.util.ResourceBundle;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 
-public class TCPServerController implements Initializable {
+public class ServerController implements Initializable {
 
     @FXML
     private TextField serverPort;

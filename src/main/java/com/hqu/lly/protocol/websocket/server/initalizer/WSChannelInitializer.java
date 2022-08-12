@@ -1,7 +1,6 @@
 package com.hqu.lly.protocol.websocket.server.initalizer;
 
-import com.hqu.lly.protocol.websocket.server.handler.PathVariableHandler;
-import com.hqu.lly.protocol.websocket.server.handler.WSChannelHandler;
+import com.hqu.lly.protocol.websocket.server.handler.WSServerHandler;
 import com.hqu.lly.service.ChannelService;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.SocketChannel;
@@ -39,6 +38,6 @@ public class WSChannelInitializer extends ChannelInitializer<SocketChannel> {
         ch.pipeline().addLast("websocket", new WebSocketServerProtocolHandler("/",null,true,65536*10));
         //自定义消息处理器
 
-        ch.pipeline().addLast("msg",new WSChannelHandler(channelService));
+        ch.pipeline().addLast("msg",new WSServerHandler(channelService));
     }
 }

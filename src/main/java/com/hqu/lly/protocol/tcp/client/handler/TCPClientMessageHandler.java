@@ -1,6 +1,7 @@
 package com.hqu.lly.protocol.tcp.client.handler;
 
 import com.hqu.lly.service.UIService;
+import com.hqu.lly.utils.MsgFormatUtil;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -27,18 +28,30 @@ public class TCPClientMessageHandler extends SimpleChannelInboundHandler<String>
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
+
         Channel channel = ctx.channel();
-        log.info("===========pathHandle================");
-        log.info("连接到服务器");
-        log.info("服务端address: " + channel.remoteAddress().toString());
+
+        String serverAddr = channel.remoteAddress().toString();
+
+        log.info("有服务端建立连接 " + "服务端address: " + serverAddr);
+
         log.info("服务端channel Id:" + channel.id().toString());
+
+        uiService.updateMsgList("服务端address: " + serverAddr);
     }
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, String msg) {
-        System.out.println(msg);
-        System.out.println(ctx.channel().remoteAddress());
-        uiService.updateMsgList(msg);
+
+        String serverAddr = ctx.channel().remoteAddress().toString();
+
+        String receiveText = msg;
+
+        String formattedReceiveText = MsgFormatUtil.formatReceiveMsg(receiveText, serverAddr);
+
+        uiService.updateMsgList(formattedReceiveText);
+
+        log.info(formattedReceiveText);
     }
 
     @Override

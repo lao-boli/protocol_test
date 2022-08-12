@@ -1,7 +1,7 @@
 package com.hqu.lly.factory;
 
 import com.hqu.lly.protocol.websocket.server.WebSocketServer;
-import com.hqu.lly.view.controller.TCPServerController;
+import com.hqu.lly.view.controller.ServerController;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.Tab;
@@ -21,7 +21,7 @@ public class WSServerTabFactory implements TabFactory{
 
     private String tabName = "server";
 
-    private String tabPanePath = "tcpServerPane.fxml";
+    private String tabPanePath = "serverPane.fxml";
     @Override
     public Tab create() {
         Tab tab = new Tab(tabName);
@@ -35,9 +35,9 @@ public class WSServerTabFactory implements TabFactory{
 
             tab.setContent(contentPane);
 
-            if (controller instanceof TCPServerController) {
-                ((TCPServerController) controller).setServer(new WebSocketServer());
-                tab.setOnClosed(event -> ((TCPServerController) controller).destroy());
+            if (controller instanceof ServerController) {
+                ((ServerController) controller).setServer(new WebSocketServer());
+                tab.setOnClosed(event -> ((ServerController) controller).destroy());
             }
         } catch (IOException e) {
             e.printStackTrace();

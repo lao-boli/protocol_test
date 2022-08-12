@@ -16,7 +16,7 @@ import java.time.format.DateTimeFormatter;
 
 @Slf4j
 //@ChannelHandler.Sharable
-public class WSChannelHandler extends SimpleChannelInboundHandler<TextWebSocketFrame> {
+public class WSServerHandler extends SimpleChannelInboundHandler<TextWebSocketFrame> {
 
 
     private Gson gson = new GsonBuilder()
@@ -31,10 +31,10 @@ public class WSChannelHandler extends SimpleChannelInboundHandler<TextWebSocketF
 
     private ChannelService channelService;
 
-    public WSChannelHandler() {
+    public WSServerHandler() {
     }
 
-    public WSChannelHandler(ChannelService channelService) {
+    public WSServerHandler(ChannelService channelService) {
         this.channelService = channelService;
     }
 
