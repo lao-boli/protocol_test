@@ -1,7 +1,6 @@
 package com.hqu.lly.factory;
 
-import com.hqu.lly.protocol.tcp.server.TCPServer;
-import com.hqu.lly.view.controller.ClientController;
+import com.hqu.lly.protocol.websocket.server.WebSocketServer;
 import com.hqu.lly.view.controller.TCPServerController;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -18,7 +17,7 @@ import java.io.IOException;
  * @date 2022/8/7 14:57
  * @Version 1.0
  */
-public class TCPServerTabFactory implements TabFactory{
+public class WSServerTabFactory implements TabFactory{
 
     private String tabName = "server";
 
@@ -37,7 +36,7 @@ public class TCPServerTabFactory implements TabFactory{
             tab.setContent(contentPane);
 
             if (controller instanceof TCPServerController) {
-                ((TCPServerController) controller).setServer(new TCPServer());
+                ((TCPServerController) controller).setServer(new WebSocketServer());
                 tab.setOnClosed(event -> ((TCPServerController) controller).destroy());
             }
         } catch (IOException e) {

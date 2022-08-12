@@ -68,9 +68,9 @@ public class MainController implements Initializable {
         int i = 0;
         firstMenuItems.forEach(item -> {
 
-            LeafTreeItem<String> server = new LeafTreeItem<>("server", new ContentPaneManager(mainPane, ContentPaneConsts.TCP_SERVER_PANE,"tabPane.fxml"));
+            LeafTreeItem<String> server = new LeafTreeItem<>("server", new ContentPaneManager(mainPane, ContentPaneConsts.WEB_SOCKET_SERVER_PANE,"tabPane.fxml"));
 
-            LeafTreeItem<String> client = new LeafTreeItem<>("client",new ContentPaneManager(mainPane, ContentPaneConsts.TCP_CLIENT_PANE,"tabPane.fxml"));
+            LeafTreeItem<String> client = new LeafTreeItem<>("client",new ContentPaneManager(mainPane, ContentPaneConsts.WEB_SOCKET_CLIENT_PANE,"tabPane.fxml"));
 
             item.getChildren().add(server);
             item.getChildren().add(client);

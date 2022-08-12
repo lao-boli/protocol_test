@@ -1,6 +1,7 @@
 package com.hqu.lly.protocol.websocket.server.initalizer;
 
 import com.hqu.lly.protocol.websocket.server.handler.PathVariableHandler;
+import com.hqu.lly.protocol.websocket.server.handler.WSChannelHandler;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.http.HttpObjectAggregator;
@@ -29,9 +30,11 @@ public class WSChannelInitializer extends ChannelInitializer<SocketChannel> {
         //大数据的分区传输
         ch.pipeline().addLast("http-chunked", new ChunkedWriteHandler());
         // 路径变量处理器
-        ch.pipeline().addLast("path-variable-handler",new PathVariableHandler());
+//        ch.pipeline().addLast("path-variable-handler",new PathVariableHandler());
         //websocket协议处理器
-        ch.pipeline().addLast("websocket", new WebSocketServerProtocolHandler("/UserWebSocket",null,true,65536*10));
+        ch.pipeline().addLast("websocket", new WebSocketServerProtocolHandler("/",null,true,65536*10));
         //自定义消息处理器
+
+        ch.pipeline().addLast("msg",new WSChannelHandler());
     }
 }

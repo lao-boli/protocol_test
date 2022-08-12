@@ -19,8 +19,8 @@ public class ContentPaneConsts {
 
     public static final String UDP_SERVER_PANE = "udpServerPane";
 
-    public static final String WEBSOCKET_CLIENT_PANE = "websocketClientPane";
+    public static final String WEB_SOCKET_CLIENT_PANE = "webSocketClientPane";
 
-    public static final String WEBSOCKET_SERVER_PANE = "websocketServerPane";
+    public static final String WEB_SOCKET_SERVER_PANE = "webSocketServerPane";
 
 }

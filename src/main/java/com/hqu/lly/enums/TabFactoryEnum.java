@@ -1,9 +1,7 @@
 package com.hqu.lly.enums;
 
 import com.hqu.lly.constant.ContentPaneConsts;
-import com.hqu.lly.factory.TCPClientTabFactory;
-import com.hqu.lly.factory.TCPServerTabFactory;
-import com.hqu.lly.factory.TabFactory;
+import com.hqu.lly.factory.*;
 import lombok.Getter;
 
 /**
@@ -21,7 +19,9 @@ public enum TabFactoryEnum {
      *
      */
     TCP_CLIENT_TAB_FACTORY(ContentPaneConsts.TCP_CLIENT_PANE,new TCPClientTabFactory()),
-    TCP_SERVER_TAB_FACTORY(ContentPaneConsts.TCP_SERVER_PANE,new TCPServerTabFactory());
+    TCP_SERVER_TAB_FACTORY(ContentPaneConsts.TCP_SERVER_PANE,new TCPServerTabFactory()),
+    WEB_SOCKET_CLIENT_TAB_FACTORY(ContentPaneConsts.WEB_SOCKET_CLIENT_PANE,new WSClientTabFactory()),
+    WEB_SOCKET_SEVER_TAB_FACTORY(ContentPaneConsts.WEB_SOCKET_SERVER_PANE,new WSServerTabFactory());
 
     private String paneType;
 

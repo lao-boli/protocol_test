@@ -23,7 +23,6 @@ public class TCPClientTest {
 
         TCPClient client = new TCPClient();
         client.setHost("127.0.0.1");
-        client.setPort("10250");
 
         FutureTask<Channel> channel = new FutureTask<Channel>(client);
 

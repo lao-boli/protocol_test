@@ -42,6 +42,7 @@ public class WSChannelHandler extends SimpleChannelInboundHandler<TextWebSocketF
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, TextWebSocketFrame msg) throws Exception {
         String body = msg.text();
+        ctx.channel().writeAndFlush(new TextWebSocketFrame(msg.text()));
         log.info(body);
     }
 
@@ -58,7 +59,7 @@ public class WSChannelHandler extends SimpleChannelInboundHandler<TextWebSocketF
         log.info("客户端断开连接... 客户端 address: " + channel.remoteAddress());
         WSChannelGroup.channelGroup.remove(channel);
         String userId = WSChannelGroup.channelUserGroup.remove(channel);
-        WSChannelGroup.userChannelGroup.remove(userId, channel);
+//        WSChannelGroup.userChannelGroup.remove(userId, channel);
     }
 
     @Override

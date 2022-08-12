@@ -21,7 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 @Data
 public class PathVariableHandler extends ChannelInboundHandlerAdapter {
 
-    private String wsUri ;
+    private String wsUri = "/";
 
 
     @Override

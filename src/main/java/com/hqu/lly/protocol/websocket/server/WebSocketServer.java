@@ -1,6 +1,9 @@
 package com.hqu.lly.protocol.websocket.server;
 
+import com.hqu.lly.common.BaseServer;
 import com.hqu.lly.protocol.websocket.server.initalizer.WSChannelInitializer;
+import com.hqu.lly.service.ChannelService;
+import com.hqu.lly.service.UIService;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
@@ -24,7 +27,7 @@ import java.util.concurrent.Callable;
  */
 @Data
 @Slf4j
-public class WebSocketServer implements Callable<Channel> {
+public class WebSocketServer extends BaseServer {
 
     private String port;
     private String host;
@@ -33,6 +36,9 @@ public class WebSocketServer implements Callable<Channel> {
     private WSChannelInitializer wsChannelInitializer = new WSChannelInitializer();
     private Channel channel;
 
+    private ChannelService channelService;
+
+    @Override
     public void init(){
         try {
 
@@ -65,11 +71,22 @@ public class WebSocketServer implements Callable<Channel> {
     }
 
 
+    @Override
     public void destroy() {
         if (null == channel){
             return;
         }
         channel.close();
         log.info("tcp server closed");
+    }
+
+    @Override
+    public void setService(UIService uiService) {
+       this.channelService = (ChannelService) uiService;
+    }
+
+    @Override
+    public void sendMessage(String message, Channel channel) {
+
     }
 }

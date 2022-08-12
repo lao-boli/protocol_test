@@ -1,5 +1,6 @@
 package com.hqu.lly.view.controller;
 
+import com.hqu.lly.common.BaseServer;
 import com.hqu.lly.protocol.tcp.server.TCPServer;
 import com.hqu.lly.service.ChannelService;
 import io.netty.channel.Channel;
@@ -13,6 +14,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.util.Callback;
+import lombok.Setter;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -42,7 +44,8 @@ public class TCPServerController implements Initializable {
     @FXML
     private ListView<Channel> clientListBox;
 
-    private TCPServer tcpServer = new TCPServer();
+    @Setter
+    private BaseServer server;
 
     private Channel targetClientChannel = null;
 
@@ -53,7 +56,7 @@ public class TCPServerController implements Initializable {
 
     @FXML
     void closeServer(MouseEvent event) {
-        tcpServer.destroy();
+        server.destroy();
     }
 
 
@@ -62,9 +65,9 @@ public class TCPServerController implements Initializable {
 
         String port = serverPort.getText();
 
-        tcpServer.setPort(port);
+        server.setPort(port);
 
-        tcpServer.setChannelService(new ChannelService() {
+        server.setService(new ChannelService() {
 
             @Override
             public void addChannel(Channel channel) {
@@ -95,7 +98,7 @@ public class TCPServerController implements Initializable {
             }
         });
 
-        FutureTask<Channel> channel = new FutureTask<Channel>(tcpServer);
+        FutureTask<Channel> channel = new FutureTask<Channel>(server);
         new Thread(channel).start();
 
         try {
@@ -114,13 +117,13 @@ public class TCPServerController implements Initializable {
     void sendMsg(MouseEvent event) {
 
         if (targetClientChannel != null) {
-            tcpServer.sendMessage(msgInput.getText(),targetClientChannel);
+            server.sendMessage(msgInput.getText(),targetClientChannel);
         }
 
     }
 
     public void destroy(){
-        tcpServer.destroy();
+        server.destroy();
     }
 
 
