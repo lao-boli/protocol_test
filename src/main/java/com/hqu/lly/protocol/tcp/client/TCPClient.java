@@ -15,6 +15,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import java.net.URI;
 import java.util.concurrent.Callable;
 
 /**
@@ -36,7 +37,7 @@ public class TCPClient extends BaseClient {
 
     private String host;
 
-    private String port;
+    private int port;
 
     private UIService uiService;
 
@@ -74,7 +75,7 @@ public class TCPClient extends BaseClient {
                         }
                     });
             //绑定服务器
-            ChannelFuture channelFuture = bootstrap.connect(host, Integer.parseInt(port)).sync();
+            ChannelFuture channelFuture = bootstrap.connect(host, port).sync();
             this.channel = channelFuture.channel();
             this.channel.closeFuture().addListener((ChannelFutureListener) future -> {
                 log.debug("处理关闭之后的操作");
@@ -95,10 +96,11 @@ public class TCPClient extends BaseClient {
     }
 
     @Override
-    public void setAddress(String host, String port) {
-        this.host = host;
-        this.port = port;
+    public void setURI(URI uri) {
+        this.host = uri.getHost();
+        this.port = uri.getPort();
     }
+
 
     @Override
     public void setService(UIService uiService) {

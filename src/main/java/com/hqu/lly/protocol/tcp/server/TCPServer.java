@@ -1,7 +1,9 @@
 package com.hqu.lly.protocol.tcp.server;
 
+import com.hqu.lly.common.BaseServer;
 import com.hqu.lly.protocol.tcp.server.handler.TCPMessageHandler;
 import com.hqu.lly.service.ChannelService;
+import com.hqu.lly.service.UIService;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFutureListener;
@@ -27,7 +29,7 @@ import java.util.concurrent.Callable;
  */
 @Slf4j
 @Data
-public class TCPServer implements Callable<Channel> {
+public class TCPServer extends BaseServer {
 
     private String port;
 
@@ -39,6 +41,7 @@ public class TCPServer implements Callable<Channel> {
 
     private Channel channel;
 
+    @Override
     public void init() {
 
         bossGroup = new NioEventLoopGroup();
@@ -69,10 +72,6 @@ public class TCPServer implements Callable<Channel> {
         }
     }
 
-    public static void main(String[] args) {
-        TCPServer server = new TCPServer();
-        server.init();
-    }
 
     @Override
     public Channel call() throws Exception {
@@ -81,17 +80,24 @@ public class TCPServer implements Callable<Channel> {
         return channel;
     }
 
+    @Override
     public void sendMessage(String msg , Channel channel){
         channel.writeAndFlush(msg);
         channelService.updateMsgList("---> "+channel.remoteAddress()+" : " + msg);
     }
 
 
+    @Override
     public void destroy() {
         if (null == channel){
             return;
         }
         channel.close();
         log.info("tcp server closed");
+    }
+
+    @Override
+    public void setService(UIService uiService) {
+       this.channelService = (ChannelService) uiService;
     }
 }
