@@ -2,7 +2,7 @@ package com.hqu.lly.protocol.websocket.client;
 
 import com.hqu.lly.common.BaseClient;
 import com.hqu.lly.protocol.websocket.client.handler.WSClientHandler;
-import com.hqu.lly.service.MessageService;
+import com.hqu.lly.service.impl.ClientService;
 import com.hqu.lly.utils.MsgFormatUtil;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
@@ -36,7 +36,7 @@ public class WebSocketClient extends BaseClient {
 
     private URI uri;
 
-    private MessageService messageService;
+    private ClientService clientService;
     private Channel channel;
     private EventLoopGroup workerGroup;
 
@@ -58,7 +58,7 @@ public class WebSocketClient extends BaseClient {
                     ch.pipeline().addLast("http-chunked", new ChunkedWriteHandler());
                     ch.pipeline().addLast("ws", new WebSocketClientProtocolHandler(uri,
                             WebSocketVersion.V13, "", true, new DefaultHttpHeaders(), Integer.MAX_VALUE));
-                    ch.pipeline().addLast("handler", new WSClientHandler(messageService));
+                    ch.pipeline().addLast("handler", new WSClientHandler(clientService));
                 }
             });
             ChannelFuture f = b.connect(host, port).sync();
@@ -96,8 +96,8 @@ public class WebSocketClient extends BaseClient {
 
 
     @Override
-    public void setService(MessageService messageService) {
-        this.messageService = messageService;
+    public void setService(ClientService clientService) {
+        this.clientService = clientService;
     }
 
     @Override
@@ -105,7 +105,7 @@ public class WebSocketClient extends BaseClient {
 
         channel.writeAndFlush(new TextWebSocketFrame(message));
 
-        messageService.updateMsgList(MsgFormatUtil.formatSendMsg(message,channel.remoteAddress().toString()));
+        clientService.updateMsgList(MsgFormatUtil.formatSendMsg(message,channel.remoteAddress().toString()));
     }
 
     @Override

@@ -2,7 +2,7 @@ package com.hqu.lly.protocol.tcp.client;
 
 import com.hqu.lly.common.BaseClient;
 import com.hqu.lly.protocol.tcp.client.handler.TCPClientMessageHandler;
-import com.hqu.lly.service.MessageService;
+import com.hqu.lly.service.impl.ClientService;
 import com.hqu.lly.utils.MsgFormatUtil;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
@@ -39,7 +39,7 @@ public class TCPClient extends BaseClient {
 
     private int port;
 
-    private MessageService messageService;
+    private ClientService clientService;
 
 
     private EventLoopGroup eventLoopGroup ;
@@ -47,7 +47,7 @@ public class TCPClient extends BaseClient {
     @Override
     public void sendMessage(String message){
         channel.writeAndFlush(message);
-        messageService.updateMsgList(MsgFormatUtil.formatSendMsg(message,channel.remoteAddress().toString()));
+        clientService.updateMsgList(MsgFormatUtil.formatSendMsg(message,channel.remoteAddress().toString()));
     }
 
 
@@ -71,7 +71,7 @@ public class TCPClient extends BaseClient {
                         protected void initChannel(SocketChannel ch) throws Exception {
                             ch.pipeline().addLast(new StringDecoder());
                             ch.pipeline().addLast(new StringEncoder());
-                            ch.pipeline().addLast(new TCPClientMessageHandler(messageService));
+                            ch.pipeline().addLast(new TCPClientMessageHandler(clientService));
 
                         }
                     });
@@ -104,8 +104,8 @@ public class TCPClient extends BaseClient {
 
 
     @Override
-    public void setService(MessageService messageService) {
-        this.messageService = messageService;
+    public void setService(ClientService clientService) {
+        this.clientService = clientService;
     }
 
 }

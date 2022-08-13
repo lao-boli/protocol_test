@@ -1,6 +1,7 @@
 package com.hqu.lly.common;
 
 import com.hqu.lly.service.MessageService;
+import com.hqu.lly.service.impl.ClientService;
 import io.netty.channel.Channel;
 
 import java.net.URI;
@@ -23,7 +24,7 @@ public abstract class BaseClient implements Callable<Channel> {
 
    public abstract void setURI(URI uri);
 
-   public abstract void setService(MessageService messageService);
+   public abstract void setService(ClientService clientService);
 
    public abstract void sendMessage(String message);
 
