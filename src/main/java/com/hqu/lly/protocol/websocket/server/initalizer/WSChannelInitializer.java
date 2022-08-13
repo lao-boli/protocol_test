@@ -1,7 +1,7 @@
 package com.hqu.lly.protocol.websocket.server.initalizer;
 
 import com.hqu.lly.protocol.websocket.server.handler.WSServerHandler;
-import com.hqu.lly.service.ChannelService;
+import com.hqu.lly.service.impl.ServerService;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.http.HttpObjectAggregator;
@@ -20,7 +20,7 @@ public class WSChannelInitializer extends ChannelInitializer<SocketChannel> {
 
 
     @Setter
-    private ChannelService channelService;
+    private ServerService serverService;
 
     @Override
     protected void initChannel(SocketChannel ch) throws Exception {
@@ -38,6 +38,6 @@ public class WSChannelInitializer extends ChannelInitializer<SocketChannel> {
         ch.pipeline().addLast("websocket", new WebSocketServerProtocolHandler("/",null,true,65536*10));
         //自定义消息处理器
 
-        ch.pipeline().addLast("msg",new WSServerHandler(channelService));
+        ch.pipeline().addLast("msg",new WSServerHandler(serverService));
     }
 }

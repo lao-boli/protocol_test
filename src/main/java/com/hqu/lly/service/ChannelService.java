@@ -11,7 +11,8 @@ import io.netty.channel.Channel;
  * @date 2022/8/9 21:03
  * @Version 1.0
  */
-public interface ChannelService extends MessageService {
+public interface ChannelService {
+
     public void addChannel(Channel channel);
 
     public void removeChannel(Channel channel);

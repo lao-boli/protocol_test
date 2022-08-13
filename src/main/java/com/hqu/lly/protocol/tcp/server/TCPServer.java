@@ -4,6 +4,7 @@ import com.hqu.lly.common.BaseServer;
 import com.hqu.lly.protocol.tcp.server.handler.TCPMessageHandler;
 import com.hqu.lly.service.ChannelService;
 import com.hqu.lly.service.MessageService;
+import com.hqu.lly.service.impl.ServerService;
 import com.hqu.lly.utils.MsgFormatUtil;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
@@ -34,7 +35,7 @@ public class TCPServer extends BaseServer {
 
     private String port;
 
-    private ChannelService channelService;
+    private ServerService serverService;
 
     private NioEventLoopGroup bossGroup;
 
@@ -56,7 +57,7 @@ public class TCPServer extends BaseServer {
                 protected void initChannel(SocketChannel ch) throws Exception {
                     ch.pipeline().addLast(new StringDecoder());
                     ch.pipeline().addLast(new StringEncoder());
-                    ch.pipeline().addLast(new TCPMessageHandler(channelService));
+                    ch.pipeline().addLast(new TCPMessageHandler(serverService));
 
                 }
             });
@@ -91,7 +92,7 @@ public class TCPServer extends BaseServer {
 
         String formatSendMsg = MsgFormatUtil.formatSendMsg(msg, channel.remoteAddress().toString());
 
-        channelService.updateMsgList(formatSendMsg);
+        serverService.updateMsgList(formatSendMsg);
 
         log.info(formatSendMsg);
     }
@@ -107,7 +108,7 @@ public class TCPServer extends BaseServer {
     }
 
     @Override
-    public void setService(MessageService messageService) {
-       this.channelService = (ChannelService) messageService;
+    public void setService(ServerService serverService) {
+       this.serverService =  serverService;
     }
 }

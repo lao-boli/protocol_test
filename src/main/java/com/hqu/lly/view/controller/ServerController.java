@@ -3,6 +3,7 @@ package com.hqu.lly.view.controller;
 import com.hqu.lly.common.BaseServer;
 import com.hqu.lly.protocol.tcp.server.TCPServer;
 import com.hqu.lly.service.ChannelService;
+import com.hqu.lly.service.impl.ServerService;
 import io.netty.channel.Channel;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -73,7 +74,7 @@ public class ServerController implements Initializable {
 
         server.setPort(port);
 
-        server.setService(new ChannelService() {
+        server.setService(new ServerService() {
 
             @Override
             public void addChannel(Channel channel) {

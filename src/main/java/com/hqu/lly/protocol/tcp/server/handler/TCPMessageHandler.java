@@ -2,6 +2,7 @@ package com.hqu.lly.protocol.tcp.server.handler;
 
 import com.hqu.lly.protocol.tcp.server.group.TCPChannelGroup;
 import com.hqu.lly.service.ChannelService;
+import com.hqu.lly.service.impl.ServerService;
 import com.hqu.lly.utils.MsgFormatUtil;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
@@ -22,10 +23,10 @@ import lombok.extern.slf4j.Slf4j;
 public class TCPMessageHandler extends SimpleChannelInboundHandler<String> {  // 6
 
 
-    private ChannelService channelService;
+    private ServerService serverService;
 
-    public TCPMessageHandler(ChannelService ChannelService) {
-        this.channelService = ChannelService;
+    public TCPMessageHandler(ServerService serverService) {
+        this.serverService = serverService;
     }
 
     @Override
@@ -34,9 +35,9 @@ public class TCPMessageHandler extends SimpleChannelInboundHandler<String> {  //
         log.info("有客户端建立连接");
         log.info("客户端address: " + channel.remoteAddress().toString());
         log.info("客户端channel Id:" + channel.id().toString());
-        channelService.updateMsgList("客户端address: " + channel.remoteAddress().toString());
+        serverService.updateMsgList("客户端address: " + channel.remoteAddress().toString());
 
-        channelService.addChannel(channel);
+        serverService.addChannel(channel);
         TCPChannelGroup.clientChannelGroup.put(channel.id().toString(), channel);
 
 
@@ -52,7 +53,7 @@ public class TCPMessageHandler extends SimpleChannelInboundHandler<String> {  //
 
         String formatReceiveMsg = MsgFormatUtil.formatReceiveMsg(receiveText, clientAddr);
 
-        channelService.updateMsgList(formatReceiveMsg);
+        serverService.updateMsgList(formatReceiveMsg);
 
         String responseText = "your message is " + msg;
 
@@ -60,7 +61,7 @@ public class TCPMessageHandler extends SimpleChannelInboundHandler<String> {  //
 
         String formatSendMsg = MsgFormatUtil.formatSendMsg(responseText, clientAddr);
 
-        channelService.updateMsgList(formatSendMsg);
+        serverService.updateMsgList(formatSendMsg);
 
         log.info(formatSendMsg);
 
@@ -71,8 +72,8 @@ public class TCPMessageHandler extends SimpleChannelInboundHandler<String> {  //
         Channel channel = ctx.channel();
         TCPChannelGroup.clientChannelGroup.remove(channel.id().toString());
         log.info("客户端断开连接... 客户端 address: " + channel.remoteAddress());
-        channelService.updateMsgList("客户端断开连接... 客户端address: " + channel.remoteAddress().toString());
-        channelService.removeChannel(channel);
+        serverService.updateMsgList("客户端断开连接... 客户端address: " + channel.remoteAddress().toString());
+        serverService.removeChannel(channel);
     }
 
     @Override

@@ -2,8 +2,7 @@ package com.hqu.lly.protocol.websocket.server;
 
 import com.hqu.lly.common.BaseServer;
 import com.hqu.lly.protocol.websocket.server.initalizer.WSChannelInitializer;
-import com.hqu.lly.service.ChannelService;
-import com.hqu.lly.service.MessageService;
+import com.hqu.lly.service.impl.ServerService;
 import com.hqu.lly.utils.MsgFormatUtil;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
@@ -36,7 +35,7 @@ public class WebSocketServer extends BaseServer {
     private WSChannelInitializer wsChannelInitializer = new WSChannelInitializer();
     private Channel channel;
 
-    private ChannelService channelService;
+    private ServerService serverService;
 
     @Override
     public void init(){
@@ -84,9 +83,9 @@ public class WebSocketServer extends BaseServer {
     }
 
     @Override
-    public void setService(MessageService messageService) {
-       this.channelService = (ChannelService) messageService;
-       this.wsChannelInitializer.setChannelService(channelService);
+    public void setService(ServerService serverService) {
+       this.serverService =  serverService;
+       this.wsChannelInitializer.setServerService(this.serverService);
     }
 
     @Override
@@ -96,7 +95,7 @@ public class WebSocketServer extends BaseServer {
 
         String formatSendMsg = MsgFormatUtil.formatSendMsg(msg, channel.remoteAddress().toString());
 
-        channelService.updateMsgList(formatSendMsg);
+        serverService.updateMsgList(formatSendMsg);
 
         log.info(formatSendMsg);
     }

@@ -4,6 +4,7 @@ import com.hqu.lly.common.BaseServer;
 import com.hqu.lly.protocol.udp.server.handler.UDPServerHandler;
 import com.hqu.lly.service.ChannelService;
 import com.hqu.lly.service.MessageService;
+import com.hqu.lly.service.impl.ServerService;
 import com.hqu.lly.utils.MsgFormatUtil;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.Unpooled;
@@ -30,7 +31,7 @@ public class UDPServer extends BaseServer {
 
     private int port;
 
-    private ChannelService channelService;
+    private ServerService serverService;
 
     private Channel channel;
 
@@ -46,7 +47,7 @@ public class UDPServer extends BaseServer {
             bootstrap.group(new NioEventLoopGroup())
                     .channel(NioDatagramChannel.class)
                     .option(ChannelOption.SO_BROADCAST, true)
-                    .handler(new UDPServerHandler(channelService));
+                    .handler(new UDPServerHandler(serverService));
 
              channel = bootstrap.bind(port).sync().channel();
 
@@ -88,9 +89,9 @@ public class UDPServer extends BaseServer {
     }
 
     @Override
-    public void setService(MessageService messageService) {
+    public void setService(ServerService serverService) {
 
-        this.channelService = (ChannelService) messageService;
+        this.serverService = serverService;
 
     }
 
@@ -105,7 +106,7 @@ public class UDPServer extends BaseServer {
 
             String formatSendMsg = MsgFormatUtil.formatSendMsg(message, clientAddr.toString());
 
-            channelService.updateMsgList(formatSendMsg);
+            serverService.updateMsgList(formatSendMsg);
 
             log.info(formatSendMsg);
         }

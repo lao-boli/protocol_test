@@ -1,6 +1,6 @@
 package com.hqu.lly.protocol.udp.server.handler;
 
-import com.hqu.lly.service.ChannelService;
+import com.hqu.lly.service.impl.ServerService;
 import com.hqu.lly.utils.MsgFormatUtil;
 import io.netty.buffer.ByteBufAllocator;
 import io.netty.buffer.Unpooled;
@@ -12,7 +12,6 @@ import io.netty.util.CharsetUtil;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
-import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.util.concurrent.ConcurrentHashMap;
@@ -31,10 +30,10 @@ public class UDPServerHandler extends SimpleChannelInboundHandler<DatagramPacket
 
     ConcurrentHashMap<SocketAddress,UDPChannel> udpClientGroup = new ConcurrentHashMap<>();
 
-    private ChannelService channelService;
+    private ServerService serverService;
 
-    public UDPServerHandler(ChannelService channelService) {
-        this.channelService = channelService;
+    public UDPServerHandler(ServerService serverService) {
+        this.serverService = serverService;
 
     }
 
@@ -47,7 +46,7 @@ public class UDPServerHandler extends SimpleChannelInboundHandler<DatagramPacket
 
         String formatReceiveMsg = MsgFormatUtil.formatReceiveMsg(receiveText, clientAddr);
 
-        channelService.updateMsgList(formatReceiveMsg);
+        serverService.updateMsgList(formatReceiveMsg);
 
         String responseText = "your message is " + receiveText;
 
@@ -55,13 +54,13 @@ public class UDPServerHandler extends SimpleChannelInboundHandler<DatagramPacket
 
         ctx.channel().writeAndFlush(new DatagramPacket(Unpooled.copiedBuffer(responseText, CharsetUtil.UTF_8), datagramPacket.sender()));
 
-        channelService.updateMsgList(formatSendMsg);
+        serverService.updateMsgList(formatSendMsg);
 
         if (udpClientGroup.get(datagramPacket.sender()) == null){
 
             UDPChannel udpChannel = new UDPChannel(datagramPacket.sender());
 
-            channelService.addChannel(udpChannel);
+            serverService.addChannel(udpChannel);
 
             addChannel(udpChannel);
 

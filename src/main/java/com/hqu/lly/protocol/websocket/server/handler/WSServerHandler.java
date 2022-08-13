@@ -3,6 +3,7 @@ package com.hqu.lly.protocol.websocket.server.handler;
 import com.google.gson.*;
 import com.hqu.lly.protocol.websocket.server.group.WSChannelGroup;
 import com.hqu.lly.service.ChannelService;
+import com.hqu.lly.service.impl.ServerService;
 import com.hqu.lly.utils.MsgFormatUtil;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
@@ -29,13 +30,13 @@ public class WSServerHandler extends SimpleChannelInboundHandler<TextWebSocketFr
             .serializeNulls()
             .create();
 
-    private ChannelService channelService;
+    private ServerService serverService;
 
     public WSServerHandler() {
     }
 
-    public WSServerHandler(ChannelService channelService) {
-        this.channelService = channelService;
+    public WSServerHandler(ServerService serverService) {
+        this.serverService = serverService;
     }
 
 
@@ -45,7 +46,7 @@ public class WSServerHandler extends SimpleChannelInboundHandler<TextWebSocketFr
 
         String clientAddr = channel.remoteAddress().toString();
 
-        channelService.addChannel(channel);
+        serverService.addChannel(channel);
 
         log.info("有客户端建立连接");
         log.info("客户端address: " + clientAddr);
@@ -61,7 +62,7 @@ public class WSServerHandler extends SimpleChannelInboundHandler<TextWebSocketFr
 
         String formatReceiveMsg = MsgFormatUtil.formatReceiveMsg(receiveText, clientAddr);
 
-        channelService.updateMsgList(formatReceiveMsg);
+        serverService.updateMsgList(formatReceiveMsg);
 
         String responseText = "your message is " + msg.text();
 
@@ -69,7 +70,7 @@ public class WSServerHandler extends SimpleChannelInboundHandler<TextWebSocketFr
 
         String formatSendMsg = MsgFormatUtil.formatSendMsg(responseText, clientAddr);
 
-        channelService.updateMsgList(formatSendMsg);
+        serverService.updateMsgList(formatSendMsg);
 
         log.info(formatSendMsg);
 
@@ -87,7 +88,7 @@ public class WSServerHandler extends SimpleChannelInboundHandler<TextWebSocketFr
         Channel channel = ctx.channel();
         String clientAddr = channel.remoteAddress().toString();
         log.info("客户端断开连接... 客户端 address: " + clientAddr);
-        channelService.removeChannel(channel);
+        serverService.removeChannel(channel);
         WSChannelGroup.channelGroup.remove(channel);
         String userId = WSChannelGroup.channelUserGroup.remove(channel);
 //        WSChannelGroup.userChannelGroup.remove(userId, channel);
