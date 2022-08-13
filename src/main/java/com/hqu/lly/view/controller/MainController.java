@@ -64,6 +64,11 @@ public class MainController implements Initializable {
         tcp.getChildren().add(tcpServer);
         tcp.getChildren().add(tcpClient);
         TreeItem<String> udp = new TreeItem<>("udp");
+        LeafTreeItem<String> udpServer = new LeafTreeItem<>("server", new ContentPaneManager(mainPane, ContentPaneConsts.UDP_SERVER_PANE,"tabPane.fxml"));
+
+        LeafTreeItem<String> udpClient = new LeafTreeItem<>("client",new ContentPaneManager(mainPane, ContentPaneConsts.UDP_CLIENT_PANE,"tabPane.fxml"));
+        udp.getChildren().add(udpServer);
+        udp.getChildren().add(udpClient);
         TreeItem<String> webSocket = new TreeItem<>("webSocket");
 
         LeafTreeItem<String> server = new LeafTreeItem<>("server", new ContentPaneManager(mainPane, ContentPaneConsts.WEB_SOCKET_SERVER_PANE,"tabPane.fxml"));
