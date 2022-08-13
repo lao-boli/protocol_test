@@ -20,6 +20,8 @@ public enum TabFactoryEnum {
      */
     TCP_CLIENT_TAB_FACTORY(ContentPaneConsts.TCP_CLIENT_PANE,new TCPClientTabFactory()),
     TCP_SERVER_TAB_FACTORY(ContentPaneConsts.TCP_SERVER_PANE,new TCPServerTabFactory()),
+    UDP_CLIENT_TAB_FACTORY(ContentPaneConsts.UDP_CLIENT_PANE,new UDPClientTabFactory()),
+    UDP_SERVER_TAB_FACTORY(ContentPaneConsts.UDP_SERVER_PANE,new UDPServerTabFactory()),
     WEB_SOCKET_CLIENT_TAB_FACTORY(ContentPaneConsts.WEB_SOCKET_CLIENT_PANE,new WSClientTabFactory()),
     WEB_SOCKET_SEVER_TAB_FACTORY(ContentPaneConsts.WEB_SOCKET_SERVER_PANE,new WSServerTabFactory());
 

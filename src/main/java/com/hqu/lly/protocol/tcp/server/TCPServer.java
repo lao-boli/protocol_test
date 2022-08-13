@@ -4,6 +4,7 @@ import com.hqu.lly.common.BaseServer;
 import com.hqu.lly.protocol.tcp.server.handler.TCPMessageHandler;
 import com.hqu.lly.service.ChannelService;
 import com.hqu.lly.service.UIService;
+import com.hqu.lly.utils.MsgFormatUtil;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFutureListener;
@@ -82,8 +83,14 @@ public class TCPServer extends BaseServer {
 
     @Override
     public void sendMessage(String msg , Channel channel){
+
         channel.writeAndFlush(msg);
-        channelService.updateMsgList("---> "+channel.remoteAddress()+" : " + msg);
+
+        String formatSendMsg = MsgFormatUtil.formatSendMsg(msg, channel.remoteAddress().toString());
+
+        channelService.updateMsgList(formatSendMsg);
+
+        log.info(formatSendMsg);
     }
 
 

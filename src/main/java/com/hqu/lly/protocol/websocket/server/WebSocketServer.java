@@ -4,6 +4,7 @@ import com.hqu.lly.common.BaseServer;
 import com.hqu.lly.protocol.websocket.server.initalizer.WSChannelInitializer;
 import com.hqu.lly.service.ChannelService;
 import com.hqu.lly.service.UIService;
+import com.hqu.lly.utils.MsgFormatUtil;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
@@ -88,9 +89,14 @@ public class WebSocketServer extends BaseServer {
     }
 
     @Override
-    public void sendMessage(String message, Channel channel) {
+    public void sendMessage(String msg, Channel channel) {
 
-        channel.writeAndFlush(new TextWebSocketFrame(message));
-        channelService.updateMsgList(message);
+        channel.writeAndFlush(new TextWebSocketFrame(msg));
+
+        String formatSendMsg = MsgFormatUtil.formatSendMsg(msg, channel.remoteAddress().toString());
+
+        channelService.updateMsgList(formatSendMsg);
+
+        log.info(formatSendMsg);
     }
 }
