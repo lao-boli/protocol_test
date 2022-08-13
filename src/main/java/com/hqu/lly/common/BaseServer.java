@@ -1,6 +1,6 @@
 package com.hqu.lly.common;
 
-import com.hqu.lly.service.UIService;
+import com.hqu.lly.service.MessageService;
 import io.netty.channel.Channel;
 
 import java.util.concurrent.Callable;
@@ -22,7 +22,7 @@ public abstract class BaseServer implements Callable<Channel> {
 
    public abstract void setPort(String port);
 
-   public abstract void setService(UIService uiService);
+   public abstract void setService(MessageService messageService);
 
    public abstract void sendMessage(String message,Channel channel);
 

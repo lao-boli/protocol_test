@@ -2,9 +2,7 @@ package com.hqu.lly.protocol.udp.client;
 
 import com.hqu.lly.common.BaseClient;
 import com.hqu.lly.protocol.udp.client.handler.UDPClientHandler;
-import com.hqu.lly.protocol.udp.server.handler.UDPServerHandler;
-import com.hqu.lly.service.ChannelService;
-import com.hqu.lly.service.UIService;
+import com.hqu.lly.service.MessageService;
 import com.hqu.lly.utils.MsgFormatUtil;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.Unpooled;
@@ -34,7 +32,7 @@ public class UDPClient extends BaseClient {
 
     private String host;
 
-    private UIService uiService;
+    private MessageService messageService;
 
     private Channel channel;
 
@@ -52,7 +50,7 @@ public class UDPClient extends BaseClient {
             bootstrap.group(new NioEventLoopGroup())
                     .channel(NioDatagramChannel.class)
                     .option(ChannelOption.SO_BROADCAST, true)
-                    .handler(new UDPClientHandler(uiService));
+                    .handler(new UDPClientHandler(messageService));
 
             channel = bootstrap.connect(host, port).sync().channel();
 
@@ -88,8 +86,8 @@ public class UDPClient extends BaseClient {
     }
 
     @Override
-    public void setService(UIService uiService) {
-        this.uiService = uiService;
+    public void setService(MessageService messageService) {
+        this.messageService = messageService;
 
     }
 
@@ -98,7 +96,7 @@ public class UDPClient extends BaseClient {
 
         channel.writeAndFlush(new DatagramPacket(Unpooled.copiedBuffer(message, CharsetUtil.UTF_8), serverAddr));
 
-        uiService.updateMsgList(MsgFormatUtil.formatSendMsg(message,serverAddr.toString()));
+        messageService.updateMsgList(MsgFormatUtil.formatSendMsg(message,serverAddr.toString()));
 
     }
 

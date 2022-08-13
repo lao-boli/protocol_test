@@ -3,7 +3,7 @@ package com.hqu.lly.protocol.websocket.server;
 import com.hqu.lly.common.BaseServer;
 import com.hqu.lly.protocol.websocket.server.initalizer.WSChannelInitializer;
 import com.hqu.lly.service.ChannelService;
-import com.hqu.lly.service.UIService;
+import com.hqu.lly.service.MessageService;
 import com.hqu.lly.utils.MsgFormatUtil;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
@@ -15,8 +15,6 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-
-import java.util.concurrent.Callable;
 
 /**
  * <p>
@@ -33,8 +31,8 @@ public class WebSocketServer extends BaseServer {
 
     private String port;
     private String host;
-    private NioEventLoopGroup bossGroup = new NioEventLoopGroup();
-    private NioEventLoopGroup workerGroup = new NioEventLoopGroup();
+    private NioEventLoopGroup bossGroup;
+    private NioEventLoopGroup workerGroup;
     private WSChannelInitializer wsChannelInitializer = new WSChannelInitializer();
     private Channel channel;
 
@@ -42,6 +40,9 @@ public class WebSocketServer extends BaseServer {
 
     @Override
     public void init(){
+        bossGroup = new NioEventLoopGroup();
+        workerGroup = new NioEventLoopGroup();
+
         try {
 
             ServerBootstrap serverBootstrap = new ServerBootstrap()
@@ -83,8 +84,8 @@ public class WebSocketServer extends BaseServer {
     }
 
     @Override
-    public void setService(UIService uiService) {
-       this.channelService = (ChannelService) uiService;
+    public void setService(MessageService messageService) {
+       this.channelService = (ChannelService) messageService;
        this.wsChannelInitializer.setChannelService(channelService);
     }
 

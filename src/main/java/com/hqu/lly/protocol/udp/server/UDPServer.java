@@ -3,7 +3,7 @@ package com.hqu.lly.protocol.udp.server;
 import com.hqu.lly.common.BaseServer;
 import com.hqu.lly.protocol.udp.server.handler.UDPServerHandler;
 import com.hqu.lly.service.ChannelService;
-import com.hqu.lly.service.UIService;
+import com.hqu.lly.service.MessageService;
 import com.hqu.lly.utils.MsgFormatUtil;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.Unpooled;
@@ -11,7 +11,6 @@ import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.DatagramPacket;
 import io.netty.channel.socket.nio.NioDatagramChannel;
-import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import io.netty.util.CharsetUtil;
 import lombok.extern.slf4j.Slf4j;
 
@@ -89,9 +88,9 @@ public class UDPServer extends BaseServer {
     }
 
     @Override
-    public void setService(UIService uiService) {
+    public void setService(MessageService messageService) {
 
-        this.channelService = (ChannelService) uiService;
+        this.channelService = (ChannelService) messageService;
 
     }
 

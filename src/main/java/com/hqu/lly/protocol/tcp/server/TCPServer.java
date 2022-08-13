@@ -3,7 +3,7 @@ package com.hqu.lly.protocol.tcp.server;
 import com.hqu.lly.common.BaseServer;
 import com.hqu.lly.protocol.tcp.server.handler.TCPMessageHandler;
 import com.hqu.lly.service.ChannelService;
-import com.hqu.lly.service.UIService;
+import com.hqu.lly.service.MessageService;
 import com.hqu.lly.utils.MsgFormatUtil;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
@@ -17,7 +17,7 @@ import io.netty.handler.codec.string.StringEncoder;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.concurrent.Callable;
+import java.net.BindException;
 
 /**
  * <p>
@@ -65,10 +65,13 @@ public class TCPServer extends BaseServer {
                 bossGroup.shutdownGracefully();
                 workerGroup.shutdownGracefully();
             });
-        } catch (InterruptedException e) {
+        } catch (Exception e) {
 
             bossGroup.shutdownGracefully();
             workerGroup.shutdownGracefully();
+            if (e instanceof BindException){
+
+            }
             log.error("server error", e);
         }
     }
@@ -104,7 +107,7 @@ public class TCPServer extends BaseServer {
     }
 
     @Override
-    public void setService(UIService uiService) {
-       this.channelService = (ChannelService) uiService;
+    public void setService(MessageService messageService) {
+       this.channelService = (ChannelService) messageService;
     }
 }

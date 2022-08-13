@@ -1,8 +1,7 @@
 package com.hqu.lly.view.controller;
 
 import com.hqu.lly.common.BaseClient;
-import com.hqu.lly.protocol.tcp.client.TCPClient;
-import com.hqu.lly.service.UIService;
+import com.hqu.lly.service.MessageService;
 import io.netty.channel.Channel;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -54,7 +53,7 @@ public class ClientController {
 
         client.setURI(uri);
 
-        client.setService(new UIService() {
+        client.setService(new MessageService() {
             @Override
             public void updateMsgList(String msg) {
 

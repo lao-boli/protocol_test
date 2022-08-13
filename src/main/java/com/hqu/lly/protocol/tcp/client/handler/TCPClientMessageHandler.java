@@ -1,6 +1,6 @@
 package com.hqu.lly.protocol.tcp.client.handler;
 
-import com.hqu.lly.service.UIService;
+import com.hqu.lly.service.MessageService;
 import com.hqu.lly.utils.MsgFormatUtil;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
@@ -20,10 +20,10 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class TCPClientMessageHandler extends SimpleChannelInboundHandler<String> {  // 6
 
-    private UIService uiService;
+    private MessageService messageService;
 
-    public TCPClientMessageHandler(UIService uiService) {
-        this.uiService = uiService;
+    public TCPClientMessageHandler(MessageService messageService) {
+        this.messageService = messageService;
     }
 
     @Override
@@ -37,7 +37,7 @@ public class TCPClientMessageHandler extends SimpleChannelInboundHandler<String>
 
         log.info("服务端channel Id:" + channel.id().toString());
 
-        uiService.updateMsgList("服务端address: " + serverAddr);
+        messageService.updateMsgList("服务端address: " + serverAddr);
     }
 
     @Override
@@ -49,7 +49,7 @@ public class TCPClientMessageHandler extends SimpleChannelInboundHandler<String>
 
         String formattedReceiveText = MsgFormatUtil.formatReceiveMsg(receiveText, serverAddr);
 
-        uiService.updateMsgList(formattedReceiveText);
+        messageService.updateMsgList(formattedReceiveText);
 
         log.info(formattedReceiveText);
     }
