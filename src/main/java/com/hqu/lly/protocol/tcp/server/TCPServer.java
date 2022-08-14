@@ -66,14 +66,19 @@ public class TCPServer extends BaseServer {
                 bossGroup.shutdownGracefully();
                 workerGroup.shutdownGracefully();
             });
+            log.info("tcp server start successful at " + channel.localAddress());
         } catch (Exception e) {
 
             bossGroup.shutdownGracefully();
             workerGroup.shutdownGracefully();
+
+            log.error("tcp server error", e);
+
             if (e instanceof BindException){
 
+                serverService.onError(e,"该端口已被占用");
+
             }
-            log.error("server error", e);
         }
     }
 
@@ -81,7 +86,6 @@ public class TCPServer extends BaseServer {
     @Override
     public Channel call() throws Exception {
         init();
-        log.info("tcp server start successful at " + channel.localAddress());
         return channel;
     }
 

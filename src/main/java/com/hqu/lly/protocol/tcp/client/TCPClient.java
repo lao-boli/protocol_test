@@ -16,6 +16,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import java.net.ConnectException;
 import java.net.URI;
 
 /**
@@ -42,12 +43,12 @@ public class TCPClient extends BaseClient {
     private ClientService clientService;
 
 
-    private EventLoopGroup eventLoopGroup ;
+    private EventLoopGroup eventLoopGroup;
 
     @Override
-    public void sendMessage(String message){
+    public void sendMessage(String message) {
         channel.writeAndFlush(message);
-        clientService.updateMsgList(MsgFormatUtil.formatSendMsg(message,channel.remoteAddress().toString()));
+        clientService.updateMsgList(MsgFormatUtil.formatSendMsg(message, channel.remoteAddress().toString()));
     }
 
 
@@ -83,15 +84,23 @@ public class TCPClient extends BaseClient {
                 eventLoopGroup.shutdownGracefully();
             });
         } catch (Exception e) {
-            e.printStackTrace();
+
+            log.error("tcp client error", e);
+
             eventLoopGroup.shutdownGracefully();
+
+            if (e instanceof ConnectException) {
+
+                clientService.onError(e, "该地址服务未开启");
+
+            }
         }
     }
 
     @Override
     public void destroy() {
-        if (null == channel){
-           return;
+        if (null == channel) {
+            return;
         }
         channel.close();
     }

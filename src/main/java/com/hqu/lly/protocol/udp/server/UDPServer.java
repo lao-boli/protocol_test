@@ -15,6 +15,7 @@ import io.netty.channel.socket.nio.NioDatagramChannel;
 import io.netty.util.CharsetUtil;
 import lombok.extern.slf4j.Slf4j;
 
+import java.net.BindException;
 import java.net.InetSocketAddress;
 
 /**
@@ -58,8 +59,14 @@ public class UDPServer extends BaseServer {
                      bossGroup.shutdownGracefully();
                  }
              });
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+            log.info("udp server start successful at " + channel.localAddress());
+        } catch (Exception e) {
+
+            if (e instanceof BindException){
+
+                serverService.onError(e,"该端口已被占用");
+            }
+            log.error("udp server error", e);
         }
     }
 
@@ -77,7 +84,6 @@ public class UDPServer extends BaseServer {
     @Override
     public Channel call() throws Exception {
        init();
-       log.info("udp server start successful at " + channel.localAddress());
        return channel;
     }
 

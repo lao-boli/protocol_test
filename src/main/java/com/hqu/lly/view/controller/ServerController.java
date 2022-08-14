@@ -1,8 +1,6 @@
 package com.hqu.lly.view.controller;
 
 import com.hqu.lly.common.BaseServer;
-import com.hqu.lly.protocol.tcp.server.TCPServer;
-import com.hqu.lly.service.ChannelService;
 import com.hqu.lly.service.impl.ServerService;
 import io.netty.channel.Channel;
 import javafx.application.Platform;
@@ -14,6 +12,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.paint.Color;
 import javafx.util.Callback;
 import lombok.Setter;
 
@@ -29,6 +28,9 @@ public class ServerController implements Initializable {
 
     @FXML
     private Button confirmButton;
+
+    @FXML
+    private Label errorMsgLabel;
 
     @FXML
     private TextArea msgInput;
@@ -60,6 +62,7 @@ public class ServerController implements Initializable {
         server.destroy();
 
         Platform.runLater(() ->{
+            serverPort.setDisable(false);
             confirmButton.setDisable(false);
             closeServerButton.setDisable(true);
             sendMsgButton.setDisable(true);
@@ -75,6 +78,24 @@ public class ServerController implements Initializable {
         server.setPort(port);
 
         server.setService(new ServerService() {
+
+
+            @Override
+            public void onError(Throwable e, String errorMessage) {
+
+                Platform.runLater(() -> {
+
+                    if (errorMessage != null) {
+
+                        errorMsgLabel.setText(errorMessage);
+
+                    }else{
+
+                        errorMsgLabel.setText(e.getMessage());
+                    }
+
+                });
+            }
 
             @Override
             public void addChannel(Channel channel) {
@@ -106,15 +127,22 @@ public class ServerController implements Initializable {
         });
 
         FutureTask<Channel> channel = new FutureTask<Channel>(server);
+
         new Thread(channel).start();
 
         try {
-            channel.get();
-            Platform.runLater(() ->{
-                confirmButton.setDisable(true);
-                closeServerButton.setDisable(false);
-                sendMsgButton.setDisable(false);
-            });
+
+            if (channel.get() != null && channel.get().isActive()) {
+                if (!errorMsgLabel.getText().isEmpty()) {
+                    errorMsgLabel.setText("");
+                }
+                Platform.runLater(() ->{
+                    serverPort.setDisable(true);
+                    confirmButton.setDisable(true);
+                    closeServerButton.setDisable(false);
+                    sendMsgButton.setDisable(false);
+                });
+            }
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
         }
@@ -138,6 +166,7 @@ public class ServerController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
+        errorMsgLabel.setTextFill(Color.rgb(198,85,81));
         clientListBox.setCellFactory(new Callback<ListView<Channel>, ListCell<Channel>>() {
             @Override
             public ListCell<Channel> call(ListView<Channel> channelListView) {
@@ -158,12 +187,15 @@ public class ServerController implements Initializable {
         @Override
         protected void updateItem(Channel channel, boolean empty) {
             super.updateItem(channel, empty);
-            if (channel != null){
+            Platform.runLater(() -> {
+                if (channel != null){
 
-                setText(channel.remoteAddress().toString());
-            }else {
-                setText(null);
-            }
+                    setText(channel.remoteAddress().toString());
+                }else {
+                    setText(null);
+                }
+
+            });
 
         }
     }

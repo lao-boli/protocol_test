@@ -16,7 +16,9 @@ import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.WebSocketClientProtocolHandler;
 import io.netty.handler.codec.http.websocketx.WebSocketVersion;
 import io.netty.handler.stream.ChunkedWriteHandler;
+import lombok.extern.slf4j.Slf4j;
 
+import java.net.ConnectException;
 import java.net.URI;
 
 /**
@@ -28,6 +30,7 @@ import java.net.URI;
  * @date 2022/8/10 20:36
  * @Version 1.0
  */
+@Slf4j
 public class WebSocketClient extends BaseClient {
 
     private String host;
@@ -70,8 +73,17 @@ public class WebSocketClient extends BaseClient {
                     workerGroup.shutdownGracefully();
                 }
             });
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+
+            workerGroup.shutdownGracefully();
+
+            log.error("webSocket client error",e);
+
+            if (e instanceof ConnectException) {
+
+                clientService.onError(e, "该地址服务未开启");
+
+            }
         }
     }
 

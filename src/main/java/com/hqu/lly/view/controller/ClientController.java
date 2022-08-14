@@ -8,24 +8,28 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
+import javafx.fxml.Initializable;
+import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.paint.Color;
 import lombok.Setter;
 
 import java.net.URI;
+import java.net.URL;
+import java.util.ResourceBundle;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 
-public class ClientController {
+public class ClientController implements Initializable {
 
     @FXML
     private TextField clientInput;
 
     @FXML
     private Button confirmButton;
+
+    @FXML
+    private Label errorMsgLabel;
 
     @FXML
     private TextArea msgInput;
@@ -56,6 +60,23 @@ public class ClientController {
 
         client.setService(new ClientService() {
             @Override
+            public void onError(Throwable e , String errorMessage) {
+
+                Platform.runLater(() -> {
+
+                    if (errorMessage != null) {
+
+                        errorMsgLabel.setText(errorMessage);
+
+                    }else{
+
+                        errorMsgLabel.setText(e.getMessage());
+                    }
+
+                });
+            }
+
+            @Override
             public void updateMsgList(String msg) {
 
                 Platform.runLater(() -> {
@@ -72,12 +93,19 @@ public class ClientController {
 
         new Thread(channel).start();
         try {
-            channel.get();
-            Platform.runLater(() ->{
-                confirmButton.setDisable(true);
-                disconnectButton.setDisable(false);
-                sendMsgButton.setDisable(false);
-            });
+            if (channel.get() != null && channel.get().isActive()) {
+
+                if (!errorMsgLabel.getText().isEmpty()) {
+                    errorMsgLabel.setText("");
+                }
+
+                Platform.runLater(() ->{
+                    clientInput.setDisable(true);
+                    confirmButton.setDisable(true);
+                    disconnectButton.setDisable(false);
+                    sendMsgButton.setDisable(false);
+                });
+            }
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
         }
@@ -91,6 +119,7 @@ public class ClientController {
         client.destroy();
 
         Platform.runLater(() ->{
+            clientInput.setDisable(false);
             confirmButton.setDisable(false);
             disconnectButton.setDisable(true);
             sendMsgButton.setDisable(true);
@@ -107,4 +136,9 @@ public class ClientController {
        client.destroy();
     }
 
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+
+        errorMsgLabel.setTextFill(Color.rgb(198,85,81));
+    }
 }

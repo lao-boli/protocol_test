@@ -17,5 +17,6 @@
       <Button fx:id="closeServerButton" disable="true" layoutX="163.0" layoutY="19.0" mnemonicParsing="false" onMouseClicked="#closeServer" text="关闭服务" />
       <ListView fx:id="msgListBox" layoutX="15.0" layoutY="85.0" prefHeight="159.0" prefWidth="425.0" />
       <ListView fx:id="clientListBox" layoutX="251.0" layoutY="14.0" prefHeight="57.0" prefWidth="189.0" />
+      <Label fx:id="errorMsgLabel" layoutX="53.0" layoutY="49.0" prefHeight="15.0" prefWidth="174.0" text="" />
    </children>
 </AnchorPane>

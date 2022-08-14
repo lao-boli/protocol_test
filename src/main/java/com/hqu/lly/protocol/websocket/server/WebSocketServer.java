@@ -15,6 +15,8 @@ import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
+import java.net.BindException;
+
 /**
  * <p>
  * websocket服务类
@@ -57,17 +59,23 @@ public class WebSocketServer extends BaseServer {
                 bossGroup.shutdownGracefully();
                 workerGroup.shutdownGracefully();
             });
+            log.info("Netty websocket start successful at " + channel.localAddress());
         } catch (Exception e) {
             workerGroup.shutdownGracefully();
             bossGroup.shutdownGracefully();
             log.error("WS服务启动失败：" + e);
+
+            if (e instanceof BindException){
+
+                serverService.onError(e,"该端口已被占用");
+
+            }
         }
 
     }
     @Override
     public Channel call() throws Exception {
         init();
-        log.info("Netty websocket start successful at " + channel.localAddress());
 
         return channel;
     }
