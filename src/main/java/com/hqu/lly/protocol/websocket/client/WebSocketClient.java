@@ -1,6 +1,6 @@
 package com.hqu.lly.protocol.websocket.client;
 
-import com.hqu.lly.common.BaseClient;
+import com.hqu.lly.domain.base.BaseClient;
 import com.hqu.lly.protocol.websocket.client.handler.WSClientHandler;
 import com.hqu.lly.service.impl.ClientService;
 import com.hqu.lly.utils.MsgFormatUtil;
@@ -40,12 +40,13 @@ public class WebSocketClient extends BaseClient {
     private URI uri;
 
     private ClientService clientService;
+
     private Channel channel;
+
     private EventLoopGroup workerGroup;
 
     @Override
     public void init() {
-
         workerGroup = new NioEventLoopGroup();
         try {
             Bootstrap b = new Bootstrap();
@@ -66,31 +67,22 @@ public class WebSocketClient extends BaseClient {
             });
             ChannelFuture f = b.connect(host, port).sync();
             channel = f.channel();
-            channel.closeFuture().addListener(new ChannelFutureListener() {
-                @Override
-                public void operationComplete(ChannelFuture channelFuture) throws Exception {
-
-                    workerGroup.shutdownGracefully();
-                }
-            });
+            channel.closeFuture().addListener((ChannelFutureListener) channelFuture -> workerGroup.shutdownGracefully());
         } catch (Exception e) {
-
             workerGroup.shutdownGracefully();
-
-            log.error("webSocket client error",e);
-
             if (e instanceof ConnectException) {
-
+                log.warn(e.toString());
                 clientService.onError(e, "该地址服务未开启");
-
+            } else {
+                log.error("webSocket client error", e);
+                clientService.onError(e, "未知错误");
             }
         }
     }
 
     @Override
     public void destroy() {
-
-        if (null == channel){
+        if (null == channel) {
             return;
         }
         channel.close();
@@ -101,11 +93,7 @@ public class WebSocketClient extends BaseClient {
         this.host = uri.getHost();
         this.port = uri.getPort();
         this.uri = uri;
-
-
-
     }
-
 
     @Override
     public void setService(ClientService clientService) {
@@ -114,10 +102,8 @@ public class WebSocketClient extends BaseClient {
 
     @Override
     public void sendMessage(String message) {
-
         channel.writeAndFlush(new TextWebSocketFrame(message));
-
-        clientService.updateMsgList(MsgFormatUtil.formatSendMsg(message,channel.remoteAddress().toString()));
+        clientService.updateMsgList(MsgFormatUtil.formatSendMsg(message, channel.remoteAddress().toString()));
     }
 
     @Override

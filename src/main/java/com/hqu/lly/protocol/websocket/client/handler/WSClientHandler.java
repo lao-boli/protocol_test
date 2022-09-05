@@ -31,7 +31,6 @@ public class WSClientHandler extends SimpleChannelInboundHandler<TextWebSocketFr
         String serverAddr = channel.remoteAddress().toString();
         log.info("有服务端建立连接 " + "服务端address: " + serverAddr);
         log.info("服务端channel Id:" + channel.id().toString());
-
         messageService.updateMsgList("服务端address: " + serverAddr);
     }
 

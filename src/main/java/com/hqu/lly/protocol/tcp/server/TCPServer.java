@@ -1,9 +1,7 @@
 package com.hqu.lly.protocol.tcp.server;
 
-import com.hqu.lly.common.BaseServer;
+import com.hqu.lly.domain.base.BaseServer;
 import com.hqu.lly.protocol.tcp.server.handler.TCPMessageHandler;
-import com.hqu.lly.service.ChannelService;
-import com.hqu.lly.service.MessageService;
 import com.hqu.lly.service.impl.ServerService;
 import com.hqu.lly.utils.MsgFormatUtil;
 import io.netty.bootstrap.ServerBootstrap;
@@ -16,6 +14,7 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
 
 import java.net.BindException;
@@ -26,9 +25,10 @@ import java.net.BindException;
  * <p>
  *
  * @author liulingyu
+ * @version 1.0
  * @date 2022/8/4 10:45
- * @Version 1.0
  */
+@EqualsAndHashCode(callSuper = true)
 @Slf4j
 @Data
 public class TCPServer extends BaseServer {
@@ -68,16 +68,13 @@ public class TCPServer extends BaseServer {
             });
             log.info("tcp server start successful at " + channel.localAddress());
         } catch (Exception e) {
-
             bossGroup.shutdownGracefully();
             workerGroup.shutdownGracefully();
-
-            log.error("tcp server error", e);
-
-            if (e instanceof BindException){
-
-                serverService.onError(e,"该端口已被占用");
-
+            if (e instanceof BindException) {
+                log.warn(e.toString());
+                serverService.onError(e, "该端口已被占用");
+            } else {
+                log.error("tcp server error", e);
             }
         }
     }
@@ -90,7 +87,7 @@ public class TCPServer extends BaseServer {
     }
 
     @Override
-    public void sendMessage(String msg , Channel channel){
+    public void sendMessage(String msg, Channel channel) {
 
         channel.writeAndFlush(msg);
 
@@ -104,7 +101,7 @@ public class TCPServer extends BaseServer {
 
     @Override
     public void destroy() {
-        if (null == channel){
+        if (null == channel) {
             return;
         }
         channel.close();
@@ -113,6 +110,6 @@ public class TCPServer extends BaseServer {
 
     @Override
     public void setService(ServerService serverService) {
-       this.serverService =  serverService;
+        this.serverService = serverService;
     }
 }

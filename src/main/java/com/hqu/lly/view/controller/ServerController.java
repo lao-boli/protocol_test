@@ -1,19 +1,15 @@
 package com.hqu.lly.view.controller;
 
-import com.hqu.lly.common.BaseServer;
+import com.hqu.lly.domain.base.BaseServer;
 import com.hqu.lly.service.impl.ServerService;
 import io.netty.channel.Channel;
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.paint.Color;
-import javafx.util.Callback;
 import lombok.Setter;
 
 import java.net.URL;
@@ -21,6 +17,15 @@ import java.util.ResourceBundle;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 
+/**
+ * <p>
+ * 服务面板controller
+ * </p>
+ *
+ * @author liulingyu
+ * @version 1.0
+ * @date 2022-09-05 09:15
+ */
 public class ServerController implements Initializable {
 
     @FXML
@@ -52,56 +57,35 @@ public class ServerController implements Initializable {
 
     private Channel targetClientChannel = null;
 
+    ObservableList<String> msgList = FXCollections.observableArrayList();
 
-    ObservableList<String> msgList = FXCollections.observableArrayList() ;
-
-    ObservableList<Channel> channelList = FXCollections.observableArrayList() ;
-
-    @FXML
-    void closeServer(MouseEvent event) {
-        server.destroy();
-
-        Platform.runLater(() ->{
-            serverPort.setDisable(false);
-            confirmButton.setDisable(false);
-            closeServerButton.setDisable(true);
-            sendMsgButton.setDisable(true);
-        });
-    }
+    ObservableList<Channel> channelList = FXCollections.observableArrayList();
 
 
     @FXML
     void startServer(MouseEvent event) {
-
         String port = serverPort.getText();
-
         server.setPort(port);
-
         server.setService(new ServerService() {
-
-
             @Override
             public void onError(Throwable e, String errorMessage) {
-
                 Platform.runLater(() -> {
-
                     if (errorMessage != null) {
-
                         errorMsgLabel.setText(errorMessage);
-
-                    }else{
-
+                    } else {
                         errorMsgLabel.setText(e.getMessage());
                     }
-
                 });
             }
 
             @Override
+            public void onClose() {
+
+            }
+
+            @Override
             public void addChannel(Channel channel) {
-
                 Platform.runLater(() -> {
-
                     channelList.add(channel);
                     clientListBox.setItems(channelList);
                 });
@@ -109,39 +93,31 @@ public class ServerController implements Initializable {
 
             @Override
             public void removeChannel(Channel channel) {
-
-                channelList.remove(channel);
-                clientListBox.setItems(channelList);
+                Platform.runLater(() -> {
+                    channelList.remove(channel);
+                    clientListBox.setItems(channelList);
+                });
             }
 
             @Override
             public void updateMsgList(String msg) {
-
                 Platform.runLater(() -> {
-
                     msgList.add(msg);
-
                     msgListBox.setItems(msgList);
                 });
             }
         });
 
-        FutureTask<Channel> channel = new FutureTask<Channel>(server);
+        FutureTask<Channel> channel = new FutureTask<>(server);
 
         new Thread(channel).start();
 
         try {
-
             if (channel.get() != null && channel.get().isActive()) {
                 if (!errorMsgLabel.getText().isEmpty()) {
                     errorMsgLabel.setText("");
                 }
-                Platform.runLater(() ->{
-                    serverPort.setDisable(true);
-                    confirmButton.setDisable(true);
-                    closeServerButton.setDisable(false);
-                    sendMsgButton.setDisable(false);
-                });
+                setActiveUI();
             }
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
@@ -149,56 +125,64 @@ public class ServerController implements Initializable {
     }
 
     @FXML
-    void sendMsg(MouseEvent event) {
+    void closeServer(MouseEvent event) {
+        server.destroy();
+        setInactiveUI();
+    }
 
+    private void setActiveUI() {
+        Platform.runLater(() -> {
+            serverPort.setDisable(true);
+            msgInput.setDisable(false);
+            confirmButton.setDisable(true);
+            closeServerButton.setDisable(false);
+            sendMsgButton.setDisable(false);
+        });
+    }
+
+    private void setInactiveUI() {
+        Platform.runLater(() -> {
+            serverPort.setDisable(false);
+            msgInput.setDisable(true);
+            confirmButton.setDisable(false);
+            closeServerButton.setDisable(true);
+            sendMsgButton.setDisable(true);
+        });
+    }
+    @FXML
+    void sendMsg(MouseEvent event) {
         if (targetClientChannel != null) {
-            server.sendMessage(msgInput.getText(),targetClientChannel);
+            server.sendMessage(msgInput.getText(), targetClientChannel);
         }
 
     }
 
-    public void destroy(){
+    public void destroy() {
         server.destroy();
     }
 
 
-
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-
-        errorMsgLabel.setTextFill(Color.rgb(198,85,81));
-        clientListBox.setCellFactory(new Callback<ListView<Channel>, ListCell<Channel>>() {
-            @Override
-            public ListCell<Channel> call(ListView<Channel> channelListView) {
-                return new ChannelCellFactory();
-            }
-        });
-        clientListBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Channel>() {
-            @Override
-            public void changed(ObservableValue<? extends Channel> observableValue, Channel preChannel, Channel currentChannel) {
-                targetClientChannel = currentChannel;
-            }
-        });
-
-
+        // 自定义细胞工厂，设置显示的内容
+        clientListBox.setCellFactory(channelListView -> new ChannelCellFactory());
+        // 点击时将当前的clientChannel设置为选中的channel
+        clientListBox.getSelectionModel().selectedItemProperty().addListener((observableValue, preChannel, currentChannel) -> targetClientChannel = currentChannel);
     }
 
-    class ChannelCellFactory extends ListCell<Channel> {
+
+    static class ChannelCellFactory extends ListCell<Channel> {
         @Override
         protected void updateItem(Channel channel, boolean empty) {
             super.updateItem(channel, empty);
             Platform.runLater(() -> {
-                if (channel != null){
-
+                if (channel != null) {
                     setText(channel.remoteAddress().toString());
-                }else {
+                } else {
                     setText(null);
                 }
-
             });
-
         }
     }
-
 
 }

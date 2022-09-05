@@ -1,6 +1,6 @@
 package com.hqu.lly.protocol.websocket.server;
 
-import com.hqu.lly.common.BaseServer;
+import com.hqu.lly.domain.base.BaseServer;
 import com.hqu.lly.protocol.websocket.server.initalizer.WSChannelInitializer;
 import com.hqu.lly.service.impl.ServerService;
 import com.hqu.lly.utils.MsgFormatUtil;

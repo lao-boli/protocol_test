@@ -1,13 +1,11 @@
 package com.hqu.lly.view.controller;
 
 import com.hqu.lly.constant.ContentPaneConsts;
-import com.hqu.lly.service.SwitchPaneService;
+import com.hqu.lly.domain.vo.ServiceItem;
 import com.hqu.lly.service.impl.ContentPaneManager;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
@@ -56,25 +54,23 @@ public class MainController implements Initializable {
 
     private void initSideBar() {
         TreeItem<String> root = new TreeItem<>("root");
+
+
         TreeItem<String> tcp = new TreeItem<>("tcp");
-
-        LeafTreeItem<String> tcpServer = new LeafTreeItem<>("server", new ContentPaneManager(mainPane, ContentPaneConsts.TCP_SERVER_PANE,"tabPane.fxml"));
-
-        LeafTreeItem<String> tcpClient = new LeafTreeItem<>("client",new ContentPaneManager(mainPane, ContentPaneConsts.TCP_CLIENT_PANE,"tabPane.fxml"));
+        ServiceItem<String> tcpServer = new ServiceItem<>("server", new ContentPaneManager(mainPane, ContentPaneConsts.TCP_SERVER_PANE,"tabPane.fxml"));
+        ServiceItem<String> tcpClient = new ServiceItem<>("client",new ContentPaneManager(mainPane, ContentPaneConsts.TCP_CLIENT_PANE,"tabPane.fxml"));
         tcp.getChildren().add(tcpServer);
         tcp.getChildren().add(tcpClient);
-        TreeItem<String> udp = new TreeItem<>("udp");
-        LeafTreeItem<String> udpServer = new LeafTreeItem<>("server", new ContentPaneManager(mainPane, ContentPaneConsts.UDP_SERVER_PANE,"tabPane.fxml"));
 
-        LeafTreeItem<String> udpClient = new LeafTreeItem<>("client",new ContentPaneManager(mainPane, ContentPaneConsts.UDP_CLIENT_PANE,"tabPane.fxml"));
+        TreeItem<String> udp = new TreeItem<>("udp");
+        ServiceItem<String> udpServer = new ServiceItem<>("server", new ContentPaneManager(mainPane, ContentPaneConsts.UDP_SERVER_PANE,"tabPane.fxml"));
+        ServiceItem<String> udpClient = new ServiceItem<>("client",new ContentPaneManager(mainPane, ContentPaneConsts.UDP_CLIENT_PANE,"tabPane.fxml"));
         udp.getChildren().add(udpServer);
         udp.getChildren().add(udpClient);
+
         TreeItem<String> webSocket = new TreeItem<>("webSocket");
-
-        LeafTreeItem<String> server = new LeafTreeItem<>("server", new ContentPaneManager(mainPane, ContentPaneConsts.WEB_SOCKET_SERVER_PANE,"tabPane.fxml"));
-
-        LeafTreeItem<String> client = new LeafTreeItem<>("client",new ContentPaneManager(mainPane, ContentPaneConsts.WEB_SOCKET_CLIENT_PANE,"tabPane.fxml"));
-
+        ServiceItem<String> server = new ServiceItem<>("server", new ContentPaneManager(mainPane, ContentPaneConsts.WEB_SOCKET_SERVER_PANE,"tabPane.fxml"));
+        ServiceItem<String> client = new ServiceItem<>("client",new ContentPaneManager(mainPane, ContentPaneConsts.WEB_SOCKET_CLIENT_PANE,"tabPane.fxml"));
         webSocket.getChildren().add(server);
         webSocket.getChildren().add(client);
 
@@ -83,18 +79,7 @@ public class MainController implements Initializable {
         firstMenuItems.add(udp);
         firstMenuItems.add(webSocket);
 
-        int i = 0;
         firstMenuItems.forEach(item -> {
-
-/*
-            LeafTreeItem<String> server = new LeafTreeItem<>("server", new ContentPaneManager(mainPane, ContentPaneConsts.WEB_SOCKET_SERVER_PANE,"tabPane.fxml"));
-
-            LeafTreeItem<String> client = new LeafTreeItem<>("client",new ContentPaneManager(mainPane, ContentPaneConsts.WEB_SOCKET_CLIENT_PANE,"tabPane.fxml"));
-
-            item.getChildren().add(server);
-            item.getChildren().add(client);
-*/
-
             item.setExpanded(true);
         });
 
@@ -109,29 +94,12 @@ public class MainController implements Initializable {
             @Override
             public void handle(MouseEvent mouseEvent) {
                 Object selectedItem = menuTree.getSelectionModel().getSelectedItem();
-                if (selectedItem instanceof LeafTreeItem){
-                    ((LeafTreeItem<?>) selectedItem).switchPane();
+                if (selectedItem instanceof ServiceItem){
+                    ((ServiceItem<?>) selectedItem).switchPane();
                 }
             }
         });
         menuTree.setShowRoot(false);
     }
 
-    class LeafTreeItem<T> extends TreeItem{
-
-        private SwitchPaneService switchPaneService;
-
-
-
-        public LeafTreeItem(T name , SwitchPaneService switchPaneService) {
-
-            super(name);
-            this.switchPaneService = switchPaneService;
-        }
-
-        public void switchPane(){
-            switchPaneService.switchPane();
-            log.info("switch pane");
-        }
-    }
 }

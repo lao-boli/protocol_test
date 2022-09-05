@@ -1,7 +1,6 @@
 package com.hqu.lly.view.controller;
 
-import com.hqu.lly.common.BaseClient;
-import com.hqu.lly.service.MessageService;
+import com.hqu.lly.domain.base.BaseClient;
 import com.hqu.lly.service.impl.ClientService;
 import io.netty.channel.Channel;
 import javafx.application.Platform;
@@ -11,7 +10,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.paint.Color;
 import lombok.Setter;
 
 import java.net.URI;
@@ -23,10 +21,10 @@ import java.util.concurrent.FutureTask;
 public class ClientController implements Initializable {
 
     @FXML
-    private TextField clientInput;
+    private TextField remoteAddressInput;
 
     @FXML
-    private Button confirmButton;
+    private Button connectButton;
 
     @FXML
     private Label errorMsgLabel;
@@ -53,38 +51,32 @@ public class ClientController implements Initializable {
 
     @FXML
     void confirmAddr(MouseEvent event) {
-
-        URI uri = URI.create(protocol + clientInput.getText());
-
+        URI uri = URI.create(protocol + remoteAddressInput.getText());
         client.setURI(uri);
-
         client.setService(new ClientService() {
             @Override
             public void onError(Throwable e , String errorMessage) {
-
                 Platform.runLater(() -> {
-
                     if (errorMessage != null) {
-
                         errorMsgLabel.setText(errorMessage);
-
                     }else{
-
                         errorMsgLabel.setText(e.getMessage());
                     }
-
                 });
             }
 
             @Override
+            public void onClose() {
+                client.destroy();
+                setInactiveUI();
+            }
+
+            @Override
             public void updateMsgList(String msg) {
-
                 Platform.runLater(() -> {
-
                     items.add(msg);
                     msgList.setItems(items);
                 });
-
             }
         });
 
@@ -94,33 +86,37 @@ public class ClientController implements Initializable {
         new Thread(channel).start();
         try {
             if (channel.get() != null && channel.get().isActive()) {
-
                 if (!errorMsgLabel.getText().isEmpty()) {
                     errorMsgLabel.setText("");
                 }
-
-                Platform.runLater(() ->{
-                    clientInput.setDisable(true);
-                    confirmButton.setDisable(true);
-                    disconnectButton.setDisable(false);
-                    sendMsgButton.setDisable(false);
-                });
+                setActiveUI();
             }
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
         }
+    }
 
-
+    private void setActiveUI() {
+        Platform.runLater(() ->{
+            remoteAddressInput.setDisable(true);
+            msgInput.setDisable(false);
+            connectButton.setDisable(true);
+            disconnectButton.setDisable(false);
+            sendMsgButton.setDisable(false);
+        });
     }
 
     @FXML
     void disconnect(MouseEvent event) {
-
         client.destroy();
+        setInactiveUI();
+    }
 
+    private void setInactiveUI() {
         Platform.runLater(() ->{
-            clientInput.setDisable(false);
-            confirmButton.setDisable(false);
+            remoteAddressInput.setDisable(false);
+            msgInput.setDisable(true);
+            connectButton.setDisable(false);
             disconnectButton.setDisable(true);
             sendMsgButton.setDisable(true);
         });
@@ -139,6 +135,5 @@ public class ClientController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
-        errorMsgLabel.setTextFill(Color.rgb(198,85,81));
     }
 }

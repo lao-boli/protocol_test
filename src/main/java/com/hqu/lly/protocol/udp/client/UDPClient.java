@@ -1,6 +1,6 @@
 package com.hqu.lly.protocol.udp.client;
 
-import com.hqu.lly.common.BaseClient;
+import com.hqu.lly.domain.base.BaseClient;
 import com.hqu.lly.protocol.udp.client.handler.UDPClientHandler;
 import com.hqu.lly.service.impl.ClientService;
 import com.hqu.lly.utils.MsgFormatUtil;

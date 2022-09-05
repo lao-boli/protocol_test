@@ -10,6 +10,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 import java.net.URL;
 
@@ -17,18 +18,19 @@ public class App extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
 
+        primaryStage.initStyle(StageStyle.TRANSPARENT);
+
         FXMLLoader fxmlLoader = new FXMLLoader();
 
         URL resource = getClass().getClassLoader().getResource("main.fxml");
         fxmlLoader.setLocation(resource);
         Parent root = fxmlLoader.load();
-        Scene scene = new Scene(root, 640, 400);
+        Scene scene = new Scene(root, 600, 450);
         DarculaFX.applyDarculaStyle(scene);
 
         MainController controller = fxmlLoader.getController();
 
         primaryStage.setScene(scene);
-        primaryStage.setTitle("Maven Test");
         primaryStage.show();
     }
 }

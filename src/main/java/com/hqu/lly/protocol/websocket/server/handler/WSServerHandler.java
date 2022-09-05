@@ -1,6 +1,5 @@
 package com.hqu.lly.protocol.websocket.server.handler;
 
-import com.google.gson.*;
 import com.hqu.lly.protocol.websocket.server.group.WSChannelGroup;
 import com.hqu.lly.service.ChannelService;
 import com.hqu.lly.service.impl.ServerService;
@@ -16,19 +15,8 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 @Slf4j
-//@ChannelHandler.Sharable
 public class WSServerHandler extends SimpleChannelInboundHandler<TextWebSocketFrame> {
 
-
-    private Gson gson = new GsonBuilder()
-            .registerTypeAdapter(LocalDateTime.class, new JsonSerializer<LocalDateTime>() {
-                @Override
-                public JsonElement serialize(LocalDateTime localDateTime, Type type, JsonSerializationContext jsonSerializationContext) {
-                    return new JsonPrimitive(localDateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")));
-                }
-            })
-            .serializeNulls()
-            .create();
 
     private ServerService serverService;
 
@@ -43,11 +31,8 @@ public class WSServerHandler extends SimpleChannelInboundHandler<TextWebSocketFr
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         Channel channel = ctx.channel();
-
         String clientAddr = channel.remoteAddress().toString();
-
         serverService.addChannel(channel);
-
         log.info("有客户端建立连接");
         log.info("客户端address: " + clientAddr);
         log.info("客户端channel Id:" + channel.id().toString());
@@ -91,7 +76,6 @@ public class WSServerHandler extends SimpleChannelInboundHandler<TextWebSocketFr
         serverService.removeChannel(channel);
         WSChannelGroup.channelGroup.remove(channel);
         String userId = WSChannelGroup.channelUserGroup.remove(channel);
-//        WSChannelGroup.userChannelGroup.remove(userId, channel);
     }
 
     @Override

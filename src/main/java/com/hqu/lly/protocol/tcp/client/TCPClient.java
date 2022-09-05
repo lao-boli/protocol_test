@@ -1,6 +1,6 @@
 package com.hqu.lly.protocol.tcp.client;
 
-import com.hqu.lly.common.BaseClient;
+import com.hqu.lly.domain.base.BaseClient;
 import com.hqu.lly.protocol.tcp.client.handler.TCPClientMessageHandler;
 import com.hqu.lly.service.impl.ClientService;
 import com.hqu.lly.utils.MsgFormatUtil;
@@ -85,14 +85,15 @@ public class TCPClient extends BaseClient {
             });
         } catch (Exception e) {
 
-            log.error("tcp client error", e);
 
             eventLoopGroup.shutdownGracefully();
 
             if (e instanceof ConnectException) {
-
+                log.warn(e.toString());
                 clientService.onError(e, "该地址服务未开启");
-
+            } else {
+                log.error("tcp client error", e);
+                clientService.onError(e, "未知错误");
             }
         }
     }

@@ -36,23 +36,15 @@ public class ContentPaneManager implements SwitchPaneService {
 
     @Override
     public void switchPane() {
-
         if (rootPane.getChildren().size() > 0) {
-
             rootPane.getChildren().remove(0);
         }
         Parent contentPane = ContentPaneGroup.contentPaneMap.get(contentPaneName);
-
         if (contentPane != null) {
-
             rootPane.getChildren().add(contentPane);
-
-        }else {
-
+        } else {
             rootPane.getChildren().add(createContentPane(contentPanePath));
-
         }
-
     }
 
     @SneakyThrows
@@ -64,12 +56,12 @@ public class ContentPaneManager implements SwitchPaneService {
 
         Object controller = loader.getController();
 
-        if (controller instanceof TabPaneController){
+        if (controller instanceof TabPaneController) {
             ((TabPaneController) controller).setTabFactory(TabFactoryEnum.getByPaneType(contentPaneName).getTabFactory());
             ((TabPaneController) controller).createNewTab();
         }
 
-        ContentPaneGroup.contentPaneMap.put(contentPaneName,contentPane);
+        ContentPaneGroup.contentPaneMap.put(contentPaneName, contentPane);
 
         return contentPane;
     }

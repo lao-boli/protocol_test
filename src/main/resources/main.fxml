@@ -4,30 +4,17 @@
 <?import javafx.scene.control.TreeView?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.hqu.lly.view.controller.MainController">
+<AnchorPane prefHeight="450.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.hqu.lly.view.controller.MainController">
    <children>
-      <SplitPane fx:id="mainSplitPane" layoutY="7.0" prefHeight="391.0" prefWidth="600.0">
+      <SplitPane fx:id="mainSplitPane" dividerPositions="0.20735785953177258" layoutY="34.0" prefHeight="416.0" prefWidth="600.0">
         <items>
-          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="389.0" prefWidth="102.0">
-               <children>
-                  <TreeView fx:id="menuTree" layoutY="1.0" prefHeight="389.0" prefWidth="114.0">
+            <TreeView fx:id="menuTree" prefHeight="398.0" prefWidth="85.0">
                   </TreeView>
-                  <AnchorPane fx:id="mainPane" layoutX="114.0" prefHeight="391.0" prefWidth="485.0" />
-
-               </children></AnchorPane>
-<!--            <TabPane fx:id="mainTabPane" prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="ALL_TABS">-->
-<!--              <tabs>-->
-<!--                <Tab text="client">-->
-<!--                    <fx:include source="clientPane.fxml" />-->
-<!--                </Tab>-->
-<!--                  <Tab fx:id="createTab" closable="false" onSelectionChanged="#createNewTab" text="+">-->
-<!--                    <content>-->
-<!--                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />-->
-<!--                    </content>-->
-<!--                  </Tab>-->
-<!--              </tabs>-->
-<!--            </TabPane>-->
+            <AnchorPane fx:id="mainPane" prefHeight="384.0" prefWidth="485.0" />
         </items>
       </SplitPane>
+      <AnchorPane fx:id="titleBar" prefHeight="35.0" prefWidth="600.0">
+          <fx:include source="titleBar.fxml" />
+      </AnchorPane>
    </children>
 </AnchorPane>
