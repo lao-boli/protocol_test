@@ -1,5 +1,6 @@
 package org.hqu.lly.protocol.tcp.client;
 
+import lombok.EqualsAndHashCode;
 import org.hqu.lly.domain.base.BaseClient;
 import org.hqu.lly.protocol.tcp.client.handler.TCPClientMessageHandler;
 import org.hqu.lly.service.impl.ClientService;
@@ -28,10 +29,9 @@ import java.net.URI;
  * @date 2022/8/4 10:46
  * @Version 1.0
  */
+@EqualsAndHashCode(callSuper = true)
 @Slf4j
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class TCPClient extends BaseClient {
 
     private Channel channel;
@@ -41,7 +41,6 @@ public class TCPClient extends BaseClient {
     private int port;
 
     private ClientService clientService;
-
 
     private EventLoopGroup eventLoopGroup;
 
@@ -73,10 +72,8 @@ public class TCPClient extends BaseClient {
                             ch.pipeline().addLast(new StringDecoder());
                             ch.pipeline().addLast(new StringEncoder());
                             ch.pipeline().addLast(new TCPClientMessageHandler(clientService));
-
                         }
                     });
-            //绑定服务器
             ChannelFuture channelFuture = bootstrap.connect(host, port).sync();
             this.channel = channelFuture.channel();
             this.channel.closeFuture().addListener((ChannelFutureListener) future -> {
@@ -84,8 +81,6 @@ public class TCPClient extends BaseClient {
                 eventLoopGroup.shutdownGracefully();
             });
         } catch (Exception e) {
-
-
             eventLoopGroup.shutdownGracefully();
 
             if (e instanceof ConnectException) {

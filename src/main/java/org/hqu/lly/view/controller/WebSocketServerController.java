@@ -1,7 +1,5 @@
 package org.hqu.lly.view.controller;
 
-import org.hqu.lly.domain.base.BaseServer;
-import org.hqu.lly.service.impl.ServerService;
 import io.netty.channel.Channel;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -11,6 +9,9 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import lombok.Setter;
+import org.hqu.lly.domain.base.BaseServer;
+import org.hqu.lly.protocol.websocket.server.WebSocketServer;
+import org.hqu.lly.service.impl.ServerService;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -26,7 +27,7 @@ import java.util.concurrent.FutureTask;
  * @version 1.0
  * @date 2022-09-05 09:15
  */
-public class ServerController implements Initializable {
+public class WebSocketServerController implements Initializable {
 
     @FXML
     private TextField serverPort;
@@ -52,8 +53,7 @@ public class ServerController implements Initializable {
     @FXML
     private ListView<Channel> clientListBox;
 
-    @Setter
-    private BaseServer server;
+    private WebSocketServer server = new WebSocketServer();
 
     private Channel targetClientChannel = null;
 

@@ -1,6 +1,7 @@
 package org.hqu.lly;
  
 import com.github.mouse0w0.darculafx.DarculaFX;
+import org.hqu.lly.constant.ResLocConsts;
 import org.hqu.lly.view.controller.MainController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -19,7 +20,7 @@ public class App extends Application {
 
         FXMLLoader fxmlLoader = new FXMLLoader();
 
-        URL resource = getClass().getClassLoader().getResource("main.fxml");
+        URL resource = getClass().getClassLoader().getResource(ResLocConsts.MAIN_PANE);
         fxmlLoader.setLocation(resource);
         Parent root = fxmlLoader.load();
         Scene scene = new Scene(root, 600, 450);

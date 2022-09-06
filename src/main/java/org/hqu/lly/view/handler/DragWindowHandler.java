@@ -21,7 +21,7 @@ public class DragWindowHandler implements EventHandler<MouseEvent> {
     private double oldScreenX;
     private double oldScreenY;
 
-    public DragWindowHandler(Stage primaryStage) { //构造器
+    public DragWindowHandler(Stage primaryStage) {
         this.primaryStage = primaryStage;
     }
 

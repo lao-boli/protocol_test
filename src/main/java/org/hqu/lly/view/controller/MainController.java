@@ -2,7 +2,7 @@ package org.hqu.lly.view.controller;
 
 import org.hqu.lly.constant.ContentPaneConsts;
 import org.hqu.lly.domain.vo.ServiceItem;
-import org.hqu.lly.service.impl.ContentPaneManager;
+import org.hqu.lly.service.impl.TabPaneManager;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -47,30 +47,29 @@ public class MainController implements Initializable {
     @SneakyThrows
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-
         initSideBar();
-
     }
 
     private void initSideBar() {
+        String contentPanePath = "views/TabPane.fxml";
+
         TreeItem<String> root = new TreeItem<>("root");
 
-
         TreeItem<String> tcp = new TreeItem<>("tcp");
-        ServiceItem<String> tcpServer = new ServiceItem<>("server", new ContentPaneManager(mainPane, ContentPaneConsts.TCP_SERVER_PANE,"tabPane.fxml"));
-        ServiceItem<String> tcpClient = new ServiceItem<>("client",new ContentPaneManager(mainPane, ContentPaneConsts.TCP_CLIENT_PANE,"tabPane.fxml"));
+        ServiceItem<String> tcpServer = new ServiceItem<>("server", new TabPaneManager(mainPane, ContentPaneConsts.TCP_SERVER_PANE));
+        ServiceItem<String> tcpClient = new ServiceItem<>("client",new TabPaneManager(mainPane, ContentPaneConsts.TCP_CLIENT_PANE));
         tcp.getChildren().add(tcpServer);
         tcp.getChildren().add(tcpClient);
 
         TreeItem<String> udp = new TreeItem<>("udp");
-        ServiceItem<String> udpServer = new ServiceItem<>("server", new ContentPaneManager(mainPane, ContentPaneConsts.UDP_SERVER_PANE,"tabPane.fxml"));
-        ServiceItem<String> udpClient = new ServiceItem<>("client",new ContentPaneManager(mainPane, ContentPaneConsts.UDP_CLIENT_PANE,"tabPane.fxml"));
+        ServiceItem<String> udpServer = new ServiceItem<>("server", new TabPaneManager(mainPane, ContentPaneConsts.UDP_SERVER_PANE));
+        ServiceItem<String> udpClient = new ServiceItem<>("client",new TabPaneManager(mainPane, ContentPaneConsts.UDP_CLIENT_PANE));
         udp.getChildren().add(udpServer);
         udp.getChildren().add(udpClient);
 
         TreeItem<String> webSocket = new TreeItem<>("webSocket");
-        ServiceItem<String> server = new ServiceItem<>("server", new ContentPaneManager(mainPane, ContentPaneConsts.WEB_SOCKET_SERVER_PANE,"tabPane.fxml"));
-        ServiceItem<String> client = new ServiceItem<>("client",new ContentPaneManager(mainPane, ContentPaneConsts.WEB_SOCKET_CLIENT_PANE,"tabPane.fxml"));
+        ServiceItem<String> server = new ServiceItem<>("server", new TabPaneManager(mainPane, ContentPaneConsts.WEB_SOCKET_SERVER_PANE));
+        ServiceItem<String> client = new ServiceItem<>("client",new TabPaneManager(mainPane, ContentPaneConsts.WEB_SOCKET_CLIENT_PANE));
         webSocket.getChildren().add(server);
         webSocket.getChildren().add(client);
 
@@ -83,13 +82,10 @@ public class MainController implements Initializable {
             item.setExpanded(true);
         });
 
-
         root.getChildren().addAll(firstMenuItems);
-
         root.setExpanded(true);
 
-        this.menuTree.setRoot(root);
-
+        menuTree.setRoot(root);
         menuTree.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {

@@ -1,7 +1,5 @@
 package org.hqu.lly.view.controller;
 
-import org.hqu.lly.domain.base.BaseClient;
-import org.hqu.lly.service.impl.ClientService;
 import io.netty.channel.Channel;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -11,6 +9,10 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import lombok.Setter;
+import org.hqu.lly.constant.ProtocolConsts;
+import org.hqu.lly.domain.base.BaseClient;
+import org.hqu.lly.protocol.websocket.client.WebSocketClient;
+import org.hqu.lly.service.impl.ClientService;
 
 import java.net.URI;
 import java.net.URL;
@@ -18,7 +20,7 @@ import java.util.ResourceBundle;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 
-public class ClientController implements Initializable {
+public class WebSocketClientController implements Initializable {
 
     @FXML
     private TextField remoteAddressInput;
@@ -41,11 +43,9 @@ public class ClientController implements Initializable {
     @FXML
     private ListView<String> msgList;
 
-    @Setter
-    private BaseClient client;
+    private WebSocketClient client = new WebSocketClient();
 
-    @Setter
-    private String protocol;
+    private String protocol = ProtocolConsts.WEB_SOCKET;
 
     ObservableList<String> items = FXCollections.observableArrayList() ;
 

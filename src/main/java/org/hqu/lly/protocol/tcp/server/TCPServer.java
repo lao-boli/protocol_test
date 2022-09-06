@@ -1,5 +1,6 @@
 package org.hqu.lly.protocol.tcp.server;
 
+import io.netty.channel.ChannelFuture;
 import org.hqu.lly.domain.base.BaseServer;
 import org.hqu.lly.protocol.tcp.server.handler.TCPMessageHandler;
 import org.hqu.lly.service.impl.ServerService;
@@ -62,7 +63,8 @@ public class TCPServer extends BaseServer {
                 }
             });
             channel = serverBootstrap.bind(Integer.parseInt(port)).sync().channel();
-            channel.closeFuture().addListener((ChannelFutureListener) channelFuture -> {
+            ChannelFuture f = channel.closeFuture();
+            f.addListener(promise -> {
                 bossGroup.shutdownGracefully();
                 workerGroup.shutdownGracefully();
             });
