@@ -21,4 +21,5 @@ public class TCPChannelGroup {
 
     public static ChannelGroup channelGroup = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
     public static Map<String, Channel> clientChannelGroup = new ConcurrentHashMap<>();
+    public static Map<String, Channel> serverChannelGroup = new ConcurrentHashMap<>();
 }

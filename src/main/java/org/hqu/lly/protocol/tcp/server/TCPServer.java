@@ -1,22 +1,28 @@
 package org.hqu.lly.protocol.tcp.server;
 
-import io.netty.channel.ChannelFuture;
-import org.hqu.lly.domain.base.BaseServer;
-import org.hqu.lly.protocol.tcp.server.handler.TCPMessageHandler;
-import org.hqu.lly.service.impl.ServerService;
-import org.hqu.lly.utils.MsgFormatUtil;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
-import io.netty.channel.ChannelFutureListener;
+import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
+import org.hqu.lly.domain.base.BaseServer;
+import org.hqu.lly.protocol.tcp.codec.LTCEncoder;
+import org.hqu.lly.protocol.tcp.codec.MessageDecoderSelector;
+import org.hqu.lly.protocol.tcp.codec.MessageEncoderSelector;
+import org.hqu.lly.protocol.tcp.constant.CommonConsts;
+import org.hqu.lly.protocol.tcp.group.AppChannelGroup;
+import org.hqu.lly.protocol.tcp.server.group.TCPChannelGroup;
+import org.hqu.lly.protocol.tcp.server.handler.TCPMessageHandler;
+import org.hqu.lly.service.impl.ServerService;
+import org.hqu.lly.utils.MsgFormatUtil;
 
 import java.net.BindException;
 
@@ -56,9 +62,13 @@ public class TCPServer extends BaseServer {
             serverBootstrap.childHandler(new ChannelInitializer<SocketChannel>() {
                 @Override
                 protected void initChannel(SocketChannel ch) throws Exception {
-                    ch.pipeline().addLast(new StringDecoder());
-                    ch.pipeline().addLast(new StringEncoder());
-                    ch.pipeline().addLast(new TCPMessageHandler(serverService));
+                    ch.pipeline().addLast("MessageDecoderSelector",new MessageDecoderSelector());
+                    ch.pipeline().addLast("LTCDecoder",new LengthFieldBasedFrameDecoder(1024*100,4,4,0,8));
+                    ch.pipeline().addLast("StringDecoder",new StringDecoder());
+                    ch.pipeline().addLast("StringEncoder",new StringEncoder());
+                    ch.pipeline().addLast("LTCEncoder",new LTCEncoder());
+                    ch.pipeline().addLast("MessageEncoderSelector",new MessageEncoderSelector(CommonConsts.SERVER));
+                    ch.pipeline().addLast("MessageHandler",new TCPMessageHandler(serverService));
 
                 }
             });
@@ -68,6 +78,7 @@ public class TCPServer extends BaseServer {
                 bossGroup.shutdownGracefully();
                 workerGroup.shutdownGracefully();
             });
+            AppChannelGroup.serverChannelSet.add("/127.0.0.1:"+port);
             log.info("tcp server start successful at " + channel.localAddress());
         } catch (Exception e) {
             bossGroup.shutdownGracefully();
