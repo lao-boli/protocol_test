@@ -1,9 +1,5 @@
 package org.hqu.lly.protocol.websocket.server;
 
-import org.hqu.lly.domain.base.BaseServer;
-import org.hqu.lly.protocol.websocket.server.initalizer.WSChannelInitializer;
-import org.hqu.lly.service.impl.ServerService;
-import org.hqu.lly.utils.MsgFormatUtil;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
@@ -14,6 +10,10 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.hqu.lly.domain.base.BaseServer;
+import org.hqu.lly.protocol.websocket.server.initalizer.WSChannelInitializer;
+import org.hqu.lly.service.impl.ServerService;
+import org.hqu.lly.utils.MsgUtil;
 
 import java.net.BindException;
 
@@ -101,7 +101,7 @@ public class WebSocketServer extends BaseServer {
 
         channel.writeAndFlush(new TextWebSocketFrame(msg));
 
-        String formatSendMsg = MsgFormatUtil.formatSendMsg(msg, channel.remoteAddress().toString());
+        String formatSendMsg = MsgUtil.formatSendMsg(msg, channel.remoteAddress().toString());
 
         serverService.updateMsgList(formatSendMsg);
 

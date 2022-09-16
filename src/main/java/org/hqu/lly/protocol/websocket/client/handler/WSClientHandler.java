@@ -1,12 +1,12 @@
 package org.hqu.lly.protocol.websocket.client.handler;
 
-import org.hqu.lly.service.MessageService;
-import org.hqu.lly.utils.MsgFormatUtil;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import lombok.extern.slf4j.Slf4j;
+import org.hqu.lly.service.MessageService;
+import org.hqu.lly.utils.MsgUtil;
 
 /**
  * <p>
@@ -41,7 +41,7 @@ public class WSClientHandler extends SimpleChannelInboundHandler<TextWebSocketFr
 
         String receiveText = msg.text();
 
-        String formattedReceiveText = MsgFormatUtil.formatReceiveMsg(receiveText, serverAddr);
+        String formattedReceiveText = MsgUtil.formatReceiveMsg(receiveText, serverAddr);
 
         messageService.updateMsgList(formattedReceiveText);
 

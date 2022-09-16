@@ -1,9 +1,5 @@
 package org.hqu.lly.protocol.udp.server;
 
-import org.hqu.lly.domain.base.BaseServer;
-import org.hqu.lly.protocol.udp.server.handler.UDPServerHandler;
-import org.hqu.lly.service.impl.ServerService;
-import org.hqu.lly.utils.MsgFormatUtil;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.*;
@@ -12,6 +8,10 @@ import io.netty.channel.socket.DatagramPacket;
 import io.netty.channel.socket.nio.NioDatagramChannel;
 import io.netty.util.CharsetUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.hqu.lly.domain.base.BaseServer;
+import org.hqu.lly.protocol.udp.server.handler.UDPServerHandler;
+import org.hqu.lly.service.impl.ServerService;
+import org.hqu.lly.utils.MsgUtil;
 
 import java.net.BindException;
 import java.net.InetSocketAddress;
@@ -108,7 +108,7 @@ public class UDPServer extends BaseServer {
 
             channel.writeAndFlush(new DatagramPacket(Unpooled.copiedBuffer(message, CharsetUtil.UTF_8), clientAddr));
 
-            String formatSendMsg = MsgFormatUtil.formatSendMsg(message, clientAddr.toString());
+            String formatSendMsg = MsgUtil.formatSendMsg(message, clientAddr.toString());
 
             serverService.updateMsgList(formatSendMsg);
 

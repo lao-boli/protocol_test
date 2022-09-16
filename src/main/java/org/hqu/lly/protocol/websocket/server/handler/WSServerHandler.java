@@ -1,13 +1,13 @@
 package org.hqu.lly.protocol.websocket.server.handler;
 
-import org.hqu.lly.protocol.websocket.server.group.WSChannelGroup;
-import org.hqu.lly.service.impl.ServerService;
-import org.hqu.lly.utils.MsgFormatUtil;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import lombok.extern.slf4j.Slf4j;
+import org.hqu.lly.protocol.websocket.server.group.WSChannelGroup;
+import org.hqu.lly.service.impl.ServerService;
+import org.hqu.lly.utils.MsgUtil;
 
 @Slf4j
 public class WSServerHandler extends SimpleChannelInboundHandler<TextWebSocketFrame> {
@@ -40,7 +40,7 @@ public class WSServerHandler extends SimpleChannelInboundHandler<TextWebSocketFr
 
         String receiveText = msg.text();
 
-        String formatReceiveMsg = MsgFormatUtil.formatReceiveMsg(receiveText, clientAddr);
+        String formatReceiveMsg = MsgUtil.formatReceiveMsg(receiveText, clientAddr);
 
         serverService.updateMsgList(formatReceiveMsg);
 
@@ -48,7 +48,7 @@ public class WSServerHandler extends SimpleChannelInboundHandler<TextWebSocketFr
 
         ctx.channel().writeAndFlush(new TextWebSocketFrame(responseText));
 
-        String formatSendMsg = MsgFormatUtil.formatSendMsg(responseText, clientAddr);
+        String formatSendMsg = MsgUtil.formatSendMsg(responseText, clientAddr);
 
         serverService.updateMsgList(formatSendMsg);
 

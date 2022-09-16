@@ -1,11 +1,11 @@
 package org.hqu.lly.protocol.udp.client.handler;
 
-import org.hqu.lly.service.MessageService;
-import org.hqu.lly.utils.MsgFormatUtil;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.socket.DatagramPacket;
 import io.netty.util.CharsetUtil;
+import org.hqu.lly.service.MessageService;
+import org.hqu.lly.utils.MsgUtil;
 
 /**
  * <p>
@@ -30,7 +30,7 @@ public class UDPClientHandler extends SimpleChannelInboundHandler<DatagramPacket
 
         String serverAddr = datagramPacket.sender().toString();
 
-        String formatReceiveMsg = MsgFormatUtil.formatReceiveMsg(receiveText, serverAddr);
+        String formatReceiveMsg = MsgUtil.formatReceiveMsg(receiveText, serverAddr);
 
         messageService.updateMsgList(formatReceiveMsg);
 

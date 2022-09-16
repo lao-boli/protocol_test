@@ -1,7 +1,5 @@
 package org.hqu.lly.protocol.udp.server.handler;
 
-import org.hqu.lly.service.impl.ServerService;
-import org.hqu.lly.utils.MsgFormatUtil;
 import io.netty.buffer.ByteBufAllocator;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.*;
@@ -11,6 +9,8 @@ import io.netty.util.AttributeKey;
 import io.netty.util.CharsetUtil;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.hqu.lly.service.impl.ServerService;
+import org.hqu.lly.utils.MsgUtil;
 
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
@@ -44,13 +44,13 @@ public class UDPServerHandler extends SimpleChannelInboundHandler<DatagramPacket
 
         String clientAddr = datagramPacket.sender().toString();
 
-        String formatReceiveMsg = MsgFormatUtil.formatReceiveMsg(receiveText, clientAddr);
+        String formatReceiveMsg = MsgUtil.formatReceiveMsg(receiveText, clientAddr);
 
         serverService.updateMsgList(formatReceiveMsg);
 
         String responseText = "your message is " + receiveText;
 
-        String formatSendMsg = MsgFormatUtil.formatSendMsg(responseText, clientAddr);
+        String formatSendMsg = MsgUtil.formatSendMsg(responseText, clientAddr);
 
         ctx.channel().writeAndFlush(new DatagramPacket(Unpooled.copiedBuffer(responseText, CharsetUtil.UTF_8), datagramPacket.sender()));
 
