@@ -1,25 +1,29 @@
 package org.hqu.lly.protocol.tcp.client;
 
+import io.netty.bootstrap.Bootstrap;
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelInitializer;
+import io.netty.channel.EventLoopGroup;
+import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.socket.SocketChannel;
+import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
+import io.netty.handler.codec.string.StringDecoder;
+import io.netty.handler.codec.string.StringEncoder;
+import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.extern.slf4j.Slf4j;
 import org.hqu.lly.domain.base.BaseClient;
+import org.hqu.lly.protocol.tcp.client.handler.TCPClientConnectHandler;
+import org.hqu.lly.protocol.tcp.client.handler.TCPClientExceptionHandler;
 import org.hqu.lly.protocol.tcp.client.handler.TCPClientMessageHandler;
 import org.hqu.lly.protocol.tcp.codec.LTCEncoder;
 import org.hqu.lly.protocol.tcp.codec.MessageDecoderSelector;
 import org.hqu.lly.protocol.tcp.codec.MessageEncoderSelector;
-import org.hqu.lly.protocol.tcp.constant.CommonConsts;
 import org.hqu.lly.protocol.tcp.group.AppChannelGroup;
 import org.hqu.lly.service.impl.ClientService;
-import org.hqu.lly.utils.MsgFormatUtil;
-import io.netty.bootstrap.Bootstrap;
-import io.netty.channel.*;
-import io.netty.channel.nio.NioEventLoopGroup;
-import io.netty.channel.socket.SocketChannel;
-import io.netty.channel.socket.nio.NioSocketChannel;
-import io.netty.handler.codec.string.StringDecoder;
-import io.netty.handler.codec.string.StringEncoder;
-import lombok.Data;
-import lombok.extern.slf4j.Slf4j;
+import org.hqu.lly.utils.MsgUtil;
 
 import java.net.ConnectException;
 import java.net.URI;
@@ -29,9 +33,9 @@ import java.net.URI;
  * TCP client
  * <p>
  *
- * @author liulingyu
+ * @author hqully
+ * @version 1.0
  * @date 2022/8/4 10:46
- * @Version 1.0
  */
 @EqualsAndHashCode(callSuper = true)
 @Slf4j
@@ -51,8 +55,9 @@ public class TCPClient extends BaseClient {
     @Override
     public void sendMessage(String message) {
         channel.writeAndFlush(message);
-
-        clientService.updateMsgList(MsgFormatUtil.formatSendMsg(message, channel.remoteAddress().toString()));
+        String formattedText = MsgUtil.formatSendMsg(message, channel.remoteAddress().toString());
+        log.info(formattedText);
+        clientService.updateMsgList(formattedText);
     }
 
 
@@ -74,19 +79,21 @@ public class TCPClient extends BaseClient {
                     .handler(new ChannelInitializer<SocketChannel>() {
                         @Override
                         protected void initChannel(SocketChannel ch) throws Exception {
-                            ch.pipeline().addLast("MessageDecoderSelector",new MessageDecoderSelector());
-                            ch.pipeline().addLast("LTCDecoder",new LengthFieldBasedFrameDecoder(1024*100,4,4,0,8));
-                            ch.pipeline().addLast("StringDecoder",new StringDecoder());
-                            ch.pipeline().addLast("StringEncoder",new StringEncoder());
-                            ch.pipeline().addLast("LTCEncoder",new LTCEncoder());
-                            ch.pipeline().addLast("MessageEncoderSelector",new MessageEncoderSelector(CommonConsts.CLIENT));
-                            ch.pipeline().addLast("TCPClientMessageHandler",new TCPClientMessageHandler(clientService));
+                            ch.pipeline().addLast("TCPClientConnectHandler", new TCPClientConnectHandler(clientService));
+                            ch.pipeline().addLast("MessageDecoderSelector", new MessageDecoderSelector());
+                            ch.pipeline().addLast("LTCDecoder", new LengthFieldBasedFrameDecoder(1024 * 100, 4, 4, 0, 8));
+                            ch.pipeline().addLast("StringDecoder", new StringDecoder());
+                            ch.pipeline().addLast("StringEncoder", new StringEncoder());
+                            ch.pipeline().addLast("LTCEncoder", new LTCEncoder());
+                            ch.pipeline().addLast("MessageEncoderSelector", new MessageEncoderSelector());
+                            ch.pipeline().addLast("TCPClientMessageHandler", new TCPClientMessageHandler(clientService));
+                            ch.pipeline().addLast("TCPClientExceptionHandler", new TCPClientExceptionHandler());
                         }
                     });
             ChannelFuture channelFuture = bootstrap.connect(host, port).sync();
-            this.channel = channelFuture.channel();
-            this.channel.closeFuture().addListener((ChannelFutureListener) future -> {
-                log.debug("处理关闭之后的操作");
+            channel = channelFuture.channel();
+            channel.closeFuture().addListener(promise -> {
+                AppChannelGroup.clientChannelSet.remove(channel.localAddress().toString());
                 eventLoopGroup.shutdownGracefully();
             });
             AppChannelGroup.clientChannelSet.add(channel.localAddress().toString());

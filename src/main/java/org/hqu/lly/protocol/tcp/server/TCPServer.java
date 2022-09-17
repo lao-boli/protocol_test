@@ -17,12 +17,12 @@ import org.hqu.lly.domain.base.BaseServer;
 import org.hqu.lly.protocol.tcp.codec.LTCEncoder;
 import org.hqu.lly.protocol.tcp.codec.MessageDecoderSelector;
 import org.hqu.lly.protocol.tcp.codec.MessageEncoderSelector;
-import org.hqu.lly.protocol.tcp.constant.CommonConsts;
 import org.hqu.lly.protocol.tcp.group.AppChannelGroup;
-import org.hqu.lly.protocol.tcp.server.group.TCPChannelGroup;
-import org.hqu.lly.protocol.tcp.server.handler.TCPMessageHandler;
+import org.hqu.lly.protocol.tcp.server.handler.TCPServerConnectHandler;
+import org.hqu.lly.protocol.tcp.server.handler.TCPServerExceptionHandler;
+import org.hqu.lly.protocol.tcp.server.handler.TCPServerMessageHandler;
 import org.hqu.lly.service.impl.ServerService;
-import org.hqu.lly.utils.MsgFormatUtil;
+import org.hqu.lly.utils.MsgUtil;
 
 import java.net.BindException;
 
@@ -31,7 +31,7 @@ import java.net.BindException;
  * TCP server
  * <p>
  *
- * @author liulingyu
+ * @author hqully
  * @version 1.0
  * @date 2022/8/4 10:45
  */
@@ -62,14 +62,15 @@ public class TCPServer extends BaseServer {
             serverBootstrap.childHandler(new ChannelInitializer<SocketChannel>() {
                 @Override
                 protected void initChannel(SocketChannel ch) throws Exception {
+                    ch.pipeline().addLast("TCPServerConnectHandler",new TCPServerConnectHandler(serverService));
                     ch.pipeline().addLast("MessageDecoderSelector",new MessageDecoderSelector());
                     ch.pipeline().addLast("LTCDecoder",new LengthFieldBasedFrameDecoder(1024*100,4,4,0,8));
                     ch.pipeline().addLast("StringDecoder",new StringDecoder());
                     ch.pipeline().addLast("StringEncoder",new StringEncoder());
                     ch.pipeline().addLast("LTCEncoder",new LTCEncoder());
-                    ch.pipeline().addLast("MessageEncoderSelector",new MessageEncoderSelector(CommonConsts.SERVER));
-                    ch.pipeline().addLast("MessageHandler",new TCPMessageHandler(serverService));
-
+                    ch.pipeline().addLast("MessageEncoderSelector",new MessageEncoderSelector());
+                    ch.pipeline().addLast("TCPServerMessageHandler",new TCPServerMessageHandler(serverService));
+                    ch.pipeline().addLast("TCPExceptionHandler",new TCPServerExceptionHandler());
                 }
             });
             channel = serverBootstrap.bind(Integer.parseInt(port)).sync().channel();
@@ -77,6 +78,7 @@ public class TCPServer extends BaseServer {
             f.addListener(promise -> {
                 bossGroup.shutdownGracefully();
                 workerGroup.shutdownGracefully();
+                AppChannelGroup.serverChannelSet.remove("/127.0.0.1:"+port);
             });
             AppChannelGroup.serverChannelSet.add("/127.0.0.1:"+port);
             log.info("tcp server start successful at " + channel.localAddress());
@@ -101,13 +103,9 @@ public class TCPServer extends BaseServer {
 
     @Override
     public void sendMessage(String msg, Channel channel) {
-
         channel.writeAndFlush(msg);
-
-        String formatSendMsg = MsgFormatUtil.formatSendMsg(msg, channel.remoteAddress().toString());
-
+        String formatSendMsg = MsgUtil.formatSendMsg(msg, channel.remoteAddress().toString());
         serverService.updateMsgList(formatSendMsg);
-
         log.info(formatSendMsg);
     }
 

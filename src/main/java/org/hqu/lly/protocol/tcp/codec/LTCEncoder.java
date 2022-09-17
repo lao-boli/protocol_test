@@ -22,7 +22,6 @@ public class LTCEncoder extends MessageToByteEncoder<String> {
 
     @Override
     protected void encode(ChannelHandlerContext ctx, String msg, ByteBuf out) throws Exception {
-        log.debug("LECEncoder is be used");
         // 写入魔数
         out.writeBytes(HeaderConsts.MAGIC_NUMBER);
         // 字符串转byte数组
