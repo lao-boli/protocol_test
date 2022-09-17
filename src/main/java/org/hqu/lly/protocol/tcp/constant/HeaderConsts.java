@@ -2,7 +2,7 @@ package org.hqu.lly.protocol.tcp.constant;
 
 /**
  * <p>
- *
+ * 消息头常量
  * <p>
  *
  * @author hqully

@@ -1,22 +1,22 @@
 package org.hqu.lly.view.controller;
 
-import org.hqu.lly.view.handler.DragWindowHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
+import org.hqu.lly.view.handler.DragWindowHandler;
 
 import java.net.URL;
 import java.util.ResourceBundle;
 
 /**
  * <p>
- * 标题栏controller
+ * 标题栏控制器
  * <p>
  *
- * @author liulingyu
+ * @author hqully
  * @version 1.0
  * @date 2022/8/14 19:32
  */
@@ -31,7 +31,7 @@ public class TitleBarController implements Initializable {
     private Stage stage;
 
     /**
-     * 鼠标第一次移入标题栏
+     * 鼠标第一次移入标题栏标记
      */
     private boolean firstMoveIn = true;
 

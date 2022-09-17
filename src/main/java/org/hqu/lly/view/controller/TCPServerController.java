@@ -8,8 +8,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
-import lombok.Setter;
-import org.hqu.lly.domain.base.BaseServer;
 import org.hqu.lly.protocol.tcp.server.TCPServer;
 import org.hqu.lly.service.impl.ServerService;
 
@@ -20,12 +18,12 @@ import java.util.concurrent.FutureTask;
 
 /**
  * <p>
- * 服务面板controller
+ * TCP服务端功能控制器
  * </p>
  *
- * @author liulingyu
+ * @author hqully
  * @version 1.0
- * @date 2022-09-05 09:15
+ * @date 2022-08-10 09:15
  */
 public class TCPServerController implements Initializable {
 
@@ -149,6 +147,7 @@ public class TCPServerController implements Initializable {
             sendMsgButton.setDisable(true);
         });
     }
+
     @FXML
     void sendMsg(MouseEvent event) {
         if (targetClientChannel != null) {

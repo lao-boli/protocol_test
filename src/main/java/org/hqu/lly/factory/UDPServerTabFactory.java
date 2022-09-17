@@ -1,17 +1,16 @@
 package org.hqu.lly.factory;
 
-import org.hqu.lly.constant.ResLocConsts;
-import org.hqu.lly.protocol.udp.server.UDPServer;
-import org.hqu.lly.view.controller.UDPServerController;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.Tab;
+import org.hqu.lly.constant.ResLocConsts;
+import org.hqu.lly.view.controller.UDPServerController;
 
 import java.io.IOException;
 
 /**
  * <p>
- * tcp client tab factory
+ * TCP服务端标签页工厂
  * <p>
  *
  * @author liulingyu

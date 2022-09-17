@@ -1,23 +1,21 @@
 package org.hqu.lly.factory;
 
-import org.hqu.lly.constant.ResLocConsts;
-import org.hqu.lly.protocol.websocket.server.WebSocketServer;
-import org.hqu.lly.view.controller.UDPServerController;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.Tab;
+import org.hqu.lly.constant.ResLocConsts;
 import org.hqu.lly.view.controller.WebSocketServerController;
 
 import java.io.IOException;
 
 /**
  * <p>
- * tcp client tab factory
+ * WebSocket服务端标签页工厂
  * <p>
  *
- * @author liulingyu
+ * @author hqully
  * @date 2022/8/7 14:57
- * @Version 1.0
+ * @version 1.0
  */
 public class WSServerTabFactory implements TabFactory {
 

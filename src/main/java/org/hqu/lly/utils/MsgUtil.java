@@ -5,7 +5,7 @@ package org.hqu.lly.utils;
  * 字符串消息工具
  * <p>
  *
- * @author liulingyu
+ * @author hqully
  * @version 1.0
  * @date 2022/8/12 15:32
  */

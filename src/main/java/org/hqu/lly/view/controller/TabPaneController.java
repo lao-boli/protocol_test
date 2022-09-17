@@ -1,23 +1,23 @@
 package org.hqu.lly.view.controller;
 
-import org.hqu.lly.factory.TabFactory;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import org.hqu.lly.factory.TabFactory;
 
 import java.net.URL;
 import java.util.ResourceBundle;
 
 /**
  * <p>
- *
+ * 标签页控制器
  * <p>
  *
- * @author liulingyu
+ * @author hqully
+ * @version 1.0
  * @date 2022/8/8 9:51
- * @Version 1.0
  */
 public class TabPaneController implements Initializable {
 
@@ -29,10 +29,9 @@ public class TabPaneController implements Initializable {
 
     private TabFactory TabFactory;
 
-    public void setTabFactory(org.hqu.lly.factory.TabFactory tabFactory) {
+    public void setTabFactory(TabFactory tabFactory) {
         TabFactory = tabFactory;
     }
-
 
 
     @FXML
@@ -43,20 +42,15 @@ public class TabPaneController implements Initializable {
     }
 
     public void createNewTab() {
+
         Tab tab = TabFactory.create();
+        mainTabPane.getTabs().add(mainTabPane.getTabs().size() - 1, tab);
 
-        mainTabPane.getTabs().add(mainTabPane.getTabs().size() - 1,tab );
-
+        // 切换到新添加的标签页
         mainTabPane.getSelectionModel().select(tab);
-
-
     }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-
-
-//        ContentPaneGroup.tabPaneMap.put("tcpClient",mainTabPane);
-
     }
 }

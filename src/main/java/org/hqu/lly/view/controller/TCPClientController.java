@@ -8,9 +8,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
-import lombok.Setter;
 import org.hqu.lly.constant.ProtocolConsts;
-import org.hqu.lly.domain.base.BaseClient;
 import org.hqu.lly.protocol.tcp.client.TCPClient;
 import org.hqu.lly.service.impl.ClientService;
 
@@ -20,6 +18,15 @@ import java.util.ResourceBundle;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 
+/**
+ * <p>
+ * TCP客户端功能控制器
+ * </p>
+ *
+ * @author liulingyu
+ * @version 1.0
+ * @date 2022-08-10 10:25
+ */
 public class TCPClientController implements Initializable {
 
     @FXML
@@ -47,7 +54,7 @@ public class TCPClientController implements Initializable {
 
     private String protocol = ProtocolConsts.TCP;
 
-    ObservableList<String> items = FXCollections.observableArrayList() ;
+    ObservableList<String> items = FXCollections.observableArrayList();
 
     @FXML
     void confirmAddr(MouseEvent event) {
@@ -55,11 +62,11 @@ public class TCPClientController implements Initializable {
         client.setURI(uri);
         client.setService(new ClientService() {
             @Override
-            public void onError(Throwable e , String errorMessage) {
+            public void onError(Throwable e, String errorMessage) {
                 Platform.runLater(() -> {
                     if (errorMessage != null) {
                         errorMsgLabel.setText(errorMessage);
-                    }else{
+                    } else {
                         errorMsgLabel.setText(e.getMessage());
                     }
                 });
@@ -97,7 +104,7 @@ public class TCPClientController implements Initializable {
     }
 
     private void setActiveUI() {
-        Platform.runLater(() ->{
+        Platform.runLater(() -> {
             remoteAddressInput.setDisable(true);
             msgInput.setDisable(false);
             connectButton.setDisable(true);
@@ -113,7 +120,7 @@ public class TCPClientController implements Initializable {
     }
 
     private void setInactiveUI() {
-        Platform.runLater(() ->{
+        Platform.runLater(() -> {
             remoteAddressInput.setDisable(false);
             msgInput.setDisable(true);
             connectButton.setDisable(false);
@@ -125,11 +132,10 @@ public class TCPClientController implements Initializable {
     @FXML
     void sendMsg(MouseEvent event) {
         client.sendMessage(msgInput.getText());
-
     }
 
-    public void destroy(){
-       client.destroy();
+    public void destroy() {
+        client.destroy();
     }
 
     @Override

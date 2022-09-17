@@ -1,9 +1,5 @@
 package org.hqu.lly.view.controller;
 
-import org.hqu.lly.constant.ProtocolConsts;
-import org.hqu.lly.domain.base.BaseClient;
-import org.hqu.lly.protocol.udp.client.UDPClient;
-import org.hqu.lly.service.impl.ClientService;
 import io.netty.channel.Channel;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -12,7 +8,9 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
-import lombok.Setter;
+import org.hqu.lly.constant.ProtocolConsts;
+import org.hqu.lly.protocol.udp.client.UDPClient;
+import org.hqu.lly.service.impl.ClientService;
 
 import java.net.URI;
 import java.net.URL;
@@ -20,6 +18,15 @@ import java.util.ResourceBundle;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 
+/**
+ * <p>
+ * UDP客户端控制器
+ * </p>
+ *
+ * @author hqully
+ * @version 1.0
+ * @date 2022-08-10 10:31
+ */
 public class UDPClientController implements Initializable {
 
     @FXML
@@ -47,7 +54,7 @@ public class UDPClientController implements Initializable {
 
     private String protocol = ProtocolConsts.UDP;
 
-    ObservableList<String> items = FXCollections.observableArrayList() ;
+    ObservableList<String> items = FXCollections.observableArrayList();
 
     @FXML
     void confirmAddr(MouseEvent event) {
@@ -55,11 +62,11 @@ public class UDPClientController implements Initializable {
         client.setURI(uri);
         client.setService(new ClientService() {
             @Override
-            public void onError(Throwable e , String errorMessage) {
+            public void onError(Throwable e, String errorMessage) {
                 Platform.runLater(() -> {
                     if (errorMessage != null) {
                         errorMsgLabel.setText(errorMessage);
-                    }else{
+                    } else {
                         errorMsgLabel.setText(e.getMessage());
                     }
                 });
@@ -97,7 +104,7 @@ public class UDPClientController implements Initializable {
     }
 
     private void setActiveUI() {
-        Platform.runLater(() ->{
+        Platform.runLater(() -> {
             remoteAddressInput.setDisable(true);
             msgInput.setDisable(false);
             connectButton.setDisable(true);
@@ -113,7 +120,7 @@ public class UDPClientController implements Initializable {
     }
 
     private void setInactiveUI() {
-        Platform.runLater(() ->{
+        Platform.runLater(() -> {
             remoteAddressInput.setDisable(false);
             msgInput.setDisable(true);
             connectButton.setDisable(false);
@@ -128,8 +135,8 @@ public class UDPClientController implements Initializable {
 
     }
 
-    public void destroy(){
-       client.destroy();
+    public void destroy() {
+        client.destroy();
     }
 
     @Override

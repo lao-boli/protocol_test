@@ -1,23 +1,21 @@
 package org.hqu.lly.factory;
 
-import org.hqu.lly.constant.ProtocolConsts;
-import org.hqu.lly.constant.ResLocConsts;
-import org.hqu.lly.protocol.udp.client.UDPClient;
-import org.hqu.lly.view.controller.UDPClientController;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.Tab;
+import org.hqu.lly.constant.ResLocConsts;
+import org.hqu.lly.view.controller.UDPClientController;
 
 import java.io.IOException;
 
 /**
  * <p>
- * tcp client tab factory
+ * UDP客户端标签页工厂
  * <p>
  *
- * @author liulingyu
+ * @author hqully
+ * @version 1.0
  * @date 2022/8/7 14:57
- * @Version 1.0
  */
 public class UDPClientTabFactory implements TabFactory {
 

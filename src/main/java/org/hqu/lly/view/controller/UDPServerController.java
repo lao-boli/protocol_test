@@ -1,8 +1,5 @@
 package org.hqu.lly.view.controller;
 
-import org.hqu.lly.domain.base.BaseServer;
-import org.hqu.lly.protocol.udp.server.UDPServer;
-import org.hqu.lly.service.impl.ServerService;
 import io.netty.channel.Channel;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -11,7 +8,8 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
-import lombok.Setter;
+import org.hqu.lly.protocol.udp.server.UDPServer;
+import org.hqu.lly.service.impl.ServerService;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -20,12 +18,12 @@ import java.util.concurrent.FutureTask;
 
 /**
  * <p>
- * 服务面板controller
+ * UDP服务端控制器
  * </p>
  *
- * @author liulingyu
+ * @author hqully
  * @version 1.0
- * @date 2022-09-05 09:15
+ * @date 2022-08-10 09:15
  */
 public class UDPServerController implements Initializable {
 
@@ -149,6 +147,7 @@ public class UDPServerController implements Initializable {
             sendMsgButton.setDisable(true);
         });
     }
+
     @FXML
     void sendMsg(MouseEvent event) {
         if (targetClientChannel != null) {

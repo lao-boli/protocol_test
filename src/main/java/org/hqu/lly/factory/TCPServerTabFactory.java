@@ -1,22 +1,21 @@
 package org.hqu.lly.factory;
 
-import org.hqu.lly.constant.ResLocConsts;
-import org.hqu.lly.protocol.tcp.server.TCPServer;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.Tab;
+import org.hqu.lly.constant.ResLocConsts;
 import org.hqu.lly.view.controller.TCPServerController;
 
 import java.io.IOException;
 
 /**
  * <p>
- * tcp client tab factory
+ * TCP服务端标签页工厂
  * <p>
  *
- * @author liulingyu
+ * @author hqully
+ * @version 1.0
  * @date 2022/8/7 14:57
- * @Version 1.0
  */
 public class TCPServerTabFactory implements TabFactory {
 

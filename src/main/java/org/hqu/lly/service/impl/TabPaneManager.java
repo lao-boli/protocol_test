@@ -1,23 +1,23 @@
 package org.hqu.lly.service.impl;
 
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.layout.Pane;
+import lombok.SneakyThrows;
 import org.hqu.lly.constant.ResLocConsts;
 import org.hqu.lly.enums.TabFactoryEnum;
 import org.hqu.lly.service.SwitchPaneService;
 import org.hqu.lly.view.controller.TabPaneController;
 import org.hqu.lly.view.group.ContentPaneGroup;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.layout.Pane;
-import lombok.SneakyThrows;
 
 /**
  * <p>
- *
+ * 标签面板管理器
  * <p>
  *
- * @author liulingyu
+ * @author hqully
+ * @version 1.0
  * @date 2022/8/8 19:22
- * @Version 1.0
  */
 public class TabPaneManager implements SwitchPaneService {
 
@@ -62,6 +62,7 @@ public class TabPaneManager implements SwitchPaneService {
         Parent contentPane = loader.load();
         Object controller = loader.getController();
         if (controller instanceof TabPaneController) {
+            // 新建面板默认创建一个标签页
             ((TabPaneController) controller).setTabFactory(TabFactoryEnum.getByPaneType(tabPaneName).getTabFactory());
             ((TabPaneController) controller).createNewTab();
         }

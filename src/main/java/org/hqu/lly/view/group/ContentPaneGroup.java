@@ -1,22 +1,23 @@
 package org.hqu.lly.view.group;
 
 import javafx.scene.Parent;
-import javafx.scene.control.TabPane;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * <p>
- * tabPane group
+ * 内容面板管理组,用于GUI界面的面板切换.
  * <p>
  *
- * @author liulingyu
+ * @author hqully
+ * @version 1.0
  * @date 2022/8/8 9:30
- * @Version 1.0
  */
 public class ContentPaneGroup {
 
-    public static Map<String, TabPane> tabPaneMap = new ConcurrentHashMap<>();
+    /**
+     * 存储服务级面板(服务端和客户端).
+     */
     public static Map<String, Parent> contentPaneMap = new ConcurrentHashMap<>();
 }

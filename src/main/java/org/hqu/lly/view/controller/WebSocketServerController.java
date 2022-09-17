@@ -8,8 +8,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
-import lombok.Setter;
-import org.hqu.lly.domain.base.BaseServer;
 import org.hqu.lly.protocol.websocket.server.WebSocketServer;
 import org.hqu.lly.service.impl.ServerService;
 
@@ -17,15 +15,13 @@ import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
-
 /**
  * <p>
- * 服务面板controller
+ *     WebSocket服务端控制器
  * </p>
- *
- * @author liulingyu
+ * @author hqully
  * @version 1.0
- * @date 2022-09-05 09:15
+ * @date 2022-08-10 10:37
  */
 public class WebSocketServerController implements Initializable {
 

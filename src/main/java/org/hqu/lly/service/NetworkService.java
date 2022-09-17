@@ -2,10 +2,10 @@ package org.hqu.lly.service;
 
 /**
  * <p>
- *
+ * 网络服务
  * <p>
  *
- * @author liulingyu
+ * @author hqully
  * @version 1.0
  * @date 2022/8/13 20:26
  */
