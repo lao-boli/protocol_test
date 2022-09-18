@@ -1,7 +1,5 @@
 package org.hqu.lly.protocol.websocket.server.initalizer;
 
-import org.hqu.lly.protocol.websocket.server.handler.WSServerHandler;
-import org.hqu.lly.service.impl.ServerService;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.http.HttpObjectAggregator;
@@ -12,6 +10,8 @@ import io.netty.handler.codec.http.cors.CorsHandler;
 import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
 import io.netty.handler.stream.ChunkedWriteHandler;
 import lombok.Setter;
+import org.hqu.lly.protocol.websocket.server.handler.WSServerHandler;
+import org.hqu.lly.service.impl.ConnectedServerService;
 
 public class WSChannelInitializer extends ChannelInitializer<SocketChannel> {
 
@@ -20,7 +20,7 @@ public class WSChannelInitializer extends ChannelInitializer<SocketChannel> {
 
 
     @Setter
-    private ServerService serverService;
+    private ConnectedServerService serverService;
 
     @Override
     protected void initChannel(SocketChannel ch) throws Exception {

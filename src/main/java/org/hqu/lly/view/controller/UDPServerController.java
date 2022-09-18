@@ -9,8 +9,9 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import org.hqu.lly.protocol.udp.server.UDPServer;
-import org.hqu.lly.service.impl.ServerService;
+import org.hqu.lly.service.impl.ConnectionlessServerService;
 
+import java.net.InetSocketAddress;
 import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.concurrent.ExecutionException;
@@ -49,22 +50,39 @@ public class UDPServerController implements Initializable {
     private ListView<String> msgListBox;
 
     @FXML
-    private ListView<Channel> clientListBox;
+    private ListView<InetSocketAddress> clientListBox;
 
     private UDPServer server = new UDPServer();
 
-    private Channel targetClientChannel = null;
+    private InetSocketAddress targetClientAddr = null;
 
     ObservableList<String> msgList = FXCollections.observableArrayList();
 
-    ObservableList<Channel> channelList = FXCollections.observableArrayList();
+    ObservableList<InetSocketAddress> AddressList = FXCollections.observableArrayList();
 
 
     @FXML
     void startServer(MouseEvent event) {
         String port = serverPort.getText();
         server.setPort(port);
-        server.setService(new ServerService() {
+        server.setService(new ConnectionlessServerService() {
+            @Override
+            public void addInetSocketAddress(InetSocketAddress dstAddr) {
+                Platform.runLater(() -> {
+                    AddressList.add(dstAddr);
+                    clientListBox.setItems(AddressList);
+                });
+            }
+
+            @Override
+            public void removeInetSocketAddress(InetSocketAddress dstAddr) {
+                Platform.runLater(() -> {
+                    AddressList.remove(dstAddr);
+                    clientListBox.setItems(AddressList);
+                });
+
+            }
+
             @Override
             public void onError(Throwable e, String errorMessage) {
                 Platform.runLater(() -> {
@@ -79,22 +97,6 @@ public class UDPServerController implements Initializable {
             @Override
             public void onClose() {
 
-            }
-
-            @Override
-            public void addChannel(Channel channel) {
-                Platform.runLater(() -> {
-                    channelList.add(channel);
-                    clientListBox.setItems(channelList);
-                });
-            }
-
-            @Override
-            public void removeChannel(Channel channel) {
-                Platform.runLater(() -> {
-                    channelList.remove(channel);
-                    clientListBox.setItems(channelList);
-                });
             }
 
             @Override
@@ -150,10 +152,9 @@ public class UDPServerController implements Initializable {
 
     @FXML
     void sendMsg(MouseEvent event) {
-        if (targetClientChannel != null) {
-            server.sendMessage(msgInput.getText(), targetClientChannel);
+        if (targetClientAddr != null) {
+            server.sendMessage(msgInput.getText(), targetClientAddr);
         }
-
     }
 
     public void destroy() {
@@ -164,19 +165,19 @@ public class UDPServerController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         // 自定义细胞工厂，设置显示的内容
-        clientListBox.setCellFactory(channelListView -> new ChannelCellFactory());
-        // 点击时将当前的clientChannel设置为选中的channel
-        clientListBox.getSelectionModel().selectedItemProperty().addListener((observableValue, preChannel, currentChannel) -> targetClientChannel = currentChannel);
+        clientListBox.setCellFactory(channelListView -> new InetSocketAddressCellFactory());
+        // 点击时将当前的clientAddr设置为选中的dstAddr
+        clientListBox.getSelectionModel().selectedItemProperty().addListener((observableValue, preChannel, currentChannel) -> targetClientAddr = currentChannel);
     }
 
 
-    static class ChannelCellFactory extends ListCell<Channel> {
+    static class InetSocketAddressCellFactory extends ListCell<InetSocketAddress> {
         @Override
-        protected void updateItem(Channel channel, boolean empty) {
-            super.updateItem(channel, empty);
+        protected void updateItem(InetSocketAddress dstAddr, boolean empty) {
+            super.updateItem(dstAddr, empty);
             Platform.runLater(() -> {
-                if (channel != null) {
-                    setText(channel.remoteAddress().toString());
+                if (dstAddr != null) {
+                    setText(dstAddr.toString());
                 } else {
                     setText(null);
                 }

@@ -1,6 +1,5 @@
 package org.hqu.lly.service.impl;
 
-import org.hqu.lly.service.GUIChannelService;
 import org.hqu.lly.service.MessageService;
 import org.hqu.lly.service.NetworkService;
 
@@ -13,5 +12,5 @@ import org.hqu.lly.service.NetworkService;
  * @version 1.0
  * @date 2022/8/13 19:50
  */
-public abstract class ServerService implements GUIChannelService, MessageService, NetworkService {
+public abstract class ServerService implements MessageService, NetworkService {
 }

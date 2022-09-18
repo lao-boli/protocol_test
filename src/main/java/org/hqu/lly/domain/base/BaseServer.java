@@ -24,8 +24,6 @@ public abstract class BaseServer implements Callable<Channel> {
 
     public abstract void setService(ServerService serverService);
 
-    public abstract void sendMessage(String message, Channel channel);
-
     @Override
     public Channel call() throws Exception {
         return null;

@@ -10,8 +10,9 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import org.hqu.lly.domain.base.BaseServer;
+import org.hqu.lly.domain.bean.ConnectedServer;
 import org.hqu.lly.protocol.websocket.server.initalizer.WSChannelInitializer;
+import org.hqu.lly.service.impl.ConnectedServerService;
 import org.hqu.lly.service.impl.ServerService;
 import org.hqu.lly.utils.MsgUtil;
 
@@ -23,12 +24,12 @@ import java.net.BindException;
  * <p>
  *
  * @author liulingyu
- * @date 2022/7/2 10:59
  * @version 1.0
+ * @date 2022/7/2 10:59
  */
 @Data
 @Slf4j
-public class WebSocketServer extends BaseServer {
+public class WebSocketServer extends ConnectedServer {
 
     private String port;
     private String host;
@@ -37,10 +38,10 @@ public class WebSocketServer extends BaseServer {
     private WSChannelInitializer wsChannelInitializer = new WSChannelInitializer();
     private Channel channel;
 
-    private ServerService serverService;
+    private ConnectedServerService serverService;
 
     @Override
-    public void init(){
+    public void init() {
         bossGroup = new NioEventLoopGroup();
         workerGroup = new NioEventLoopGroup();
 
@@ -59,20 +60,18 @@ public class WebSocketServer extends BaseServer {
                 bossGroup.shutdownGracefully();
                 workerGroup.shutdownGracefully();
             });
-            log.info("Netty websocket start successful at " + channel.localAddress());
+            log.info("websocket start successful at " + channel.localAddress());
         } catch (Exception e) {
             workerGroup.shutdownGracefully();
             bossGroup.shutdownGracefully();
-            log.error("WS服务启动失败：" + e);
+            log.error("websocket start fail, cause: {}", e.getCause());
 
-            if (e instanceof BindException){
-
-                serverService.onError(e,"该端口已被占用");
-
+            if (e instanceof BindException) {
+                serverService.onError(e, "该端口已被占用");
             }
         }
-
     }
+
     @Override
     public Channel call() throws Exception {
         init();
@@ -83,7 +82,7 @@ public class WebSocketServer extends BaseServer {
 
     @Override
     public void destroy() {
-        if (null == channel){
+        if (null == channel) {
             return;
         }
         channel.close();
@@ -92,8 +91,8 @@ public class WebSocketServer extends BaseServer {
 
     @Override
     public void setService(ServerService serverService) {
-       this.serverService =  serverService;
-       this.wsChannelInitializer.setServerService(this.serverService);
+        this.serverService = (ConnectedServerService) serverService;
+        this.wsChannelInitializer.setServerService(this.serverService);
     }
 
     @Override

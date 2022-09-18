@@ -13,7 +13,7 @@ import io.netty.handler.codec.string.StringEncoder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
-import org.hqu.lly.domain.base.BaseServer;
+import org.hqu.lly.domain.bean.ConnectedServer;
 import org.hqu.lly.protocol.tcp.codec.LTCEncoder;
 import org.hqu.lly.protocol.tcp.codec.MessageDecoderSelector;
 import org.hqu.lly.protocol.tcp.codec.MessageEncoderSelector;
@@ -21,6 +21,7 @@ import org.hqu.lly.protocol.tcp.group.AppChannelGroup;
 import org.hqu.lly.protocol.tcp.server.handler.TCPServerConnectHandler;
 import org.hqu.lly.protocol.tcp.server.handler.TCPServerExceptionHandler;
 import org.hqu.lly.protocol.tcp.server.handler.TCPServerMessageHandler;
+import org.hqu.lly.service.impl.ConnectedServerService;
 import org.hqu.lly.service.impl.ServerService;
 import org.hqu.lly.utils.MsgUtil;
 
@@ -38,11 +39,11 @@ import java.net.BindException;
 @EqualsAndHashCode(callSuper = true)
 @Slf4j
 @Data
-public class TCPServer extends BaseServer {
+public class TCPServer extends ConnectedServer {
 
     private String port;
 
-    private ServerService serverService;
+    private ConnectedServerService serverService;
 
     private NioEventLoopGroup bossGroup;
 
@@ -52,7 +53,6 @@ public class TCPServer extends BaseServer {
 
     @Override
     public void init() {
-
         bossGroup = new NioEventLoopGroup();
         workerGroup = new NioEventLoopGroup();
         try {
@@ -121,6 +121,6 @@ public class TCPServer extends BaseServer {
 
     @Override
     public void setService(ServerService serverService) {
-        this.serverService = serverService;
+        this.serverService = (ConnectedServerService) serverService;
     }
 }

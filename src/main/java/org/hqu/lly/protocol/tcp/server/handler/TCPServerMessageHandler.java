@@ -3,7 +3,7 @@ package org.hqu.lly.protocol.tcp.server.handler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import lombok.extern.slf4j.Slf4j;
-import org.hqu.lly.service.impl.ServerService;
+import org.hqu.lly.service.impl.ConnectedServerService;
 import org.hqu.lly.utils.MsgUtil;
 
 /**
@@ -18,9 +18,9 @@ import org.hqu.lly.utils.MsgUtil;
 @Slf4j
 public class TCPServerMessageHandler extends SimpleChannelInboundHandler<String> {
 
-    private ServerService serverService;
+    private ConnectedServerService serverService;
 
-    public TCPServerMessageHandler(ServerService serverService) {
+    public TCPServerMessageHandler(ConnectedServerService serverService) {
         this.serverService = serverService;
     }
 

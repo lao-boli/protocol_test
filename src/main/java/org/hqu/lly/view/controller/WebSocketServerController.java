@@ -9,7 +9,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import org.hqu.lly.protocol.websocket.server.WebSocketServer;
-import org.hqu.lly.service.impl.ServerService;
+import org.hqu.lly.service.impl.ConnectedServerService;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -62,7 +62,7 @@ public class WebSocketServerController implements Initializable {
     void startServer(MouseEvent event) {
         String port = serverPort.getText();
         server.setPort(port);
-        server.setService(new ServerService() {
+        server.setService(new ConnectedServerService() {
             @Override
             public void onError(Throwable e, String errorMessage) {
                 Platform.runLater(() -> {

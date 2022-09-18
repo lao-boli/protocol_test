@@ -5,7 +5,7 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import lombok.extern.slf4j.Slf4j;
 import org.hqu.lly.protocol.tcp.server.group.TCPChannelGroup;
-import org.hqu.lly.service.impl.ServerService;
+import org.hqu.lly.service.impl.ConnectedServerService;
 
 /**
  * <p>
@@ -19,9 +19,9 @@ import org.hqu.lly.service.impl.ServerService;
 @Slf4j
 public class TCPServerConnectHandler extends ChannelInboundHandlerAdapter {
 
-    private ServerService serverService;
+    private ConnectedServerService serverService;
 
-    public TCPServerConnectHandler(ServerService serverService) {
+    public TCPServerConnectHandler(ConnectedServerService serverService) {
         this.serverService = serverService;
     }
 

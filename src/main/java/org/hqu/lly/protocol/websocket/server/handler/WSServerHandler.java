@@ -6,19 +6,19 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import lombok.extern.slf4j.Slf4j;
 import org.hqu.lly.protocol.websocket.server.group.WSChannelGroup;
-import org.hqu.lly.service.impl.ServerService;
+import org.hqu.lly.service.impl.ConnectedServerService;
 import org.hqu.lly.utils.MsgUtil;
 
 @Slf4j
 public class WSServerHandler extends SimpleChannelInboundHandler<TextWebSocketFrame> {
 
 
-    private ServerService serverService;
+    private ConnectedServerService serverService;
 
     public WSServerHandler() {
     }
 
-    public WSServerHandler(ServerService serverService) {
+    public WSServerHandler(ConnectedServerService serverService) {
         this.serverService = serverService;
     }
 
