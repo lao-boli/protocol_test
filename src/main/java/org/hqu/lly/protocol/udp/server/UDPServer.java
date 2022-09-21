@@ -76,8 +76,8 @@ public class UDPServer extends ConnectionlessServer {
     }
 
     @Override
-    public void setPort(String port) {
-        this.port = Integer.parseInt(port);
+    public void setPort(int port) {
+        this.port = port;
     }
 
     @Override

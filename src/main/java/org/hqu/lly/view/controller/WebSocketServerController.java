@@ -60,7 +60,7 @@ public class WebSocketServerController implements Initializable {
 
     @FXML
     void startServer(MouseEvent event) {
-        String port = serverPort.getText();
+        int port = Integer.parseInt(serverPort.getText());
         server.setPort(port);
         server.setService(new ConnectedServerService() {
             @Override

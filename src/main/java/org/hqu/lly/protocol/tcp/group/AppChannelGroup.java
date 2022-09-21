@@ -1,9 +1,5 @@
 package org.hqu.lly.protocol.tcp.group;
 
-import io.netty.channel.Channel;
-
-import java.util.Collections;
-import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -18,7 +14,9 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class AppChannelGroup {
 
-    public static Set<String> clientChannelSet = ConcurrentHashMap.newKeySet();
+    public static Set<String> TCPServerChannelSet = ConcurrentHashMap.newKeySet();
+    public static Set<String> TCPClientChannelSet = ConcurrentHashMap.newKeySet();
+    public static Set<String> WebSocketServerChannelSet = ConcurrentHashMap.newKeySet();
+    public static Set<String> WebSocketClientChannelSet = ConcurrentHashMap.newKeySet();
 
-    public static Set<String> serverChannelSet = ConcurrentHashMap.newKeySet();
 }

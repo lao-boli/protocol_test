@@ -63,7 +63,7 @@ public class UDPServerController implements Initializable {
 
     @FXML
     void startServer(MouseEvent event) {
-        String port = serverPort.getText();
+        int port = Integer.parseInt(serverPort.getText());
         server.setPort(port);
         server.setService(new ConnectionlessServerService() {
             @Override
@@ -169,7 +169,6 @@ public class UDPServerController implements Initializable {
         // 点击时将当前的clientAddr设置为选中的dstAddr
         clientListBox.getSelectionModel().selectedItemProperty().addListener((observableValue, preChannel, currentChannel) -> targetClientAddr = currentChannel);
     }
-
 
     static class InetSocketAddressCellFactory extends ListCell<InetSocketAddress> {
         @Override

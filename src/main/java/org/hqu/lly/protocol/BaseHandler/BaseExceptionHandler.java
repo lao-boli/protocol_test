@@ -15,9 +15,9 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 public class BaseExceptionHandler extends ChannelInboundHandlerAdapter {
+    protected String name = "a";
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        log.error("occur exception: {}", cause.toString());
         ctx.channel().close();
     }
 }

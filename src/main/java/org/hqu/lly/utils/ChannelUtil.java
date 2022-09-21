@@ -29,10 +29,10 @@ public class ChannelUtil {
     }
 
     public static boolean isAppClientChannel(ChannelHandlerContext ctx) {
-        return AppChannelGroup.clientChannelSet.contains(ctx.channel().remoteAddress().toString());
+        return AppChannelGroup.TCPClientChannelSet.contains(ctx.channel().remoteAddress().toString());
     }
 
     public static boolean isAppServerChannel(ChannelHandlerContext ctx) {
-        return AppChannelGroup.serverChannelSet.contains(ctx.channel().remoteAddress().toString());
+        return AppChannelGroup.TCPServerChannelSet.contains(ctx.channel().remoteAddress().toString());
     }
 }

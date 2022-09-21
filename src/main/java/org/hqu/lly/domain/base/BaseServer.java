@@ -20,7 +20,7 @@ public abstract class BaseServer implements Callable<Channel> {
 
     public abstract void destroy();
 
-    public abstract void setPort(String port);
+    public abstract void setPort(int port);
 
     public abstract void setService(ServerService serverService);
 

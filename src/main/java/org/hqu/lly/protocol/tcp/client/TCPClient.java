@@ -15,7 +15,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
 import org.hqu.lly.domain.base.BaseClient;
-import org.hqu.lly.protocol.tcp.client.handler.TCPClientConnectHandler;
+import org.hqu.lly.protocol.BaseHandler.BaseClientConnectHandler;
 import org.hqu.lly.protocol.tcp.client.handler.TCPClientExceptionHandler;
 import org.hqu.lly.protocol.tcp.client.handler.TCPClientMessageHandler;
 import org.hqu.lly.protocol.tcp.codec.LTCEncoder;
@@ -79,7 +79,7 @@ public class TCPClient extends BaseClient {
                     .handler(new ChannelInitializer<SocketChannel>() {
                         @Override
                         protected void initChannel(SocketChannel ch) throws Exception {
-                            ch.pipeline().addLast("TCPClientConnectHandler", new TCPClientConnectHandler(clientService));
+                            ch.pipeline().addLast("TCPClientConnectHandler", new BaseClientConnectHandler(clientService));
                             ch.pipeline().addLast("MessageDecoderSelector", new MessageDecoderSelector());
                             ch.pipeline().addLast("LTCDecoder", new LengthFieldBasedFrameDecoder(1024 * 100, 4, 4, 0, 8));
                             ch.pipeline().addLast("StringDecoder", new StringDecoder());
@@ -93,10 +93,10 @@ public class TCPClient extends BaseClient {
             ChannelFuture channelFuture = bootstrap.connect(host, port).sync();
             channel = channelFuture.channel();
             channel.closeFuture().addListener(promise -> {
-                AppChannelGroup.clientChannelSet.remove(channel.localAddress().toString());
+                AppChannelGroup.TCPClientChannelSet.remove(channel.localAddress().toString());
                 eventLoopGroup.shutdownGracefully();
             });
-            AppChannelGroup.clientChannelSet.add(channel.localAddress().toString());
+            AppChannelGroup.TCPClientChannelSet.add(channel.localAddress().toString());
         } catch (Exception e) {
             eventLoopGroup.shutdownGracefully();
 
