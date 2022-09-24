@@ -8,9 +8,11 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Region;
 import org.hqu.lly.constant.ProtocolConsts;
 import org.hqu.lly.protocol.tcp.client.TCPClient;
 import org.hqu.lly.service.impl.ClientService;
+import org.hqu.lly.utils.UIUtil;
 
 import java.net.URI;
 import java.net.URL;
@@ -46,9 +48,15 @@ public class TCPClientController implements Initializable {
 
     @FXML
     private Button disconnectButton;
+    @FXML
+    private ToggleButton softWrapBtn;
+    @FXML
+    private Button clearBtn;
 
     @FXML
-    private ListView<String> msgList;
+    private ListView<Label> msgList;
+
+    private boolean softWrap = false;
 
     private TCPClient client = new TCPClient();
 
@@ -81,8 +89,8 @@ public class TCPClientController implements Initializable {
             @Override
             public void updateMsgList(String msg) {
                 Platform.runLater(() -> {
-                    items.add(msg);
-                    msgList.setItems(items);
+                    Label msgLabel = UIUtil.getMsgLabel(msg, msgList.getWidth() - 20, softWrap);
+                    msgList.getItems().add(msgLabel);
                 });
             }
         });
@@ -134,12 +142,38 @@ public class TCPClientController implements Initializable {
         client.sendMessage(msgInput.getText());
     }
 
+
+    @FXML
+    void clearMsg(MouseEvent event) {
+        msgList.getItems().remove(0, msgList.getItems().size());
+        msgList.refresh();
+
+    }
+
+    @FXML
+    void handleSoftWrap(MouseEvent event) {
+        softWrap = !softWrap;
+        double labelWidth = softWrap ? msgList.getWidth() - 20 : Region.USE_COMPUTED_SIZE;
+        ObservableList<Label> msgItems = msgList.getItems();
+        msgItems.forEach(msg -> {
+            UIUtil.changeMsgLabel(msg, labelWidth, softWrap);
+        });
+        Platform.runLater(() -> {
+            msgList.setItems(msgItems);
+        });
+    }
+
     public void destroy() {
         client.destroy();
     }
 
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        softWrapBtn.setTooltip(UIUtil.getTooltip("soft-wrap", 300));
+        clearBtn.setTooltip(UIUtil.getTooltip("clear-all", 300));
 
+        msgList.setContextMenu(UIUtil.getMsgListMenu(msgList));
     }
+
 }

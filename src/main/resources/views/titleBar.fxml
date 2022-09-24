@@ -3,16 +3,23 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
-<AnchorPane fx:id="titleBar" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onMouseMoved="#initDrag" prefHeight="35.0" prefWidth="600.0" styleClass="root" stylesheets="@../css/titleBar.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.hqu.lly.view.controller.TitleBarController">
+<AnchorPane fx:id="titleBar" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+            onMouseMoved="#initDrag" prefHeight="35.0" prefWidth="620.0" styleClass="root"
+            stylesheets="@../css/titleBar.css" xmlns="http://javafx.com/javafx/8.0.171"
+            xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.hqu.lly.view.controller.TitleBarController">
    <children>
-      <Label fx:id="closeLabel" alignment="CENTER" layoutX="565.0" onMouseClicked="#closeWindow" prefHeight="35.0" prefWidth="35.0" styleClass="close-button" stylesheets="@../css/titleBar.css" text="×" textAlignment="RIGHT" textFill="#f4f3f3" textOverrun="CENTER_ELLIPSIS">
+      <Label fx:id="closeLabel" alignment="CENTER" layoutX="585.0" onMouseClicked="#closeWindow" prefHeight="35.0"
+             prefWidth="35.0" styleClass="close-button" stylesheets="@../css/titleBar.css" text="×"
+             textAlignment="RIGHT" textFill="#f4f3f3" textOverrun="CENTER_ELLIPSIS">
          <font>
-            <Font size="24.0" />
+            <Font size="24.0"/>
          </font>
       </Label>
-      <Label fx:id="minimizeLabel" alignment="CENTER" layoutX="530.0" onMouseClicked="#minimizeWindow" prefHeight="35.0" prefWidth="35.0" styleClass="close-button" stylesheets="@../css/titleBar.css" text="—" textAlignment="RIGHT" textFill="#f4f3f3" textOverrun="CENTER_ELLIPSIS">
+      <Label fx:id="minimizeLabel" alignment="CENTER" layoutX="550.0" layoutY="1.0" onMouseClicked="#minimizeWindow"
+             prefHeight="35.0" prefWidth="35.0" styleClass="close-button" stylesheets="@../css/titleBar.css" text="—"
+             textAlignment="RIGHT" textFill="#f4f3f3" textOverrun="CENTER_ELLIPSIS">
          <font>
-            <Font size="14.0" />
+            <Font size="14.0"/>
          </font>
       </Label>
       <Label fx:id="titleLabel" layoutX="8.0" layoutY="1.0" prefHeight="35.0" prefWidth="91.0" styleClass="title" stylesheets="@../css/titleBar.css" text="协议测试工具" textFill="#f4f3f3" textOverrun="CENTER_ELLIPSIS" />

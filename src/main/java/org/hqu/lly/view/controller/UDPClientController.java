@@ -8,9 +8,11 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Region;
 import org.hqu.lly.constant.ProtocolConsts;
 import org.hqu.lly.protocol.udp.client.UDPClient;
 import org.hqu.lly.service.impl.ClientService;
+import org.hqu.lly.utils.UIUtil;
 
 import java.net.URI;
 import java.net.URL;
@@ -29,32 +31,28 @@ import java.util.concurrent.FutureTask;
  */
 public class UDPClientController implements Initializable {
 
+    ObservableList<Label> items = FXCollections.observableArrayList();
     @FXML
     private TextField remoteAddressInput;
-
     @FXML
     private Button connectButton;
-
     @FXML
     private Label errorMsgLabel;
-
     @FXML
     private TextArea msgInput;
-
     @FXML
     private Button sendMsgButton;
-
     @FXML
     private Button disconnectButton;
-
     @FXML
-    private ListView<String> msgList;
-
+    private ToggleButton softWrapBtn;
+    @FXML
+    private Button clearBtn;
+    @FXML
+    private ListView<Label> msgList;
     private UDPClient client = new UDPClient();
-
     private String protocol = ProtocolConsts.UDP;
-
-    ObservableList<String> items = FXCollections.observableArrayList();
+    private boolean softWrap = false;
 
     @FXML
     void confirmAddr(MouseEvent event) {
@@ -81,8 +79,8 @@ public class UDPClientController implements Initializable {
             @Override
             public void updateMsgList(String msg) {
                 Platform.runLater(() -> {
-                    items.add(msg);
-                    msgList.setItems(items);
+                    Label msgLabel = UIUtil.getMsgLabel(msg, msgList.getWidth() - 20, softWrap);
+                    msgList.getItems().add(msgLabel);
                 });
             }
         });
@@ -132,7 +130,26 @@ public class UDPClientController implements Initializable {
     @FXML
     void sendMsg(MouseEvent event) {
         client.sendMessage(msgInput.getText());
+    }
 
+    @FXML
+    void clearMsg(MouseEvent event) {
+        msgList.getItems().remove(0, msgList.getItems().size());
+        msgList.refresh();
+
+    }
+
+    @FXML
+    void handleSoftWrap(MouseEvent event) {
+        softWrap = !softWrap;
+        double labelWidth = softWrap ? msgList.getWidth() - 20 : Region.USE_COMPUTED_SIZE;
+        ObservableList<Label> msgItems = msgList.getItems();
+        msgItems.forEach(msg -> {
+            UIUtil.changeMsgLabel(msg, labelWidth, softWrap);
+        });
+        Platform.runLater(() -> {
+            msgList.setItems(msgItems);
+        });
     }
 
     public void destroy() {
@@ -141,6 +158,10 @@ public class UDPClientController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        softWrapBtn.setTooltip(UIUtil.getTooltip("soft-wrap", 300));
+        clearBtn.setTooltip(UIUtil.getTooltip("clear-all", 300));
 
+        msgList.setContextMenu(UIUtil.getMsgListMenu(msgList));
     }
+
 }

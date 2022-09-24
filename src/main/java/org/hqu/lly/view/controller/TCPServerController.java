@@ -8,8 +8,10 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Region;
 import org.hqu.lly.protocol.tcp.server.TCPServer;
 import org.hqu.lly.service.impl.ConnectedServerService;
+import org.hqu.lly.utils.UIUtil;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -27,37 +29,30 @@ import java.util.concurrent.FutureTask;
  */
 public class TCPServerController implements Initializable {
 
+    ObservableList<Channel> channelList = FXCollections.observableArrayList();
     @FXML
     private TextField serverPort;
-
     @FXML
     private Button confirmButton;
-
     @FXML
     private Label errorMsgLabel;
-
     @FXML
     private TextArea msgInput;
-
     @FXML
     private Button sendMsgButton;
-
     @FXML
     private Button closeServerButton;
-
     @FXML
-    private ListView<String> msgListBox;
-
+    private ListView<Label> msgList;
     @FXML
     private ListView<Channel> clientListBox;
-
+    @FXML
+    private ToggleButton softWrapBtn;
+    @FXML
+    private Button clearBtn;
     private TCPServer server = new TCPServer();
-
     private Channel targetClientChannel = null;
-
-    ObservableList<String> msgList = FXCollections.observableArrayList();
-
-    ObservableList<Channel> channelList = FXCollections.observableArrayList();
+    private boolean softWrap;
 
 
     @FXML
@@ -100,8 +95,8 @@ public class TCPServerController implements Initializable {
             @Override
             public void updateMsgList(String msg) {
                 Platform.runLater(() -> {
-                    msgList.add(msg);
-                    msgListBox.setItems(msgList);
+                    Label msgLabel = UIUtil.getMsgLabel(msg, msgList.getWidth() - 20, softWrap);
+                    msgList.getItems().add(msgLabel);
                 });
             }
         });
@@ -156,6 +151,26 @@ public class TCPServerController implements Initializable {
 
     }
 
+    @FXML
+    void clearMsg(MouseEvent event) {
+        msgList.getItems().remove(0, msgList.getItems().size());
+        msgList.refresh();
+
+    }
+
+    @FXML
+    void handleSoftWrap(MouseEvent event) {
+        softWrap = !softWrap;
+        double labelWidth = softWrap ? msgList.getWidth() - 20 : Region.USE_COMPUTED_SIZE;
+        ObservableList<Label> msgItems = msgList.getItems();
+        msgItems.forEach(msg -> {
+            UIUtil.changeMsgLabel(msg, labelWidth, softWrap);
+        });
+        Platform.runLater(() -> {
+            msgList.setItems(msgItems);
+        });
+    }
+
     public void destroy() {
         server.destroy();
     }
@@ -167,10 +182,16 @@ public class TCPServerController implements Initializable {
         clientListBox.setCellFactory(channelListView -> new ChannelCellFactory());
         // 点击时将当前的clientChannel设置为选中的channel
         clientListBox.getSelectionModel().selectedItemProperty().addListener((observableValue, preChannel, currentChannel) -> targetClientChannel = currentChannel);
+
+        softWrapBtn.setTooltip(UIUtil.getTooltip("soft-wrap", 300));
+        clearBtn.setTooltip(UIUtil.getTooltip("clear-all", 300));
+
+        msgList.setContextMenu(UIUtil.getMsgListMenu(msgList));
     }
 
 
     static class ChannelCellFactory extends ListCell<Channel> {
+
         @Override
         protected void updateItem(Channel channel, boolean empty) {
             super.updateItem(channel, empty);
@@ -182,6 +203,7 @@ public class TCPServerController implements Initializable {
                 }
             });
         }
+
     }
 
 }

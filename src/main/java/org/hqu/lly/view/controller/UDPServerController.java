@@ -8,8 +8,10 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Region;
 import org.hqu.lly.protocol.udp.server.UDPServer;
 import org.hqu.lly.service.impl.ConnectionlessServerService;
+import org.hqu.lly.utils.UIUtil;
 
 import java.net.InetSocketAddress;
 import java.net.URL;
@@ -28,38 +30,30 @@ import java.util.concurrent.FutureTask;
  */
 public class UDPServerController implements Initializable {
 
+    ObservableList<InetSocketAddress> AddressList = FXCollections.observableArrayList();
     @FXML
     private TextField serverPort;
-
     @FXML
     private Button confirmButton;
-
     @FXML
     private Label errorMsgLabel;
-
     @FXML
     private TextArea msgInput;
-
     @FXML
     private Button sendMsgButton;
-
     @FXML
     private Button closeServerButton;
-
     @FXML
-    private ListView<String> msgListBox;
-
+    private ToggleButton softWrapBtn;
+    @FXML
+    private Button clearBtn;
+    @FXML
+    private ListView<Label> msgList;
     @FXML
     private ListView<InetSocketAddress> clientListBox;
-
     private UDPServer server = new UDPServer();
-
     private InetSocketAddress targetClientAddr = null;
-
-    ObservableList<String> msgList = FXCollections.observableArrayList();
-
-    ObservableList<InetSocketAddress> AddressList = FXCollections.observableArrayList();
-
+    private boolean softWrap;
 
     @FXML
     void startServer(MouseEvent event) {
@@ -102,8 +96,8 @@ public class UDPServerController implements Initializable {
             @Override
             public void updateMsgList(String msg) {
                 Platform.runLater(() -> {
-                    msgList.add(msg);
-                    msgListBox.setItems(msgList);
+                    Label msgLabel = UIUtil.getMsgLabel(msg, msgList.getWidth() - 20, softWrap);
+                    msgList.getItems().add(msgLabel);
                 });
             }
         });
@@ -157,6 +151,27 @@ public class UDPServerController implements Initializable {
         }
     }
 
+
+    @FXML
+    void clearMsg(MouseEvent event) {
+        msgList.getItems().remove(0, msgList.getItems().size());
+        msgList.refresh();
+
+    }
+
+    @FXML
+    void handleSoftWrap(MouseEvent event) {
+        softWrap = !softWrap;
+        double labelWidth = softWrap ? msgList.getWidth() - 20 : Region.USE_COMPUTED_SIZE;
+        ObservableList<Label> msgItems = msgList.getItems();
+        msgItems.forEach(msg -> {
+            UIUtil.changeMsgLabel(msg, labelWidth, softWrap);
+        });
+        Platform.runLater(() -> {
+            msgList.setItems(msgItems);
+        });
+    }
+
     public void destroy() {
         server.destroy();
     }
@@ -168,9 +183,15 @@ public class UDPServerController implements Initializable {
         clientListBox.setCellFactory(channelListView -> new InetSocketAddressCellFactory());
         // 点击时将当前的clientAddr设置为选中的dstAddr
         clientListBox.getSelectionModel().selectedItemProperty().addListener((observableValue, preChannel, currentChannel) -> targetClientAddr = currentChannel);
+
+        softWrapBtn.setTooltip(UIUtil.getTooltip("soft-wrap", 300));
+        clearBtn.setTooltip(UIUtil.getTooltip("clear-all", 300));
+
+        msgList.setContextMenu(UIUtil.getMsgListMenu(msgList));
     }
 
     static class InetSocketAddressCellFactory extends ListCell<InetSocketAddress> {
+
         @Override
         protected void updateItem(InetSocketAddress dstAddr, boolean empty) {
             super.updateItem(dstAddr, empty);
@@ -182,6 +203,7 @@ public class UDPServerController implements Initializable {
                 }
             });
         }
+
     }
 
 }
