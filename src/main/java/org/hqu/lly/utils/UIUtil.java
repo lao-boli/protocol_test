@@ -5,7 +5,9 @@ import javafx.scene.control.*;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.layout.Region;
+import javafx.stage.Stage;
 import javafx.util.Duration;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * <p>
@@ -16,12 +18,30 @@ import javafx.util.Duration;
  * @version 1.0
  * @date 2022/9/22 14:27
  */
+@Slf4j
 public class UIUtil {
 
     /**
      * 系统剪贴板
      */
     private static Clipboard clipboard = Clipboard.getSystemClipboard();
+
+    /**
+     * 应用程序主窗口
+     */
+    private static Stage primaryStage;
+
+    public static void setPrimaryStage(Stage primaryStage) {
+        if (getPrimaryStage() == null) {
+            UIUtil.primaryStage = primaryStage;
+        } else {
+            log.warn("primaryStage can only be set once");
+        }
+    }
+
+    public static Stage getPrimaryStage() {
+        return primaryStage;
+    }
 
     /**
      * <p>

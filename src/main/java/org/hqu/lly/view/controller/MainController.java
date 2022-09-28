@@ -22,7 +22,7 @@ import java.util.ResourceBundle;
  * 应用程序主面板
  * <p>
  *
- * @author liulingyu
+ * @author hqully
  * @version 1.0
  * @date 2022/8/3 20:07
  */
@@ -51,8 +51,6 @@ public class MainController implements Initializable {
     }
 
     private void initSideBar() {
-        String contentPanePath = "views/TabPane.fxml";
-
         TreeItem<String> root = new TreeItem<>("root");
 
         TreeItem<String> tcp = new TreeItem<>("tcp");

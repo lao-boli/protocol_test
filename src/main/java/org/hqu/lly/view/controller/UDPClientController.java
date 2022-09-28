@@ -9,9 +9,13 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
+import javafx.stage.Stage;
+import lombok.extern.slf4j.Slf4j;
 import org.hqu.lly.constant.ProtocolConsts;
+import org.hqu.lly.factory.ScheduleSendDialogFactory;
 import org.hqu.lly.protocol.udp.client.UDPClient;
 import org.hqu.lly.service.impl.ClientService;
+import org.hqu.lly.service.impl.StageBridger;
 import org.hqu.lly.utils.UIUtil;
 
 import java.net.URI;
@@ -29,6 +33,7 @@ import java.util.concurrent.FutureTask;
  * @version 1.0
  * @date 2022-08-10 10:31
  */
+@Slf4j
 public class UDPClientController implements Initializable {
 
     ObservableList<Label> items = FXCollections.observableArrayList();
@@ -53,6 +58,7 @@ public class UDPClientController implements Initializable {
     private UDPClient client = new UDPClient();
     private String protocol = ProtocolConsts.UDP;
     private boolean softWrap = false;
+    private Stage scheduleSendDialog;
 
     @FXML
     void confirmAddr(MouseEvent event) {
@@ -152,12 +158,30 @@ public class UDPClientController implements Initializable {
         });
     }
 
+    @FXML
+    void popScheduleSendDialog(MouseEvent event) {
+        scheduleSendDialog.show();
+        scheduleSendDialog.setAlwaysOnTop(true);
+    }
+
     public void destroy() {
         client.destroy();
     }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        scheduleSendDialog = ScheduleSendDialogFactory.create(new StageBridger() {
+            @Override
+            public void fireTask() {
+                client.sendMessage(msgInput.getText());
+            }
+
+            @Override
+            public void allTasksCompleted() {
+
+            }
+        });
+
         softWrapBtn.setTooltip(UIUtil.getTooltip("soft-wrap", 300));
         clearBtn.setTooltip(UIUtil.getTooltip("clear-all", 300));
 
