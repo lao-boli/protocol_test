@@ -31,7 +31,7 @@
             <Label layoutX="130.0" layoutY="4.0" text="ms"/>
          </children>
       </AnchorPane>
-      <ToggleButton fx:id="sendBtn" layoutX="297.0" layoutY="263.0" mnemonicParsing="false"
-                    onMouseClicked="#handleScheduleSend" text="发送消息"/>
+      <Button fx:id="saveSettingBtn" layoutX="296.0" layoutY="263.0" mnemonicParsing="false"
+              onMouseClicked="#saveSetting" text="保存设置"/>
    </children>
 </AnchorPane>

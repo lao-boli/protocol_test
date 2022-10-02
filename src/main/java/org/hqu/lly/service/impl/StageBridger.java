@@ -1,6 +1,6 @@
 package org.hqu.lly.service.impl;
 
-import org.hqu.lly.service.UIService;
+import org.hqu.lly.service.TaskService;
 
 /**
  * <p>
@@ -11,7 +11,7 @@ import org.hqu.lly.service.UIService;
  * @version 1.0
  * @date 2022/9/25 20:29
  */
-public abstract class StageBridger implements UIService {
+public abstract class StageBridger implements TaskService {
 
 
     /**
@@ -30,25 +30,19 @@ public abstract class StageBridger implements UIService {
 
     /**
      * <p>
-     * 执行另一窗口的任务
+     * 接收其他窗口传递的数据
      * </p>
      *
-     * @return void
-     * @date 2022-09-26 08:27:30 <br>
+     * @return {@link T}
+     * @date 2022-09-29 10:54:40 <br>
      * @author hqully <br>
      */
-    public abstract void fireTask();
+    public <T> T receiveData(T data) {
+        return data;
+    }
 
-    /**
-     * <p>
-     * 所有任务都完成后的回调
-     * </p>
-     *
-     * @return void
-     * @date 2022-09-28 15:56:49 <br>
-     * @author hqully <br>
-     */
-    public abstract void allTasksCompleted();
+    @Override
+    public abstract void fireTask();
 
 
 }

@@ -7,7 +7,7 @@ import javafx.scene.Scene;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.hqu.lly.constant.ResLocConsts;
-import org.hqu.lly.service.impl.StageBridger;
+import org.hqu.lly.domain.bean.ScheduledSendConfig;
 import org.hqu.lly.view.controller.ScheduleSendController;
 
 import java.io.IOException;
@@ -21,17 +21,17 @@ import java.io.IOException;
  * @version 1.0
  * @date 2022/9/25 19:33
  */
-public class ScheduleSendDialogFactory {
+public class SendSettingPaneFactory {
 
-    public static Stage create(StageBridger bridger) {
+    public static Stage create(ScheduledSendConfig sendConfig) {
         try {
             Stage dialogStage = new Stage();
 //            dialogStage.initStyle(StageStyle.TRANSPARENT);
-            FXMLLoader loader = new FXMLLoader(ScheduleSendDialogFactory.class.getClassLoader().getResource(ResLocConsts.SCHEDULE_SEND_DIALOG));
+            FXMLLoader loader = new FXMLLoader(SendSettingPaneFactory.class.getClassLoader().getResource(ResLocConsts.SCHEDULE_SEND_DIALOG));
             Parent contentPane = loader.load();
 
             ScheduleSendController controller = loader.getController();
-            controller.setBridger(bridger);
+            controller.setSendConfig(sendConfig);
 
             Scene scene = new Scene(contentPane, 400, 300);
             DarculaFX.applyDarculaStyle(scene);

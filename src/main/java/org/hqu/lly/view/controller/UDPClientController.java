@@ -2,7 +2,6 @@ package org.hqu.lly.view.controller;
 
 import io.netty.channel.Channel;
 import javafx.application.Platform;
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -12,10 +11,14 @@ import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
 import org.hqu.lly.constant.ProtocolConsts;
-import org.hqu.lly.factory.ScheduleSendDialogFactory;
+import org.hqu.lly.domain.bean.ScheduledSendConfig;
+import org.hqu.lly.factory.SendSettingPaneFactory;
+import org.hqu.lly.factory.SendTaskFactory;
 import org.hqu.lly.protocol.udp.client.UDPClient;
+import org.hqu.lly.service.ScheduledTaskService;
+import org.hqu.lly.service.TaskService;
 import org.hqu.lly.service.impl.ClientService;
-import org.hqu.lly.service.impl.StageBridger;
+import org.hqu.lly.service.impl.ScheduledSendService;
 import org.hqu.lly.utils.UIUtil;
 
 import java.net.URI;
@@ -36,7 +39,6 @@ import java.util.concurrent.FutureTask;
 @Slf4j
 public class UDPClientController implements Initializable {
 
-    ObservableList<Label> items = FXCollections.observableArrayList();
     @FXML
     private TextField remoteAddressInput;
     @FXML
@@ -48,17 +50,24 @@ public class UDPClientController implements Initializable {
     @FXML
     private Button sendMsgButton;
     @FXML
+    private ToggleButton scheduleSendBtn;
+    @FXML
     private Button disconnectButton;
     @FXML
     private ToggleButton softWrapBtn;
     @FXML
     private Button clearBtn;
     @FXML
+    private Button sendSettingBtn;
+    @FXML
     private ListView<Label> msgList;
     private UDPClient client = new UDPClient();
     private String protocol = ProtocolConsts.UDP;
     private boolean softWrap = false;
-    private Stage scheduleSendDialog;
+    private Stage sendSettingPane;
+    private ScheduledSendService scheduledService;
+    private ScheduledSendConfig sendConfig = new ScheduledSendConfig();
+    private ScheduledTaskService scheduledTaskService;
 
     @FXML
     void confirmAddr(MouseEvent event) {
@@ -114,12 +123,13 @@ public class UDPClientController implements Initializable {
             connectButton.setDisable(true);
             disconnectButton.setDisable(false);
             sendMsgButton.setDisable(false);
+            scheduleSendBtn.setDisable(false);
         });
     }
 
     @FXML
     void disconnect(MouseEvent event) {
-        client.destroy();
+        destroy();
         setInactiveUI();
     }
 
@@ -130,6 +140,7 @@ public class UDPClientController implements Initializable {
             connectButton.setDisable(false);
             disconnectButton.setDisable(true);
             sendMsgButton.setDisable(true);
+            scheduleSendBtn.setDisable(true);
         });
     }
 
@@ -159,31 +170,54 @@ public class UDPClientController implements Initializable {
     }
 
     @FXML
-    void popScheduleSendDialog(MouseEvent event) {
-        scheduleSendDialog.show();
-        scheduleSendDialog.setAlwaysOnTop(true);
+    void scheduleSend(MouseEvent event) {
+        if (scheduleSendBtn.isSelected()) {
+            scheduledService = new ScheduledSendService(sendConfig, scheduledTaskService);
+            scheduledService.start();
+        }
+        if (!scheduleSendBtn.isSelected()) {
+            scheduledService.cancel();
+        }
+    }
+
+    @FXML
+    void showSendSetting(MouseEvent event) {
+        sendSettingPane.show();
     }
 
     public void destroy() {
+        if (scheduledService.isRunning()) {
+            scheduledService.cancel();
+            scheduleSendBtn.setSelected(false);
+        }
         client.destroy();
     }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        scheduleSendDialog = ScheduleSendDialogFactory.create(new StageBridger() {
+        scheduledTaskService = new ScheduledTaskService() {
+            @Override
+            public void onTaskStart() {
+                scheduleSendBtn.setDisable(false);
+            }
+
+            @Override
+            public void onAllTasksCompleted() {
+                scheduleSendBtn.setSelected(false);
+            }
+        };
+        sendConfig.setTaskFactory(new SendTaskFactory(new TaskService() {
             @Override
             public void fireTask() {
                 client.sendMessage(msgInput.getText());
             }
+        }));
 
-            @Override
-            public void allTasksCompleted() {
-
-            }
-        });
+        sendSettingPane = SendSettingPaneFactory.create(sendConfig);
 
         softWrapBtn.setTooltip(UIUtil.getTooltip("soft-wrap", 300));
         clearBtn.setTooltip(UIUtil.getTooltip("clear-all", 300));
+        sendSettingBtn.setTooltip(UIUtil.getTooltip("send-setting", 300));
 
         msgList.setContextMenu(UIUtil.getMsgListMenu(msgList));
     }

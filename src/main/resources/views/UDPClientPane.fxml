@@ -2,8 +2,7 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.*?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="364.0"
@@ -15,7 +14,7 @@
                    text="127.0.0.1:10250"/>
         <Button fx:id="connectButton" layoutX="325.0" layoutY="19.0" mnemonicParsing="false"
                 onMouseClicked="#confirmAddr" text="确定"/>
-        <TextArea fx:id="msgInput" disable="true" layoutX="38.0" layoutY="268.0" prefHeight="52.0" prefWidth="430.0"
+        <TextArea fx:id="msgInput" disable="true" layoutX="43.0" layoutY="268.0" prefHeight="52.0" prefWidth="425.0"
                   text="test text 123" wrapText="true"/>
         <Button fx:id="sendMsgButton" disable="true" layoutX="403.0" layoutY="327.0" mnemonicParsing="false"
                 onMouseClicked="#sendMsg" text="发送消息"/>
@@ -23,7 +22,8 @@
                 onMouseClicked="#disconnect" text="断开连接"/>
         <ListView fx:id="msgList" layoutX="41.0" layoutY="68.0" prefHeight="189.0" prefWidth="425.0"/>
         <Label fx:id="errorMsgLabel" layoutX="64.0" layoutY="47.0" text="" textFill="#c65551"/>
-        <VBox layoutX="14.0" layoutY="68.0" prefHeight="189.0" prefWidth="20.0" spacing="3.0">
+        <VBox layoutX="14.0" layoutY="68.0" prefHeight="189.0" prefWidth="20.0" spacing="3.0" styleClass="sidebar"
+              stylesheets="@../css/TabPane.css">
             <children>
                 <ToggleButton fx:id="softWrapBtn" contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0"
                               mnemonicParsing="false" onMouseClicked="#handleSoftWrap" prefHeight="20.0"
@@ -40,25 +40,37 @@
                     </graphic>
             </ToggleButton>
                 <Button fx:id="clearBtn" mnemonicParsing="false" onMouseClicked="#clearMsg" prefHeight="20.0"
-                        prefWidth="20.0" styleClass="clear-button">
+                        prefWidth="20.0" styleClass="icon-button">
                     <padding>
                         <Insets bottom="1.0" left="1.0" right="1.0" top="1.0"/>
                     </padding>
                     <graphic>
-                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true"
-                                   styleClass="clear-button">
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                             <image>
                                 <Image url="@../icon/clear.png"/>
                             </image>
                         </ImageView>
                     </graphic>
-            </Button>
-         </children>
-         <padding>
-             <Insets top="-1.0"/>
-         </padding>
-      </VBox>
-        <Button fx:id="scheduleSendBtn" layoutX="333.0" layoutY="327.0" mnemonicParsing="false"
-                onMouseClicked="#popScheduleSendDialog" text="定时发送"/>
-   </children>
+                </Button>
+            </children>
+            <padding>
+                <Insets top="-1.0"/>
+            </padding>
+        </VBox>
+        <ToggleButton fx:id="scheduleSendBtn" layoutX="333.0" layoutY="327.0" mnemonicParsing="false"
+                      onMouseClicked="#scheduleSend" text="定时发送"/>
+        <Button fx:id="sendSettingBtn" layoutX="14.0" layoutY="270.0" mnemonicParsing="false"
+                onMouseClicked="#showSendSetting" prefHeight="20.0" prefWidth="20.0" styleClass="icon-button">
+            <padding>
+                <Insets bottom="1.0" left="1.0" right="1.0" top="1.0"/>
+            </padding>
+            <graphic>
+                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                    <image>
+                        <Image url="@../icon/setting.png"/>
+                    </image>
+                </ImageView>
+            </graphic>
+        </Button>
+    </children>
 </AnchorPane>
