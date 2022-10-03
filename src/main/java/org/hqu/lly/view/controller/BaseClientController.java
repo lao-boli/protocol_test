@@ -1,29 +1,43 @@
 package org.hqu.lly.view.controller;
 
-import org.hqu.lly.constant.ProtocolConsts;
-import org.hqu.lly.protocol.websocket.client.WebSocketClient;
+import io.netty.channel.Channel;
+import javafx.application.Platform;
+import javafx.collections.ObservableList;
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.scene.control.*;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Region;
+import javafx.stage.Stage;
+import lombok.extern.slf4j.Slf4j;
+import org.hqu.lly.domain.base.BaseClient;
+import org.hqu.lly.domain.bean.ScheduledSendConfig;
+import org.hqu.lly.factory.SendSettingPaneFactory;
+import org.hqu.lly.factory.SendTaskFactory;
+import org.hqu.lly.service.ScheduledTaskService;
+import org.hqu.lly.service.TaskService;
+import org.hqu.lly.service.impl.ClientService;
+import org.hqu.lly.service.impl.ScheduledSendService;
+import org.hqu.lly.utils.UIUtil;
+
+import java.net.URI;
+import java.net.URL;
+import java.util.ResourceBundle;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.FutureTask;
 
 /**
  * <p>
- * WebSocket客户端控制器
- * </p>
+ * 客户端控制器基类
+ * <p>
  *
  * @author hqully
  * @version 1.0
- * @date 2022-08-10 10:36
+ * @date 2022/10/2 20:20
  */
-public class WebSocketClientController extends BaseClientController<WebSocketClient>{
+@Slf4j
+public abstract class BaseClientController<T extends BaseClient> implements Initializable {
 
-    @Override
-    protected void setProtocol() {
-        protocol = ProtocolConsts.WEB_SOCKET;
-    }
-
-    @Override
-    protected void setClient() {
-        client = new WebSocketClient();
-    }
-/*
     @FXML
     private TextField remoteAddressInput;
     @FXML
@@ -32,7 +46,6 @@ public class WebSocketClientController extends BaseClientController<WebSocketCli
     private Button disconnectButton;
     @FXML
     private Label errorMsgLabel;
-
     @FXML
     private ListView<Label> msgList;
     @FXML
@@ -41,7 +54,6 @@ public class WebSocketClientController extends BaseClientController<WebSocketCli
     private Button sendMsgButton;
     @FXML
     private ToggleButton scheduleSendBtn;
-
     @FXML
     private ToggleButton softWrapBtn;
     @FXML
@@ -49,15 +61,26 @@ public class WebSocketClientController extends BaseClientController<WebSocketCli
     @FXML
     private Button sendSettingBtn;
 
-    private WebSocketClient client = new WebSocketClient();
-    private String protocol = ProtocolConsts.WEB_SOCKET;
+    protected boolean softWrap = false;
 
-    private boolean softWrap;
+    protected Stage sendSettingPane;
 
-    private Stage sendSettingPane;
-    private ScheduledSendService scheduledService;
-    private ScheduledSendConfig sendConfig = new ScheduledSendConfig();
-    private ScheduledTaskService scheduledTaskService;
+    protected ScheduledSendService scheduledService;
+    protected ScheduledSendConfig sendConfig = new ScheduledSendConfig();
+    protected ScheduledTaskService scheduledTaskService;
+
+    protected T client;
+    protected String protocol;
+
+    public BaseClientController() {
+        setProtocol();
+        setClient();
+    }
+
+    protected abstract void setProtocol();
+
+    protected abstract void setClient();
+
 
     @FXML
     void confirmAddr(MouseEvent event) {
@@ -77,14 +100,14 @@ public class WebSocketClientController extends BaseClientController<WebSocketCli
 
             @Override
             public void onClose() {
-                destroy();
+                client.destroy();
                 setInactiveUI();
             }
 
             @Override
             public void updateMsgList(String msg) {
                 Platform.runLater(() -> {
-                    Label msgLabel = UIUtil.getMsgLabel(msg, msgList.getWidth() - 20, softWrap);
+                    Label msgLabel = UIUtil.getMsgLabel(msg, UIUtil.getFixMsgLabelWidth(msgList.getWidth()), softWrap);
                     msgList.getItems().add(msgLabel);
                 });
             }
@@ -106,38 +129,16 @@ public class WebSocketClientController extends BaseClientController<WebSocketCli
         }
     }
 
-    private void setActiveUI() {
-        Platform.runLater(() -> {
-            remoteAddressInput.setDisable(true);
-            msgInput.setDisable(false);
-            connectButton.setDisable(true);
-            disconnectButton.setDisable(false);
-            sendMsgButton.setDisable(false);
-            scheduleSendBtn.setDisable(false);
-        });
-    }
-
     @FXML
     void disconnect(MouseEvent event) {
-        client.destroy();
+        destroy();
         setInactiveUI();
     }
 
-    private void setInactiveUI() {
-        Platform.runLater(() -> {
-            remoteAddressInput.setDisable(false);
-            msgInput.setDisable(true);
-            connectButton.setDisable(false);
-            disconnectButton.setDisable(true);
-            sendMsgButton.setDisable(true);
-            scheduleSendBtn.setDisable(false);
-        });
-    }
 
     @FXML
     void sendMsg(MouseEvent event) {
         client.sendMessage(msgInput.getText());
-
     }
 
     @FXML
@@ -149,7 +150,7 @@ public class WebSocketClientController extends BaseClientController<WebSocketCli
     @FXML
     void handleSoftWrap(MouseEvent event) {
         softWrap = !softWrap;
-        double labelWidth = softWrap ? UIUtil.getFixMsgLabelWidth(msgList.getWidth()): Region.USE_COMPUTED_SIZE;
+        double labelWidth = softWrap ? UIUtil.getFixMsgLabelWidth(msgList.getWidth()) : Region.USE_COMPUTED_SIZE;
         ObservableList<Label> msgItems = msgList.getItems();
         msgItems.forEach(msg -> {
             UIUtil.changeMsgLabel(msg, labelWidth, softWrap);
@@ -159,12 +160,50 @@ public class WebSocketClientController extends BaseClientController<WebSocketCli
         });
     }
 
+    @FXML
+    void scheduleSend(MouseEvent event) {
+        if (scheduleSendBtn.isSelected()) {
+            scheduledService = new ScheduledSendService(sendConfig, scheduledTaskService);
+            scheduledService.start();
+        }
+        if (!scheduleSendBtn.isSelected()) {
+            scheduledService.cancel();
+        }
+    }
+
+    @FXML
+    void showSendSetting(MouseEvent event) {
+        sendSettingPane.show();
+    }
+
     public void destroy() {
-        if (scheduledService!= null && scheduledService.isRunning()) {
+        if (scheduledService != null && scheduledService.isRunning()) {
             scheduledService.cancel();
             scheduleSendBtn.setSelected(false);
         }
         client.destroy();
+    }
+
+    protected void setActiveUI() {
+        Platform.runLater(() -> {
+            remoteAddressInput.setDisable(true);
+            msgInput.setDisable(false);
+            connectButton.setDisable(true);
+            disconnectButton.setDisable(false);
+            sendMsgButton.setDisable(false);
+            scheduleSendBtn.setDisable(false);
+        });
+    }
+
+    protected void setInactiveUI() {
+        Platform.runLater(() -> {
+            remoteAddressInput.setDisable(false);
+            msgInput.setDisable(true);
+            connectButton.setDisable(false);
+            disconnectButton.setDisable(true);
+            sendMsgButton.setDisable(true);
+            scheduleSendBtn.setDisable(true);
+        });
     }
 
     @Override
@@ -191,12 +230,17 @@ public class WebSocketClientController extends BaseClientController<WebSocketCli
         sendSettingPane = SendSettingPaneFactory.create(sendConfig);
 
         // 功能按钮悬浮tip提示
+        initMsgSideBar();
+
+        // 消息上下文菜单
+        msgList.setContextMenu(UIUtil.getMsgListMenu(msgList));
+    }
+
+    protected void initMsgSideBar() {
         softWrapBtn.setTooltip(UIUtil.getTooltip("长文本换行"));
         clearBtn.setTooltip(UIUtil.getTooltip("清空列表"));
         sendSettingBtn.setTooltip(UIUtil.getTooltip("发送设置"));
 
-        // 消息上下文菜单
-        msgList.setContextMenu(UIUtil.getMsgListMenu(msgList));
-    }*/
+    }
 
 }

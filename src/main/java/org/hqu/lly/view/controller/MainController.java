@@ -3,12 +3,15 @@ package org.hqu.lly.view.controller;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.*;
+import javafx.scene.control.TreeItem;
+import javafx.scene.control.TreeView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.hqu.lly.constant.ContentPaneConsts;
+import org.hqu.lly.constant.StageConsts;
 import org.hqu.lly.domain.vo.ServiceItem;
 import org.hqu.lly.service.impl.TabPaneManager;
 
@@ -30,23 +33,18 @@ import java.util.ResourceBundle;
 public class MainController implements Initializable {
 
     @FXML
-    private TabPane mainTabPane;
-
-    @FXML
-    private Tab createTab;
-
-    @FXML
     private TreeView<String> menuTree;
-
     @FXML
-    private SplitPane mainSplitPane;
-
+    private BorderPane titleBar;
+    @FXML
+    private TitleBarController titleBarController;
     @FXML
     private AnchorPane mainPane;
 
     @SneakyThrows
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        titleBarController.initTitleBar(StageConsts.MAIN_PANE);
         initSideBar();
     }
 

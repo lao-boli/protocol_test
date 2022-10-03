@@ -6,8 +6,10 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.BorderPane;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.hqu.lly.constant.StageConsts;
 import org.hqu.lly.domain.bean.ScheduledSendConfig;
 import org.hqu.lly.service.impl.StageBridger;
 
@@ -42,6 +44,10 @@ public class ScheduleSendController implements Initializable {
     private RadioButton manualStopBtn;
     @FXML
     private Button saveSettingBtn;
+    @FXML
+    private BorderPane titleBar;
+    @FXML
+    private TitleBarController titleBarController;
     @Setter
     private ScheduledSendConfig sendConfig;
 
@@ -64,6 +70,7 @@ public class ScheduleSendController implements Initializable {
                 }
             }
         });
+        titleBarController.initTitleBar(StageConsts.SEND_SETTING);
     }
 
 }

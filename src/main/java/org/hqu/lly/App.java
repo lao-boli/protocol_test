@@ -9,6 +9,7 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.hqu.lly.constant.ResLocConsts;
 import org.hqu.lly.utils.UIUtil;
+import org.hqu.lly.view.controller.MainController;
 
 import java.net.URL;
 
@@ -19,6 +20,8 @@ public class App extends Application {
         URL resource = getClass().getClassLoader().getResource(ResLocConsts.MAIN_PANE);
         fxmlLoader.setLocation(resource);
         Parent root = fxmlLoader.load();
+       MainController controller = fxmlLoader.getController();
+
         Scene scene = new Scene(root, 620, 450);
 
         DarculaFX.applyDarculaStyle(scene);

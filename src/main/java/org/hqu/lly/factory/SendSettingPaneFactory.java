@@ -6,6 +6,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import org.hqu.lly.constant.ResLocConsts;
 import org.hqu.lly.domain.bean.ScheduledSendConfig;
 import org.hqu.lly.view.controller.ScheduleSendController;
@@ -25,9 +26,8 @@ public class SendSettingPaneFactory {
 
     public static Stage create(ScheduledSendConfig sendConfig) {
         try {
-            Stage dialogStage = new Stage();
-//            dialogStage.initStyle(StageStyle.TRANSPARENT);
-            FXMLLoader loader = new FXMLLoader(SendSettingPaneFactory.class.getClassLoader().getResource(ResLocConsts.SCHEDULE_SEND_DIALOG));
+            Stage sendSettingStage = new Stage();
+            FXMLLoader loader = new FXMLLoader(SendSettingPaneFactory.class.getClassLoader().getResource(ResLocConsts.SEND_SETTING_PANE));
             Parent contentPane = loader.load();
 
             ScheduleSendController controller = loader.getController();
@@ -35,9 +35,11 @@ public class SendSettingPaneFactory {
 
             Scene scene = new Scene(contentPane, 400, 300);
             DarculaFX.applyDarculaStyle(scene);
-            dialogStage.setScene(scene);
-            dialogStage.initModality(Modality.APPLICATION_MODAL);
-            return dialogStage;
+
+            sendSettingStage.setScene(scene);
+            sendSettingStage.initStyle(StageStyle.TRANSPARENT);
+            sendSettingStage.initModality(Modality.APPLICATION_MODAL);
+            return sendSettingStage;
         } catch (IOException e) {
             e.printStackTrace();
         }

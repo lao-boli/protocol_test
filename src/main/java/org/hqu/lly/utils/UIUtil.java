@@ -1,6 +1,7 @@
 package org.hqu.lly.utils;
 
 import javafx.event.ActionEvent;
+import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
@@ -31,16 +32,16 @@ public class UIUtil {
      */
     private static Stage primaryStage;
 
+    public static Stage getPrimaryStage() {
+        return primaryStage;
+    }
+
     public static void setPrimaryStage(Stage primaryStage) {
         if (getPrimaryStage() == null) {
             UIUtil.primaryStage = primaryStage;
         } else {
             log.warn("primaryStage can only be set once");
         }
-    }
-
-    public static Stage getPrimaryStage() {
-        return primaryStage;
     }
 
     /**
@@ -62,6 +63,20 @@ public class UIUtil {
 
     /**
      * <p>
+     * 获取默认tooltip
+     * </p>
+     *
+     * @param content tip内容
+     * @return {@link Tooltip}
+     * @date 2022-10-02 17:27:19 <br>
+     * @author hqully <br>
+     */
+    public static Tooltip getTooltip(String content) {
+        return getTooltip(content, 300);
+    }
+
+    /**
+     * <p>
      * 获取消息label
      * </p>
      *
@@ -74,10 +89,25 @@ public class UIUtil {
      */
     public static Label getMsgLabel(String msg, double fixWidth, boolean softWrap) {
         Label msgLabel = new Label(msg);
+        msgLabel.setPadding(new Insets(0, 0, 0, 0));
         double labelWidth = softWrap ? fixWidth : Region.USE_COMPUTED_SIZE;
         msgLabel.setPrefWidth(labelWidth);
         msgLabel.setWrapText(softWrap);
         return msgLabel;
+    }
+
+    /**
+     * <p>
+     * 返回修正后的msgLabel长度
+     * </p>
+     *
+     * @param rawWidth msgLabel所在的父容器宽度
+     * @return {@link double}
+     * @date 2022-10-02 19:13:08 <br>
+     * @author hqully <br>
+     */
+    public static double getFixMsgLabelWidth(double rawWidth) {
+        return rawWidth - 30;
     }
 
     /**
