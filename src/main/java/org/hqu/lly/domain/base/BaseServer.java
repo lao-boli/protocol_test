@@ -14,7 +14,7 @@ import java.util.concurrent.Callable;
  * @version 1.0
  * @date 2022/8/11 14:15
  */
-public abstract class BaseServer implements Callable<Channel> {
+public abstract class BaseServer<T> implements Callable<Channel> {
 
     public abstract void init();
 
@@ -23,6 +23,8 @@ public abstract class BaseServer implements Callable<Channel> {
     public abstract void setPort(int port);
 
     public abstract void setService(ServerService serverService);
+
+    public abstract void sendMessage(String message, T dstAddr);
 
     @Override
     public Channel call() throws Exception {

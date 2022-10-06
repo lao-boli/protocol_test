@@ -12,7 +12,7 @@ import org.hqu.lly.domain.base.BaseServer;
  * @version 1.0
  * @date 2022/9/17 19:27
  */
-public abstract class ConnectedServer extends BaseServer {
+public abstract class ConnectedServer extends BaseServer<Channel> {
 
     /**
      * <p>
@@ -24,6 +24,7 @@ public abstract class ConnectedServer extends BaseServer {
      * @date 2022-09-17 19:34:12 <br>
      * @author hqully <br>
      */
+    @Override
     public abstract void sendMessage(String message, Channel channel);
 
 }

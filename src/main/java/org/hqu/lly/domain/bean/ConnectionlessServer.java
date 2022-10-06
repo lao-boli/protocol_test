@@ -13,7 +13,7 @@ import java.net.InetSocketAddress;
  * @version 1.0
  * @date 2022/9/17 19:27
  */
-public abstract class ConnectionlessServer extends BaseServer {
+public abstract class ConnectionlessServer extends BaseServer<InetSocketAddress> {
 
     /**
      * <p>
@@ -25,6 +25,7 @@ public abstract class ConnectionlessServer extends BaseServer {
      * @date 2022-09-17 19:33:02 <br>
      * @author hqully <br>
      */
+    @Override
     public abstract void sendMessage(String message, InetSocketAddress dstAddr);
 
 }
