@@ -5,12 +5,12 @@ import org.hqu.lly.service.NetworkService;
 
 /**
  * <p>
- *
+ * 客户端服务抽象父类
  * <p>
  *
- * @author liulingyu
+ * @author hqully
+ * @version 1.0
  * @date 2022/8/13 19:50
- * @Version 1.0
  */
 public abstract class ClientService implements MessageService, NetworkService {
 

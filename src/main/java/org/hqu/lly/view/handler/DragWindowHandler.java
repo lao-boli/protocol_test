@@ -7,12 +7,12 @@ import javafx.stage.Stage;
 
 /**
  * <p>
- *
+ * 应用程序窗口拖动处理器
  * <p>
  *
  * @author liulingyu
+ * @version 1.0
  * @date 2022/9/4 19:03
- * @Version 1.0
  */
 public class DragWindowHandler implements EventHandler<MouseEvent> {
     private Stage primaryStage;
@@ -21,7 +21,7 @@ public class DragWindowHandler implements EventHandler<MouseEvent> {
     private double oldScreenX;
     private double oldScreenY;
 
-    public DragWindowHandler(Stage primaryStage) { //构造器
+    public DragWindowHandler(Stage primaryStage) {
         this.primaryStage = primaryStage;
     }
 

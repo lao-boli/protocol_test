@@ -10,15 +10,16 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * <p>
- *
+ * channel管理组
  * <p>
  *
- * @author liulingyu
+ * @author hqully
+ * @version 1.0
  * @date 2022/8/9 15:57
- * @Version 1.0
  */
 public class TCPChannelGroup {
 
     public static ChannelGroup channelGroup = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
     public static Map<String, Channel> clientChannelGroup = new ConcurrentHashMap<>();
+    public static Map<String, Channel> serverChannelGroup = new ConcurrentHashMap<>();
 }

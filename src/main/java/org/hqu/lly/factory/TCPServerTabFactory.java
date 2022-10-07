@@ -1,44 +1,37 @@
 package org.hqu.lly.factory;
 
-import org.hqu.lly.protocol.tcp.server.TCPServer;
-import org.hqu.lly.view.controller.ServerController;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.Tab;
+import org.hqu.lly.constant.ResLocConsts;
+import org.hqu.lly.view.controller.TCPServerController;
 
 import java.io.IOException;
 
 /**
  * <p>
- * tcp client tab factory
+ * TCP服务端标签页工厂
  * <p>
  *
- * @author liulingyu
+ * @author hqully
+ * @version 1.0
  * @date 2022/8/7 14:57
- * @Version 1.0
  */
-public class TCPServerTabFactory implements TabFactory{
+public class TCPServerTabFactory implements TabFactory {
 
     private String tabName = "server";
 
-    private String tabPanePath = "serverPane.fxml";
+    private String tabPanePath = ResLocConsts.TCP_SERVER_PANE;
+
     @Override
     public Tab create() {
         Tab tab = new Tab(tabName);
         try {
-
             FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource(tabPanePath));
-
             Parent contentPane = loader.load();
-
-            Object controller = loader.getController();
-
+            TCPServerController controller = loader.getController();
             tab.setContent(contentPane);
-
-            if (controller instanceof ServerController) {
-                ((ServerController) controller).setServer(new TCPServer());
-                tab.setOnClosed(event -> ((ServerController) controller).destroy());
-            }
+            tab.setOnClosed(event -> controller.destroy());
         } catch (IOException e) {
             e.printStackTrace();
         }

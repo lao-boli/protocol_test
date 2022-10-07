@@ -1,0 +1,52 @@
+.tooltip {
+    -fx-text-fill: #bbbbbb;
+    -fx-background-color: #4b4d4d;
+    -fx-font-size: 12px;
+    -fx-effect: none;
+    -fx-border-style: solid;
+    -fx-border-color: #636569;
+    -fx-padding: 4;
+}
+
+.sidebar .toggle-button, .icon-button {
+    -fx-background-color: #3c3f41;
+    -fx-background-insets: 0;
+    -fx-background-radius: 3px, 3px;
+    -fx-padding: 2;
+}
+
+.sidebar .toggle-button:hover, .icon-button:hover {
+    -fx-background-color: #4c5052;
+    -fx-background-insets: 0;
+    -fx-background-radius: 3px, 3px;
+}
+
+.sidebar .toggle-button:focused, .icon-button:focused {
+    -fx-background-color: #3c3f41;
+    -fx-background-insets: 0;
+    -fx-background-radius: 3px, 3px;
+}
+
+.sidebar .toggle-button:focused:hover, .icon-button:hover {
+    -fx-background-color: #4c5052;
+    -fx-background-insets: 0;
+    -fx-background-radius: 3px, 3px;
+}
+
+.sidebar .toggle-button:selected {
+    -fx-background-color: #3c3f41, #5c6164;
+    -fx-background-insets: 0;
+    -fx-background-radius: 3px, 3px;
+}
+
+.sidebar .toggle-button:selected:focused {
+    -fx-background-color: #3c3f41, #5c6164;
+    -fx-background-insets: 0;
+    -fx-background-radius: 3px, 3px;
+}
+
+.icon-button:pressed {
+    -fx-background-color: #5c6164;
+    -fx-background-insets: 0;
+    -fx-background-radius: 3px, 3px;
+}
