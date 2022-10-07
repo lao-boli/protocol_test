@@ -5,11 +5,10 @@
     -fx-border-width: 0 0 0.2 0;
 }
 .title {
-
+    -fx-padding: 0 0 0 10;
     -fx-text-fill: #a9a9a9;
 }
 .close-button {
-
     -fx-text-background-color: -darcula-text-disabled;
     -fx-text-fill: #a9a9a9;
     -fx-prompt-text-fill: -darcula-text-disabled;

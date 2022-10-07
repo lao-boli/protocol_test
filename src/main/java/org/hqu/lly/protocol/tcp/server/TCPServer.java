@@ -1,21 +1,29 @@
 package org.hqu.lly.protocol.tcp.server;
 
-import org.hqu.lly.domain.base.BaseServer;
-import org.hqu.lly.protocol.tcp.server.handler.TCPMessageHandler;
-import org.hqu.lly.service.impl.ServerService;
-import org.hqu.lly.utils.MsgFormatUtil;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
-import io.netty.channel.ChannelFutureListener;
+import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
+import org.hqu.lly.domain.bean.ConnectedServer;
+import org.hqu.lly.protocol.BaseHandler.BaseServerConnectHandler;
+import org.hqu.lly.protocol.tcp.codec.LTCEncoder;
+import org.hqu.lly.protocol.tcp.codec.MessageDecoderSelector;
+import org.hqu.lly.protocol.tcp.codec.MessageEncoderSelector;
+import org.hqu.lly.protocol.tcp.group.AppChannelGroup;
+import org.hqu.lly.protocol.tcp.server.handler.TCPServerExceptionHandler;
+import org.hqu.lly.protocol.tcp.server.handler.TCPServerMessageHandler;
+import org.hqu.lly.service.impl.ConnectedServerService;
+import org.hqu.lly.service.impl.ServerService;
+import org.hqu.lly.utils.MsgUtil;
 
 import java.net.BindException;
 
@@ -24,18 +32,18 @@ import java.net.BindException;
  * TCP server
  * <p>
  *
- * @author liulingyu
+ * @author hqully
  * @version 1.0
  * @date 2022/8/4 10:45
  */
 @EqualsAndHashCode(callSuper = true)
 @Slf4j
 @Data
-public class TCPServer extends BaseServer {
+public class TCPServer extends ConnectedServer {
 
-    private String port;
+    private int port;
 
-    private ServerService serverService;
+    private ConnectedServerService serverService;
 
     private NioEventLoopGroup bossGroup;
 
@@ -45,7 +53,6 @@ public class TCPServer extends BaseServer {
 
     @Override
     public void init() {
-
         bossGroup = new NioEventLoopGroup();
         workerGroup = new NioEventLoopGroup();
         try {
@@ -55,18 +62,29 @@ public class TCPServer extends BaseServer {
             serverBootstrap.childHandler(new ChannelInitializer<SocketChannel>() {
                 @Override
                 protected void initChannel(SocketChannel ch) throws Exception {
-                    ch.pipeline().addLast(new StringDecoder());
-                    ch.pipeline().addLast(new StringEncoder());
-                    ch.pipeline().addLast(new TCPMessageHandler(serverService));
-
+                    ch.pipeline().addLast("TCPServerConnectHandler", new BaseServerConnectHandler(serverService));
+                    ch.pipeline().addLast("MessageDecoderSelector", new MessageDecoderSelector());
+                    ch.pipeline().addLast("LTCDecoder", new LengthFieldBasedFrameDecoder(1024 * 100, 4, 4, 0, 8));
+                    ch.pipeline().addLast("StringDecoder", new StringDecoder());
+                    ch.pipeline().addLast("StringEncoder", new StringEncoder());
+                    ch.pipeline().addLast("LTCEncoder", new LTCEncoder());
+                    ch.pipeline().addLast("MessageEncoderSelector", new MessageEncoderSelector());
+                    ch.pipeline().addLast("TCPServerMessageHandler", new TCPServerMessageHandler(serverService));
+                    ch.pipeline().addLast("TCPExceptionHandler", new TCPServerExceptionHandler());
                 }
             });
-            channel = serverBootstrap.bind(Integer.parseInt(port)).sync().channel();
-            channel.closeFuture().addListener((ChannelFutureListener) channelFuture -> {
+
+            channel = serverBootstrap.bind(port).sync().channel();
+            AppChannelGroup.TCPServerChannelSet.add("/127.0.0.1:" + port);
+            log.info("tcp server start successful at " + channel.localAddress());
+
+            ChannelFuture f = channel.closeFuture();
+            f.addListener(promise -> {
                 bossGroup.shutdownGracefully();
                 workerGroup.shutdownGracefully();
+                AppChannelGroup.TCPServerChannelSet.remove("/127.0.0.1:" + port);
+                log.info("tcp server closed");
             });
-            log.info("tcp server start successful at " + channel.localAddress());
         } catch (Exception e) {
             bossGroup.shutdownGracefully();
             workerGroup.shutdownGracefully();
@@ -88,13 +106,9 @@ public class TCPServer extends BaseServer {
 
     @Override
     public void sendMessage(String msg, Channel channel) {
-
         channel.writeAndFlush(msg);
-
-        String formatSendMsg = MsgFormatUtil.formatSendMsg(msg, channel.remoteAddress().toString());
-
+        String formatSendMsg = MsgUtil.formatSendMsg(msg, channel.remoteAddress().toString());
         serverService.updateMsgList(formatSendMsg);
-
         log.info(formatSendMsg);
     }
 
@@ -105,11 +119,10 @@ public class TCPServer extends BaseServer {
             return;
         }
         channel.close();
-        log.info("tcp server closed");
     }
 
     @Override
     public void setService(ServerService serverService) {
-        this.serverService = serverService;
+        this.serverService = (ConnectedServerService) serverService;
     }
 }
