@@ -12,6 +12,7 @@ import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
 import javafx.stage.Stage;
+import lombok.extern.slf4j.Slf4j;
 import org.hqu.lly.domain.base.BaseServer;
 import org.hqu.lly.domain.bean.ScheduledSendConfig;
 import org.hqu.lly.factory.SendSettingPaneFactory;
@@ -24,6 +25,8 @@ import org.hqu.lly.utils.UIUtil;
 
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
@@ -37,6 +40,7 @@ import java.util.concurrent.FutureTask;
  * @version 1.0
  * @date 2022/10/3 10:45
  */
+@Slf4j
 public abstract class BaseServerController<T> implements Initializable {
 
     protected Executor executor = Executors.newSingleThreadExecutor();
@@ -66,9 +70,17 @@ public abstract class BaseServerController<T> implements Initializable {
     @FXML
     protected Button sendSettingBtn;
 
+    @FXML
+    protected Button selectAllBtn;
+
+    @FXML
+    protected Button removeClientBtn;
+
     protected BaseServer<T> server;
+    protected Set<T> clientAddrSet= ConcurrentHashMap.newKeySet();
     protected T targetClient = null;
     protected boolean softWrap = false;
+    protected boolean selectAll = true;
     protected ServerService serverService;
 
     protected Stage sendSettingPane;
@@ -128,6 +140,27 @@ public abstract class BaseServerController<T> implements Initializable {
     void closeServer(MouseEvent event) {
         destroy();
         setInactiveUI();
+    }
+
+    @FXML
+    void removeClient(MouseEvent event) {
+        ObservableList<T> removeItems = clientListBox.getSelectionModel().getSelectedItems();
+        clientAddrSet.removeAll(removeItems);
+        clientList.removeAll(removeItems);
+        if (clientList.isEmpty()){
+            scheduleSendBtn.setDisable(true);
+            sendMsgButton.setDisable(true);
+        }
+    }
+
+    @FXML
+    void selectAllClient(MouseEvent event) {
+        if (selectAll){
+            clientListBox.getSelectionModel().selectAll();
+        }else {
+            clientListBox.getSelectionModel().clearSelection();
+        }
+        selectAll = !selectAll;
     }
 
     protected void setActiveUI() {
@@ -209,9 +242,10 @@ public abstract class BaseServerController<T> implements Initializable {
         initScheduleSetting();
         setClientBox();
         // 功能按钮悬浮tip提示
-        initMsgSideBar();
+        initBtnTips();
         // 消息上下文菜单
         msgList.setContextMenu(UIUtil.getMsgListMenu(msgList));
+        clientListBox.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
     }
     protected void setClientBox(){
         setClientBoxCellFactory();
@@ -250,10 +284,15 @@ public abstract class BaseServerController<T> implements Initializable {
         sendSettingPane = SendSettingPaneFactory.create(sendConfig);
     }
 
-    protected void initMsgSideBar() {
+    protected void initBtnTips() {
         softWrapBtn.setTooltip(UIUtil.getTooltip("长文本换行"));
         clearBtn.setTooltip(UIUtil.getTooltip("清空列表"));
         sendSettingBtn.setTooltip(UIUtil.getTooltip("发送设置"));
+
+
+        selectAllBtn.setTooltip(UIUtil.getTooltip("全选/取消全选"));
+        removeClientBtn.setTooltip(UIUtil.getTooltip("删除客户端"));
+
     }
 
 }

@@ -10,8 +10,6 @@ import org.hqu.lly.service.impl.ConnectionlessServerService;
 import org.hqu.lly.utils.MsgUtil;
 
 import java.net.InetSocketAddress;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * <p>
@@ -19,19 +17,17 @@ import java.util.concurrent.ConcurrentHashMap;
  * <p>
  *
  * @author hqully
- * @date 2022/8/12 20:08
  * @version 1.0
+ * @date 2022/8/12 20:08
  */
 @Slf4j
 public class UDPServerHandler extends SimpleChannelInboundHandler<DatagramPacket> {
 
-    private Set<InetSocketAddress> clientAddrSet= ConcurrentHashMap.newKeySet();
 
     private ConnectionlessServerService serverService;
 
     public UDPServerHandler(ConnectionlessServerService serverService) {
         this.serverService = serverService;
-
     }
 
     @Override
@@ -48,10 +44,7 @@ public class UDPServerHandler extends SimpleChannelInboundHandler<DatagramPacket
         ctx.channel().writeAndFlush(new DatagramPacket(Unpooled.copiedBuffer(responseText, CharsetUtil.UTF_8), sender));
         serverService.updateMsgList(formatSendMsg);
 
-        if (!clientAddrSet.contains(sender)){
-            serverService.addInetSocketAddress(sender);
-            clientAddrSet.add(sender);
-        }
+        serverService.addInetSocketAddress(sender);
     }
 
 }

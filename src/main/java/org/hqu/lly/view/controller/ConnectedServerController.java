@@ -2,8 +2,10 @@ package org.hqu.lly.view.controller;
 
 import io.netty.channel.Channel;
 import javafx.application.Platform;
+import javafx.collections.ObservableList;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
+import javafx.scene.input.MouseEvent;
 import org.hqu.lly.service.impl.ConnectedServerService;
 import org.hqu.lly.utils.UIUtil;
 
@@ -17,6 +19,19 @@ import org.hqu.lly.utils.UIUtil;
  * @date 2022/10/3 14:38
  */
 public abstract class ConnectedServerController extends BaseServerController<Channel> {
+
+    @Override
+    void removeClient(MouseEvent event) {
+        ObservableList<Channel> removeItems = clientListBox.getSelectionModel().getSelectedItems();
+        removeItems.forEach(channel ->{
+            channel.close();
+        });
+        clientList.removeAll(removeItems);
+        if (clientList.isEmpty()){
+            scheduleSendBtn.setDisable(true);
+            sendMsgButton.setDisable(true);
+        }
+    }
 
     @Override
     protected void setServerService() {
@@ -66,8 +81,8 @@ public abstract class ConnectedServerController extends BaseServerController<Cha
 
             @Override
             public void updateMsgList(String msg) {
+                Label msgLabel = UIUtil.getMsgLabel(msg, msgList.getWidth() - 20, softWrap);
                 Platform.runLater(() -> {
-                    Label msgLabel = UIUtil.getMsgLabel(msg, msgList.getWidth() - 20, softWrap);
                     msgList.getItems().add(msgLabel);
                 });
             }
