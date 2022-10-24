@@ -40,6 +40,16 @@ public abstract class ConnectionlessServerController extends BaseServerControlle
             }
 
             @Override
+            public void onStart() {
+                if (!errorMsgLabel.getText().isEmpty()) {
+                    Platform.runLater(() -> {
+                        errorMsgLabel.setText("");
+                    });
+                }
+                setActiveUI();
+            }
+
+            @Override
             public void onError(Throwable e, String errorMessage) {
                 Platform.runLater(() -> {
                     if (errorMessage != null) {

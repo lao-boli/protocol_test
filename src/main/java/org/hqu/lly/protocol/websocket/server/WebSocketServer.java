@@ -52,8 +52,7 @@ public class WebSocketServer extends ConnectedServer {
                     .option(ChannelOption.SO_BACKLOG, 1024)
                     .childHandler(wsChannelInitializer);
 
-            ChannelFuture f = serverBootstrap.bind(port).sync();
-            channel = f.channel();
+            channel = serverBootstrap.bind(port).sync().channel();
             channel.closeFuture().addListener(new ChannelFutureListener() {
                 @Override
                 public void operationComplete(ChannelFuture future) throws Exception {
@@ -61,14 +60,17 @@ public class WebSocketServer extends ConnectedServer {
                     bossGroup.shutdownGracefully();
                 }
             });
-            log.info("websocket start successful at " + channel.localAddress());
+            log.info("websocket start successful at {}", channel.localAddress());
+            serverService.onStart();
         } catch (Exception e) {
             workerGroup.shutdownGracefully();
             bossGroup.shutdownGracefully();
-            log.error("websocket start fail, cause: {}", e.getCause());
 
             if (e instanceof BindException) {
                 serverService.onError(e, "该端口已被占用");
+                log.warn(e.toString());
+            } else {
+                log.error("websocket start fail, cause: {}", e.toString());
             }
         }
     }
@@ -97,13 +99,10 @@ public class WebSocketServer extends ConnectedServer {
 
     @Override
     public void sendMessage(String msg, Channel channel) {
-
         channel.writeAndFlush(new TextWebSocketFrame(msg));
-
         String formatSendMsg = MsgUtil.formatSendMsg(msg, channel.remoteAddress().toString());
-
         serverService.updateMsgList(formatSendMsg);
-
         log.info(formatSendMsg);
     }
+
 }

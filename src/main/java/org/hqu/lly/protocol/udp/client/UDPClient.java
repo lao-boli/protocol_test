@@ -53,8 +53,11 @@ public class UDPClient extends BaseClient {
                     .handler(new UDPClientHandler(clientService));
             channel = bootstrap.bind(0).sync().channel();
             channel.closeFuture().addListener(promise -> eventLoopGroup.shutdownGracefully());
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+            log.info("udp client start successful at " + channel.localAddress());
+            clientService.onStart();
+        } catch (Exception e) {
+            eventLoopGroup.shutdownGracefully();
+            log.error(e.toString());
         }
     }
 
@@ -88,7 +91,6 @@ public class UDPClient extends BaseClient {
     @Override
     public Channel call() throws Exception {
         init();
-        log.info("udp client start successful at " + channel.localAddress());
         return channel;
     }
 

@@ -70,8 +70,7 @@ public class TCPClient extends BaseClient {
     @Override
     public void init() {
 
-        EventLoopGroup eventLoopGroup = new NioEventLoopGroup();
-        this.eventLoopGroup = eventLoopGroup;
+        this.eventLoopGroup = new NioEventLoopGroup();
         try {
             Bootstrap bootstrap = new Bootstrap();
             bootstrap.group(eventLoopGroup)
@@ -97,10 +96,14 @@ public class TCPClient extends BaseClient {
                 eventLoopGroup.shutdownGracefully();
             });
             AppChannelGroup.TCPClientChannelSet.add(channel.localAddress().toString());
+
+            // 如果通道开启,则通知UI线程更新为开启状态的UI
+            if (channel.isActive()){
+                clientService.onStart();
+            }
         } catch (Exception e) {
             eventLoopGroup.shutdownGracefully();
-
-            if (e instanceof ConnectException) {
+            if (e.getCause() instanceof ConnectException) {
                 log.warn(e.toString());
                 clientService.onError(e, "该地址服务未开启");
             } else {

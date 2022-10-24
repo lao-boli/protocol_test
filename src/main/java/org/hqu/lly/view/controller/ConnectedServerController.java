@@ -16,57 +16,68 @@ import org.hqu.lly.utils.UIUtil;
  * @version 1.0
  * @date 2022/10/3 14:38
  */
-public abstract class ConnectedServerController extends BaseServerController<Channel>{
+public abstract class ConnectedServerController extends BaseServerController<Channel> {
 
     @Override
     protected void setServerService() {
-       serverService = new ConnectedServerService() {
-           @Override
-           public void onError(Throwable e, String errorMessage) {
-               Platform.runLater(() -> {
-                   if (errorMessage != null) {
-                       errorMsgLabel.setText(errorMessage);
-                   } else {
-                       errorMsgLabel.setText(e.getMessage());
-                   }
-               });
-           }
+        serverService = new ConnectedServerService() {
+            @Override
+            public void onStart() {
+                if (!errorMsgLabel.getText().isEmpty()) {
+                    Platform.runLater(() -> {
+                        errorMsgLabel.setText("");
+                    });
+                }
+                setActiveUI();
 
-           @Override
-           public void onClose() {
+            }
 
-           }
+            @Override
+            public void onError(Throwable e, String errorMessage) {
+                Platform.runLater(() -> {
+                    if (errorMessage != null) {
+                        errorMsgLabel.setText(errorMessage);
+                    } else {
+                        errorMsgLabel.setText(e.getMessage());
+                    }
+                });
+            }
 
-           @Override
-           public void addChannel(Channel channel) {
-               Platform.runLater(() -> {
-                   clientList.add(channel);
-                   clientListBox.setItems(clientList);
-               });
-           }
+            @Override
+            public void onClose() {
 
-           @Override
-           public void removeChannel(Channel channel) {
-               Platform.runLater(() -> {
-                   clientList.remove(channel);
-                   clientListBox.setItems(clientList);
-               });
-           }
+            }
 
-           @Override
-           public void updateMsgList(String msg) {
-               Platform.runLater(() -> {
-                   Label msgLabel = UIUtil.getMsgLabel(msg, msgList.getWidth() - 20, softWrap);
-                   msgList.getItems().add(msgLabel);
-               });
-           }
-       };
+            @Override
+            public void addChannel(Channel channel) {
+                Platform.runLater(() -> {
+                    clientList.add(channel);
+                    clientListBox.setItems(clientList);
+                });
+            }
+
+            @Override
+            public void removeChannel(Channel channel) {
+                Platform.runLater(() -> {
+                    clientList.remove(channel);
+                    clientListBox.setItems(clientList);
+                });
+            }
+
+            @Override
+            public void updateMsgList(String msg) {
+                Platform.runLater(() -> {
+                    Label msgLabel = UIUtil.getMsgLabel(msg, msgList.getWidth() - 20, softWrap);
+                    msgList.getItems().add(msgLabel);
+                });
+            }
+        };
     }
 
     @Override
     protected void setClientBoxCellFactory() {
         // 自定义细胞工厂，设置显示的内容
-        clientListBox.setCellFactory(channelListView ->  new ChannelCellFactory());
+        clientListBox.setCellFactory(channelListView -> new ChannelCellFactory());
     }
 
     static class ChannelCellFactory extends ListCell<Channel> {

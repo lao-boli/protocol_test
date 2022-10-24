@@ -24,7 +24,8 @@ import org.hqu.lly.utils.UIUtil;
 
 import java.net.URL;
 import java.util.ResourceBundle;
-import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
 
 /**
@@ -37,6 +38,8 @@ import java.util.concurrent.FutureTask;
  * @date 2022/10/3 10:45
  */
 public abstract class BaseServerController<T> implements Initializable {
+
+    protected Executor executor = Executors.newSingleThreadExecutor();
 
     @FXML
     protected TextField serverPort;
@@ -79,10 +82,33 @@ public abstract class BaseServerController<T> implements Initializable {
         setServerService();
     }
 
+    /**
+     * <p>
+     *     设置服务端实例
+     * </p>
+     * @date 2022-10-23 21:16:35 <br>
+     * @author hqully <br>
+     */
     protected abstract void setServer();
 
+
+    /**
+     * <p>
+     *     设置服务端服务
+     * </p>
+     * @date 2022-10-23 21:16:35 <br>
+     * @author hqully <br>
+     */
     protected abstract void setServerService();
 
+
+    /**
+     * <p>
+     *     设置客户端列表的细胞工厂
+     * </p>
+     * @date 2022-10-23 21:16:35 <br>
+     * @author hqully <br>
+     */
     protected abstract void setClientBoxCellFactory();
 
     @FXML
@@ -91,20 +117,11 @@ public abstract class BaseServerController<T> implements Initializable {
         server.setPort(port);
         server.setService(serverService);
 
-        FutureTask<Channel> channel = new FutureTask<>(server);
-
-        new Thread(channel).start();
-
-        try {
-            if (channel.get() != null && channel.get().isActive()) {
-                if (!errorMsgLabel.getText().isEmpty()) {
-                    errorMsgLabel.setText("");
-                }
-                setActiveUI();
-            }
-        } catch (ExecutionException | InterruptedException e) {
-            e.printStackTrace();
-        }
+        FutureTask<Channel> serverTask = new FutureTask<>(server);
+        executor.execute(serverTask);
+        Platform.runLater(() -> {
+          errorMsgLabel.setText("服务开启中...");
+        });
     }
 
     @FXML
@@ -113,7 +130,7 @@ public abstract class BaseServerController<T> implements Initializable {
         setInactiveUI();
     }
 
-    private void setActiveUI() {
+    protected void setActiveUI() {
         Platform.runLater(() -> {
             serverPort.setDisable(true);
             msgInput.setDisable(false);
@@ -122,7 +139,7 @@ public abstract class BaseServerController<T> implements Initializable {
         });
     }
 
-    private void setInactiveUI() {
+    protected void setInactiveUI() {
         Platform.runLater(() -> {
             serverPort.setDisable(false);
             msgInput.setDisable(true);
