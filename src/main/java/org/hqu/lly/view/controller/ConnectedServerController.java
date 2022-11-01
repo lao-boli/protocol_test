@@ -2,8 +2,10 @@ package org.hqu.lly.view.controller;
 
 import io.netty.channel.Channel;
 import javafx.application.Platform;
+import javafx.collections.ObservableList;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
+import javafx.scene.input.MouseEvent;
 import org.hqu.lly.service.impl.ConnectedServerService;
 import org.hqu.lly.utils.UIUtil;
 
@@ -16,57 +18,81 @@ import org.hqu.lly.utils.UIUtil;
  * @version 1.0
  * @date 2022/10/3 14:38
  */
-public abstract class ConnectedServerController extends BaseServerController<Channel>{
+public abstract class ConnectedServerController extends BaseServerController<Channel> {
+
+    @Override
+    void removeClient(MouseEvent event) {
+        ObservableList<Channel> removeItems = clientListBox.getSelectionModel().getSelectedItems();
+        removeItems.forEach(channel ->{
+            channel.close();
+        });
+        clientList.removeAll(removeItems);
+        if (clientList.isEmpty()){
+            scheduleSendBtn.setDisable(true);
+            sendMsgButton.setDisable(true);
+        }
+    }
 
     @Override
     protected void setServerService() {
-       serverService = new ConnectedServerService() {
-           @Override
-           public void onError(Throwable e, String errorMessage) {
-               Platform.runLater(() -> {
-                   if (errorMessage != null) {
-                       errorMsgLabel.setText(errorMessage);
-                   } else {
-                       errorMsgLabel.setText(e.getMessage());
-                   }
-               });
-           }
+        serverService = new ConnectedServerService() {
+            @Override
+            public void onStart() {
+                if (!errorMsgLabel.getText().isEmpty()) {
+                    Platform.runLater(() -> {
+                        errorMsgLabel.setText("");
+                    });
+                }
+                setActiveUI();
 
-           @Override
-           public void onClose() {
+            }
 
-           }
+            @Override
+            public void onError(Throwable e, String errorMessage) {
+                Platform.runLater(() -> {
+                    if (errorMessage != null) {
+                        errorMsgLabel.setText(errorMessage);
+                    } else {
+                        errorMsgLabel.setText(e.getMessage());
+                    }
+                });
+            }
 
-           @Override
-           public void addChannel(Channel channel) {
-               Platform.runLater(() -> {
-                   clientList.add(channel);
-                   clientListBox.setItems(clientList);
-               });
-           }
+            @Override
+            public void onClose() {
 
-           @Override
-           public void removeChannel(Channel channel) {
-               Platform.runLater(() -> {
-                   clientList.remove(channel);
-                   clientListBox.setItems(clientList);
-               });
-           }
+            }
 
-           @Override
-           public void updateMsgList(String msg) {
-               Platform.runLater(() -> {
-                   Label msgLabel = UIUtil.getMsgLabel(msg, msgList.getWidth() - 20, softWrap);
-                   msgList.getItems().add(msgLabel);
-               });
-           }
-       };
+            @Override
+            public void addChannel(Channel channel) {
+                Platform.runLater(() -> {
+                    clientList.add(channel);
+                    clientListBox.setItems(clientList);
+                });
+            }
+
+            @Override
+            public void removeChannel(Channel channel) {
+                Platform.runLater(() -> {
+                    clientList.remove(channel);
+                    clientListBox.setItems(clientList);
+                });
+            }
+
+            @Override
+            public void updateMsgList(String msg) {
+                Label msgLabel = UIUtil.getMsgLabel(msg, msgList.getWidth() - 20, softWrap);
+                Platform.runLater(() -> {
+                    msgList.getItems().add(msgLabel);
+                });
+            }
+        };
     }
 
     @Override
     protected void setClientBoxCellFactory() {
         // 自定义细胞工厂，设置显示的内容
-        clientListBox.setCellFactory(channelListView ->  new ChannelCellFactory());
+        clientListBox.setCellFactory(channelListView -> new ChannelCellFactory());
     }
 
     static class ChannelCellFactory extends ListCell<Channel> {

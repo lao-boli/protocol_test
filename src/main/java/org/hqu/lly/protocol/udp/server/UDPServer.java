@@ -52,11 +52,14 @@ public class UDPServer extends ConnectionlessServer {
             channel = bootstrap.bind(port).sync().channel();
             channel.closeFuture().addListener(promise -> bossGroup.shutdownGracefully());
             log.info("udp server start successful at " + channel.localAddress());
+            serverService.onStart();
         } catch (Exception e) {
             if (e instanceof BindException) {
                 serverService.onError(e, "该端口已被占用");
+                log.warn(e.toString());
+            }else{
+                log.error("udp server error", e);
             }
-            log.error("udp server error", e);
         }
     }
 

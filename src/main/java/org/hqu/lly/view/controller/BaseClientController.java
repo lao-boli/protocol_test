@@ -23,7 +23,8 @@ import org.hqu.lly.utils.UIUtil;
 import java.net.URI;
 import java.net.URL;
 import java.util.ResourceBundle;
-import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
 
 /**
@@ -38,6 +39,39 @@ import java.util.concurrent.FutureTask;
 @Slf4j
 public abstract class BaseClientController<T extends BaseClient> implements Initializable {
 
+    protected Executor executor = Executors.newSingleThreadExecutor();
+
+    /**
+     * 长文本换行flag
+     */
+    protected boolean softWrap = false;
+
+    /**
+     * 发送设置面板
+     */
+    protected Stage sendSettingPane;
+
+    /**
+     * 定时发送服务
+     */
+    protected ScheduledSendService scheduledService;
+
+    /**
+     * 发送设置
+     */
+    protected ScheduledSendConfig sendConfig = new ScheduledSendConfig();
+    /**
+     * 定时任务服务
+     */
+    protected ScheduledTaskService scheduledTaskService;
+    /**
+     * 客户端服务
+     */
+    protected T client;
+    /**
+     * 当前面板的连接协议
+     */
+    protected String protocol;
     @FXML
     private TextField remoteAddressInput;
     @FXML
@@ -61,24 +95,27 @@ public abstract class BaseClientController<T extends BaseClient> implements Init
     @FXML
     private Button sendSettingBtn;
 
-    protected boolean softWrap = false;
-
-    protected Stage sendSettingPane;
-
-    protected ScheduledSendService scheduledService;
-    protected ScheduledSendConfig sendConfig = new ScheduledSendConfig();
-    protected ScheduledTaskService scheduledTaskService;
-
-    protected T client;
-    protected String protocol;
-
     public BaseClientController() {
         setProtocol();
         setClient();
     }
 
+    /**
+     * <p>
+     *     为当前controller设置协议
+     * </p>
+     * @date 2022-10-23 18:38:41 <br>
+     * @author hqully <br>
+     */
     protected abstract void setProtocol();
 
+    /**
+     * <p>
+     *     为当前controller设置客户端实体
+     * </p>
+     * @date 2022-10-23 18:38:51 <br>
+     * @author hqully <br>
+     */
     protected abstract void setClient();
 
 
@@ -87,6 +124,16 @@ public abstract class BaseClientController<T extends BaseClient> implements Init
         URI uri = URI.create(protocol + remoteAddressInput.getText());
         client.setURI(uri);
         client.setService(new ClientService() {
+            @Override
+            public void onStart() {
+                if (!errorMsgLabel.getText().isEmpty()) {
+                    Platform.runLater(() -> {
+                        errorMsgLabel.setText("");
+                    });
+                }
+                setActiveUI();
+            }
+
             @Override
             public void onError(Throwable e, String errorMessage) {
                 Platform.runLater(() -> {
@@ -106,27 +153,18 @@ public abstract class BaseClientController<T extends BaseClient> implements Init
 
             @Override
             public void updateMsgList(String msg) {
+                Label msgLabel = UIUtil.getMsgLabel(msg, UIUtil.getFixMsgLabelWidth(msgList.getWidth()), softWrap);
                 Platform.runLater(() -> {
-                    Label msgLabel = UIUtil.getMsgLabel(msg, UIUtil.getFixMsgLabelWidth(msgList.getWidth()), softWrap);
                     msgList.getItems().add(msgLabel);
                 });
             }
         });
 
-
-        FutureTask<Channel> channel = new FutureTask<Channel>(client);
-
-        new Thread(channel).start();
-        try {
-            if (channel.get() != null && channel.get().isActive()) {
-                if (!errorMsgLabel.getText().isEmpty()) {
-                    errorMsgLabel.setText("");
-                }
-                setActiveUI();
-            }
-        } catch (ExecutionException | InterruptedException e) {
-            e.printStackTrace();
-        }
+        FutureTask<Channel> channel = new FutureTask<>(client);
+        executor.execute(channel);
+        Platform.runLater(() -> {
+            errorMsgLabel.setText("连接中...");
+        });
     }
 
     @FXML
@@ -177,6 +215,7 @@ public abstract class BaseClientController<T extends BaseClient> implements Init
     }
 
     public void destroy() {
+        // 如果有定时任务正在执行,则取消
         if (scheduledService != null && scheduledService.isRunning()) {
             scheduledService.cancel();
             scheduleSendBtn.setSelected(false);

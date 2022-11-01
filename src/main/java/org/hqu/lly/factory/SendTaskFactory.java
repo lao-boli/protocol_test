@@ -4,6 +4,7 @@ import javafx.concurrent.Task;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.EventHandler;
 import lombok.extern.slf4j.Slf4j;
+import org.hqu.lly.exception.ChannelInactiveException;
 import org.hqu.lly.service.TaskService;
 
 /**
@@ -37,7 +38,11 @@ public class SendTaskFactory implements TaskFactory<Void> {
             @Override
             public void handle(WorkerStateEvent event) {
                 Throwable e = task.getException();
-                log.error(e.toString());
+                if (e instanceof ChannelInactiveException){
+                    log.warn(e.toString());
+                }else {
+                    log.error(e.toString());
+                }
             }
         });
         return task;

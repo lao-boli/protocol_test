@@ -24,10 +24,13 @@ public abstract class ConnectionlessServerController extends BaseServerControlle
         serverService = new ConnectionlessServerService() {
             @Override
             public void addInetSocketAddress(InetSocketAddress dstAddr) {
-                Platform.runLater(() -> {
-                    clientList.add(dstAddr);
-                    clientListBox.setItems(clientList);
-                });
+                if (!clientAddrSet.contains(dstAddr)){
+                    clientAddrSet.add(dstAddr);
+                    Platform.runLater(() -> {
+                        clientList.add(dstAddr);
+                        clientListBox.setItems(clientList);
+                    });
+                }
             }
 
             @Override
@@ -37,6 +40,16 @@ public abstract class ConnectionlessServerController extends BaseServerControlle
                     clientListBox.setItems(clientList);
                 });
 
+            }
+
+            @Override
+            public void onStart() {
+                if (!errorMsgLabel.getText().isEmpty()) {
+                    Platform.runLater(() -> {
+                        errorMsgLabel.setText("");
+                    });
+                }
+                setActiveUI();
             }
 
             @Override
@@ -70,8 +83,6 @@ public abstract class ConnectionlessServerController extends BaseServerControlle
     protected void setClientBoxCellFactory() {
         // 自定义细胞工厂，设置显示的内容
         clientListBox.setCellFactory(channelListView -> new InetSocketAddressCellFactory());
-        // 点击时将当前的clientAddr设置为选中的dstAddr
-        clientListBox.getSelectionModel().selectedItemProperty().addListener((observableValue, preChannel, currentChannel) -> targetClient = currentChannel);
     }
 
     static class InetSocketAddressCellFactory extends ListCell<InetSocketAddress> {

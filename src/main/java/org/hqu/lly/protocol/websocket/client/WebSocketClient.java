@@ -44,8 +44,6 @@ public class WebSocketClient extends BaseClient {
 
     private ClientService clientService;
 
-    private Channel channel;
-
     private EventLoopGroup workerGroup;
 
     @Override
@@ -69,17 +67,12 @@ public class WebSocketClient extends BaseClient {
                     ch.pipeline().addLast("WebSocketClientExceptionHandler", new WebSocketClientExceptionHandler(clientService));
                 }
             });
-            ChannelFuture f = b.connect(host, port).sync();
-            channel = f.channel();
-            channel.closeFuture().addListener(new ChannelFutureListener() {
-                @Override
-                public void operationComplete(ChannelFuture future) throws Exception {
-                    workerGroup.shutdownGracefully();
-                }
-            });
+            channel = b.connect(host, port).sync().channel();
+            channel.closeFuture().addListener((ChannelFutureListener) future -> workerGroup.shutdownGracefully());
+            clientService.onStart();
         } catch (Exception e) {
             workerGroup.shutdownGracefully();
-            if (e instanceof ConnectException) {
+            if (e.getCause() instanceof ConnectException) {
                 log.warn(e.toString());
                 clientService.onError(e, "该地址服务未开启");
             } else {
@@ -118,6 +111,7 @@ public class WebSocketClient extends BaseClient {
 
     @Override
     public void sendMessage(String message) {
+        super.sendMessage(message);
         channel.writeAndFlush(new TextWebSocketFrame(message));
         clientService.updateMsgList(MsgUtil.formatSendMsg(message, channel.remoteAddress().toString()));
     }

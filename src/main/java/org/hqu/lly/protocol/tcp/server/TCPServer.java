@@ -2,7 +2,6 @@ package org.hqu.lly.protocol.tcp.server;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
-import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
@@ -76,15 +75,15 @@ public class TCPServer extends ConnectedServer {
 
             channel = serverBootstrap.bind(port).sync().channel();
             AppChannelGroup.TCPServerChannelSet.add("/127.0.0.1:" + port);
-            log.info("tcp server start successful at " + channel.localAddress());
 
-            ChannelFuture f = channel.closeFuture();
-            f.addListener(promise -> {
+            channel.closeFuture().addListener(promise -> {
                 bossGroup.shutdownGracefully();
                 workerGroup.shutdownGracefully();
                 AppChannelGroup.TCPServerChannelSet.remove("/127.0.0.1:" + port);
                 log.info("tcp server closed");
             });
+            log.info("tcp server start successful at " + channel.localAddress());
+            serverService.onStart();
         } catch (Exception e) {
             bossGroup.shutdownGracefully();
             workerGroup.shutdownGracefully();

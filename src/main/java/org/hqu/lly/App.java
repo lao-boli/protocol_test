@@ -22,7 +22,7 @@ public class App extends Application {
         Parent root = fxmlLoader.load();
        MainController controller = fxmlLoader.getController();
 
-        Scene scene = new Scene(root, 620, 450);
+        Scene scene = new Scene(root, 650, 450);
 
         DarculaFX.applyDarculaStyle(scene);
         primaryStage.initStyle(StageStyle.TRANSPARENT);

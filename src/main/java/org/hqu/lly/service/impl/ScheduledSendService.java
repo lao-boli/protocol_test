@@ -59,6 +59,13 @@ public class ScheduledSendService {
         };
         scheduledService.setExecutor(executorService);
         scheduledService.setPeriod(new Duration(config.getInterval()));
+        scheduledService.setRestartOnFailure(false);
+        scheduledService.setOnFailed(new EventHandler<WorkerStateEvent>() {
+            @Override
+            public void handle(WorkerStateEvent event) {
+                log.info(event.toString());
+            }
+        });
     }
 
     private void initTimesScheduleService() {

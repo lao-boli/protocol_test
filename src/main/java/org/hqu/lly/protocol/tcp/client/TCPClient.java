@@ -42,8 +42,6 @@ import java.net.URI;
 @Data
 public class TCPClient extends BaseClient {
 
-    private Channel channel;
-
     private String host;
 
     private int port;
@@ -54,6 +52,7 @@ public class TCPClient extends BaseClient {
 
     @Override
     public void sendMessage(String message) {
+        super.sendMessage(message);
         channel.writeAndFlush(message);
         String formattedText = MsgUtil.formatSendMsg(message, channel.remoteAddress().toString());
         log.info(formattedText);
@@ -70,8 +69,7 @@ public class TCPClient extends BaseClient {
     @Override
     public void init() {
 
-        EventLoopGroup eventLoopGroup = new NioEventLoopGroup();
-        this.eventLoopGroup = eventLoopGroup;
+        this.eventLoopGroup = new NioEventLoopGroup();
         try {
             Bootstrap bootstrap = new Bootstrap();
             bootstrap.group(eventLoopGroup)
@@ -97,10 +95,14 @@ public class TCPClient extends BaseClient {
                 eventLoopGroup.shutdownGracefully();
             });
             AppChannelGroup.TCPClientChannelSet.add(channel.localAddress().toString());
+
+            // 如果通道开启,则通知UI线程更新为开启状态的UI
+            if (channel.isActive()){
+                clientService.onStart();
+            }
         } catch (Exception e) {
             eventLoopGroup.shutdownGracefully();
-
-            if (e instanceof ConnectException) {
+            if (e.getCause() instanceof ConnectException) {
                 log.warn(e.toString());
                 clientService.onError(e, "该地址服务未开启");
             } else {

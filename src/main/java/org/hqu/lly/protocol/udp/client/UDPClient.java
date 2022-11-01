@@ -36,8 +36,6 @@ public class UDPClient extends BaseClient {
 
     private ClientService clientService;
 
-    private Channel channel;
-
     private EventLoopGroup eventLoopGroup;
 
     private InetSocketAddress serverAddr;
@@ -53,8 +51,11 @@ public class UDPClient extends BaseClient {
                     .handler(new UDPClientHandler(clientService));
             channel = bootstrap.bind(0).sync().channel();
             channel.closeFuture().addListener(promise -> eventLoopGroup.shutdownGracefully());
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+            log.info("udp client start successful at " + channel.localAddress());
+            clientService.onStart();
+        } catch (Exception e) {
+            eventLoopGroup.shutdownGracefully();
+            log.error(e.toString());
         }
     }
 
@@ -81,6 +82,7 @@ public class UDPClient extends BaseClient {
 
     @Override
     public void sendMessage(String message) {
+        super.sendMessage(message);
         channel.writeAndFlush(new DatagramPacket(Unpooled.copiedBuffer(message, CharsetUtil.UTF_8), serverAddr));
         clientService.updateMsgList(MsgUtil.formatSendMsg(message, serverAddr.toString()));
     }
@@ -88,7 +90,6 @@ public class UDPClient extends BaseClient {
     @Override
     public Channel call() throws Exception {
         init();
-        log.info("udp client start successful at " + channel.localAddress());
         return channel;
     }
 

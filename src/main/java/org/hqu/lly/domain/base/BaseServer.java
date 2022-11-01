@@ -16,6 +16,8 @@ import java.util.concurrent.Callable;
  */
 public abstract class BaseServer<T> implements Callable<Channel> {
 
+
+
     public abstract void init();
 
     public abstract void destroy();
