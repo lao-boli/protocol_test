@@ -44,8 +44,6 @@ public class WebSocketClient extends BaseClient {
 
     private ClientService clientService;
 
-    private Channel channel;
-
     private EventLoopGroup workerGroup;
 
     @Override
@@ -113,6 +111,7 @@ public class WebSocketClient extends BaseClient {
 
     @Override
     public void sendMessage(String message) {
+        super.sendMessage(message);
         channel.writeAndFlush(new TextWebSocketFrame(message));
         clientService.updateMsgList(MsgUtil.formatSendMsg(message, channel.remoteAddress().toString()));
     }

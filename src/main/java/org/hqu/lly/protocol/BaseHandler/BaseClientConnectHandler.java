@@ -36,6 +36,7 @@ public class BaseClientConnectHandler extends ChannelInboundHandlerAdapter {
         Channel channel = ctx.channel();
         log.info(ctx.name() + " : client: {} disconnect form server: {}", channel.localAddress(), channel.remoteAddress());
         clientService.updateMsgList("与服务端断开连接, 服务端地址: " + channel.remoteAddress().toString());
+        channel.close();
         clientService.onClose();
     }
 

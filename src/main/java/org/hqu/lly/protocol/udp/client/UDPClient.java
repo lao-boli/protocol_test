@@ -36,8 +36,6 @@ public class UDPClient extends BaseClient {
 
     private ClientService clientService;
 
-    private Channel channel;
-
     private EventLoopGroup eventLoopGroup;
 
     private InetSocketAddress serverAddr;
@@ -84,6 +82,7 @@ public class UDPClient extends BaseClient {
 
     @Override
     public void sendMessage(String message) {
+        super.sendMessage(message);
         channel.writeAndFlush(new DatagramPacket(Unpooled.copiedBuffer(message, CharsetUtil.UTF_8), serverAddr));
         clientService.updateMsgList(MsgUtil.formatSendMsg(message, serverAddr.toString()));
     }

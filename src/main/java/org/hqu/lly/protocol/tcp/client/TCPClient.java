@@ -42,8 +42,6 @@ import java.net.URI;
 @Data
 public class TCPClient extends BaseClient {
 
-    private Channel channel;
-
     private String host;
 
     private int port;
@@ -54,6 +52,7 @@ public class TCPClient extends BaseClient {
 
     @Override
     public void sendMessage(String message) {
+        super.sendMessage(message);
         channel.writeAndFlush(message);
         String formattedText = MsgUtil.formatSendMsg(message, channel.remoteAddress().toString());
         log.info(formattedText);

@@ -2,9 +2,8 @@ package org.hqu.lly.view.controller;
 
 import io.netty.channel.Channel;
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -77,8 +76,8 @@ public abstract class BaseServerController<T> implements Initializable {
     protected Button removeClientBtn;
 
     protected BaseServer<T> server;
-    protected Set<T> clientAddrSet= ConcurrentHashMap.newKeySet();
-    protected T targetClient = null;
+    protected Set<T> clientAddrSet = ConcurrentHashMap.newKeySet();
+    protected Set<T> targetClientSet = ConcurrentHashMap.newKeySet();
     protected boolean softWrap = false;
     protected boolean selectAll = true;
     protected ServerService serverService;
@@ -96,8 +95,9 @@ public abstract class BaseServerController<T> implements Initializable {
 
     /**
      * <p>
-     *     设置服务端实例
+     * 设置服务端实例
      * </p>
+     *
      * @date 2022-10-23 21:16:35 <br>
      * @author hqully <br>
      */
@@ -106,8 +106,9 @@ public abstract class BaseServerController<T> implements Initializable {
 
     /**
      * <p>
-     *     设置服务端服务
+     * 设置服务端服务
      * </p>
+     *
      * @date 2022-10-23 21:16:35 <br>
      * @author hqully <br>
      */
@@ -116,8 +117,9 @@ public abstract class BaseServerController<T> implements Initializable {
 
     /**
      * <p>
-     *     设置客户端列表的细胞工厂
+     * 设置客户端列表的细胞工厂
      * </p>
+     *
      * @date 2022-10-23 21:16:35 <br>
      * @author hqully <br>
      */
@@ -132,7 +134,7 @@ public abstract class BaseServerController<T> implements Initializable {
         FutureTask<Channel> serverTask = new FutureTask<>(server);
         executor.execute(serverTask);
         Platform.runLater(() -> {
-          errorMsgLabel.setText("服务开启中...");
+            errorMsgLabel.setText("服务开启中...");
         });
     }
 
@@ -147,17 +149,13 @@ public abstract class BaseServerController<T> implements Initializable {
         ObservableList<T> removeItems = clientListBox.getSelectionModel().getSelectedItems();
         clientAddrSet.removeAll(removeItems);
         clientList.removeAll(removeItems);
-        if (clientList.isEmpty()){
-            scheduleSendBtn.setDisable(true);
-            sendMsgButton.setDisable(true);
-        }
     }
 
     @FXML
     void selectAllClient(MouseEvent event) {
-        if (selectAll){
+        if (selectAll) {
             clientListBox.getSelectionModel().selectAll();
-        }else {
+        } else {
             clientListBox.getSelectionModel().clearSelection();
         }
         selectAll = !selectAll;
@@ -185,8 +183,10 @@ public abstract class BaseServerController<T> implements Initializable {
 
     @FXML
     void sendMsg(MouseEvent event) {
-        if (targetClient != null) {
-            server.sendMessage(msgInput.getText(), targetClient);
+        if (!targetClientSet.isEmpty()) {
+            targetClientSet.forEach((client) -> {
+                server.sendMessage(msgInput.getText(), client);
+            });
         }
     }
 
@@ -205,7 +205,6 @@ public abstract class BaseServerController<T> implements Initializable {
     void showSendSetting(MouseEvent event) {
         sendSettingPane.show();
     }
-
 
     @FXML
     void clearMsg(MouseEvent event) {
@@ -236,7 +235,6 @@ public abstract class BaseServerController<T> implements Initializable {
     }
 
 
-
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         initScheduleSetting();
@@ -247,17 +245,24 @@ public abstract class BaseServerController<T> implements Initializable {
         msgList.setContextMenu(UIUtil.getMsgListMenu(msgList));
         clientListBox.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
     }
-    protected void setClientBox(){
+
+    protected void setClientBox() {
         setClientBoxCellFactory();
         // 点击时将当前的client设置为选中的client
-        clientListBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<T>() {
+        clientListBox.getSelectionModel().getSelectedItems().addListener(new ListChangeListener<T>() {
             @Override
-            public void changed(ObservableValue<? extends T> observable, T oldValue, T newValue) {
-                if(targetClient == null){
-                    scheduleSendBtn.setDisable(false);
-                    sendMsgButton.setDisable(false);
+            public void onChanged(Change<? extends T> c) {
+                while (c.next()) {
+                    targetClientSet.removeAll(c.getRemoved());
+                    targetClientSet.addAll(c.getAddedSubList());
+                    if (targetClientSet.isEmpty()) {
+                        scheduleSendBtn.setDisable(true);
+                        sendMsgButton.setDisable(true);
+                    } else {
+                        scheduleSendBtn.setDisable(false);
+                        sendMsgButton.setDisable(false);
+                    }
                 }
-                targetClient =newValue;
             }
         });
     }
@@ -277,7 +282,11 @@ public abstract class BaseServerController<T> implements Initializable {
         sendConfig.setTaskFactory(new SendTaskFactory(new TaskService() {
             @Override
             public void fireTask() {
-                server.sendMessage(msgInput.getText(), targetClient);
+                if (!targetClientSet.isEmpty()) {
+                    targetClientSet.forEach((client) -> {
+                        server.sendMessage(msgInput.getText(), client);
+                    });
+                }
             }
         }));
 

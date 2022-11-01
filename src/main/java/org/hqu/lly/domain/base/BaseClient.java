@@ -1,6 +1,7 @@
 package org.hqu.lly.domain.base;
 
 import io.netty.channel.Channel;
+import org.hqu.lly.exception.ChannelInactiveException;
 import org.hqu.lly.service.impl.ClientService;
 
 import java.net.URI;
@@ -16,6 +17,7 @@ import java.util.concurrent.Callable;
  * @date 2022/8/11 14:15
  */
 public abstract class BaseClient implements Callable<Channel> {
+    protected Channel channel;
 
     public abstract void init();
 
@@ -25,7 +27,11 @@ public abstract class BaseClient implements Callable<Channel> {
 
     public abstract void setService(ClientService clientService);
 
-    public abstract void sendMessage(String message);
+    public void sendMessage(String message){
+        if (!channel.isActive()){
+            throw new ChannelInactiveException();
+        }
+    }
 
     @Override
     public Channel call() throws Exception {
