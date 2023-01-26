@@ -35,6 +35,11 @@ public class ScheduledSendConfig {
      */
     private SendTaskFactory taskFactory;
 
+    /**
+     * 自定义数据配置类
+     */
+    private CustomDataConfig customDataConfig;
+
     public ScheduledSendConfig() {
         defaultInit();
     }

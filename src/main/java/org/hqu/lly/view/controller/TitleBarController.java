@@ -36,6 +36,7 @@ public class TitleBarController implements Initializable {
 
     public static final String MAIN_PANE = "协议测试工具";
     public static final String SEND_SETTING = "发送设置";
+    public static final String DATA_SETTING = "数据设置";
     @Setter
     private Integer type;
 
@@ -60,6 +61,9 @@ public class TitleBarController implements Initializable {
             exitApp();
         }
         if (type.equals(StageConsts.SEND_SETTING)){
+            stage.close();
+        }
+        if (type.equals(StageConsts.DATA_SETTING)){
             stage.close();
         }
     }
@@ -96,6 +100,10 @@ public class TitleBarController implements Initializable {
             titleLabel.setText(MAIN_PANE);
         }
         if (type.equals(StageConsts.SEND_SETTING)){
+            minimizeLabel.setVisible(false);
+            titleLabel.setText(SEND_SETTING);
+        }
+        if (type.equals(StageConsts.DATA_SETTING)){
             minimizeLabel.setVisible(false);
             titleLabel.setText(SEND_SETTING);
         }
