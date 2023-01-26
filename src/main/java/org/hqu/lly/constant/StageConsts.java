@@ -12,6 +12,7 @@ package org.hqu.lly.constant;
 public class StageConsts {
     public static final Integer MAIN_PANE = 0;
     public static final Integer SEND_SETTING = 1;
+    public static final Integer DATA_SETTING = 2;
 
 
 }

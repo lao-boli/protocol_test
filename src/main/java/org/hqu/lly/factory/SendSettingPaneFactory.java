@@ -32,6 +32,7 @@ public class SendSettingPaneFactory {
 
             ScheduleSendController controller = loader.getController();
             controller.setSendConfig(sendConfig);
+            controller.setCustomDataConfig(sendConfig.getCustomDataConfig());
 
             Scene scene = new Scene(contentPane, 400, 300);
             DarculaFX.applyDarculaStyle(scene);

@@ -7,10 +7,13 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
+import javafx.stage.Stage;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.hqu.lly.constant.StageConsts;
+import org.hqu.lly.domain.bean.CustomDataConfig;
 import org.hqu.lly.domain.bean.ScheduledSendConfig;
+import org.hqu.lly.factory.DataSettingPaneFactory;
 import org.hqu.lly.service.impl.StageBridger;
 
 import java.net.URL;
@@ -48,13 +51,51 @@ public class ScheduleSendController implements Initializable {
     private BorderPane titleBar;
     @FXML
     private TitleBarController titleBarController;
+
     @Setter
     private ScheduledSendConfig sendConfig;
+
+    @FXML
+    private ChoiceBox<String> modeChoiceBox;
+
+    private String[] modeArray = {"普通文本","自定义数据"};
+
+    // region 自定义数据相关
+
+    @FXML
+    private TextArea customFormTextArea;
+
+    @FXML
+    private Button formatConfirmBtn;
+
+    /**
+     * 自定义数据设置面板
+     */
+    protected Stage dataSettingPane;
+
+    @Setter
+    private CustomDataConfig customDataConfig;
+    // endregion
+
 
     @FXML
     void saveSetting(MouseEvent event) {
         sendConfig.setInterval(Integer.valueOf(intervalTextField.getText()));
         sendConfig.setSendTimes(Integer.valueOf(sendCountTextField.getText()));
+    }
+
+
+    @FXML
+    void showDataRangeSettingPane(MouseEvent event) {
+        String dataPattern = customFormTextArea.getText();
+        String customDataPattern = customDataConfig.getCustomDataPattern();
+        if (customDataPattern != null && dataPattern.equals(customDataPattern)){
+            dataSettingPane.show();
+        }else {
+            customDataConfig.updateConfig(dataPattern);
+            dataSettingPane = DataSettingPaneFactory.create(customDataConfig);
+            dataSettingPane.show();
+        }
     }
 
     @Override
@@ -71,6 +112,16 @@ public class ScheduleSendController implements Initializable {
             }
         });
         titleBarController.initTitleBar(StageConsts.SEND_SETTING);
+
+        modeChoiceBox.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                // 普通文本模式
+                if (newValue.intValue() == 0){
+
+                }
+            }
+        });
     }
 
 }

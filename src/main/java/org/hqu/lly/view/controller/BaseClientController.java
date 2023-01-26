@@ -11,6 +11,7 @@ import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
 import org.hqu.lly.domain.base.BaseClient;
+import org.hqu.lly.domain.bean.CustomDataConfig;
 import org.hqu.lly.domain.bean.ScheduledSendConfig;
 import org.hqu.lly.factory.SendSettingPaneFactory;
 import org.hqu.lly.factory.SendTaskFactory;
@@ -18,6 +19,7 @@ import org.hqu.lly.service.ScheduledTaskService;
 import org.hqu.lly.service.TaskService;
 import org.hqu.lly.service.impl.ClientService;
 import org.hqu.lly.service.impl.ScheduledSendService;
+import org.hqu.lly.utils.DataUtil;
 import org.hqu.lly.utils.UIUtil;
 
 import java.net.URI;
@@ -57,9 +59,15 @@ public abstract class BaseClientController<T extends BaseClient> implements Init
     protected ScheduledSendService scheduledService;
 
     /**
-     * 发送设置
+     * 定时发送设置
      */
     protected ScheduledSendConfig sendConfig = new ScheduledSendConfig();
+
+    /**
+     * 定时发送设置
+     */
+    protected CustomDataConfig customDataConfig = new CustomDataConfig();
+
     /**
      * 定时任务服务
      */
@@ -72,6 +80,22 @@ public abstract class BaseClientController<T extends BaseClient> implements Init
      * 当前面板的连接协议
      */
     protected String protocol;
+
+    /**
+     * 普通文本模式
+     */
+    protected final String TEXT = "text";
+
+    /**
+     * 自定义数据模式
+     */
+    protected final String CUSTOM = "custom";
+
+    /**
+     * 发送模式,默认为文本模式
+     */
+    protected String mode = CUSTOM;
+
     @FXML
     private TextField remoteAddressInput;
     @FXML
@@ -176,7 +200,15 @@ public abstract class BaseClientController<T extends BaseClient> implements Init
 
     @FXML
     void sendMsg(MouseEvent event) {
-        client.sendMessage(msgInput.getText());
+        String text = msgInput.getText();
+        if (mode.equals(TEXT)){
+            client.sendMessage(text);
+        }
+
+        if (mode.equals(CUSTOM)){
+            String msg = DataUtil.createMsg(customDataConfig.getCustomDataPattern(), customDataConfig.getBoundList());
+            client.sendMessage(msg);
+        }
     }
 
     @FXML
@@ -247,6 +279,7 @@ public abstract class BaseClientController<T extends BaseClient> implements Init
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+
         // 定时任务设置
         scheduledTaskService = new ScheduledTaskService() {
             @Override
@@ -262,9 +295,19 @@ public abstract class BaseClientController<T extends BaseClient> implements Init
         sendConfig.setTaskFactory(new SendTaskFactory(new TaskService() {
             @Override
             public void fireTask() {
-                client.sendMessage(msgInput.getText());
+                String text = msgInput.getText();
+                if (mode.equals(TEXT)){
+                    client.sendMessage(text);
+                }
+
+                if (mode.equals(CUSTOM)){
+                    String msg = DataUtil.createMsg(customDataConfig.getCustomDataPattern(), customDataConfig.getBoundList());
+                    client.sendMessage(msg);
+                }
             }
         }));
+
+        sendConfig.setCustomDataConfig(customDataConfig);
 
         sendSettingPane = SendSettingPaneFactory.create(sendConfig);
 
