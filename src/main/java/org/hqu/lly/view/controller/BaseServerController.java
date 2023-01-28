@@ -13,13 +13,16 @@ import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
 import org.hqu.lly.domain.base.BaseServer;
-import org.hqu.lly.domain.bean.ScheduledSendConfig;
+import org.hqu.lly.domain.bean.CustomDataConfig;
+import org.hqu.lly.domain.bean.SendSettingConfig;
+import org.hqu.lly.exception.UnSetBoundException;
 import org.hqu.lly.factory.SendSettingPaneFactory;
 import org.hqu.lly.factory.SendTaskFactory;
 import org.hqu.lly.service.ScheduledTaskService;
 import org.hqu.lly.service.TaskService;
 import org.hqu.lly.service.impl.ScheduledSendService;
 import org.hqu.lly.service.impl.ServerService;
+import org.hqu.lly.utils.DataUtil;
 import org.hqu.lly.utils.UIUtil;
 
 import java.net.URL;
@@ -84,7 +87,7 @@ public abstract class BaseServerController<T> implements Initializable {
 
     protected Stage sendSettingPane;
     protected ScheduledSendService scheduledService;
-    protected ScheduledSendConfig sendConfig = new ScheduledSendConfig();
+    protected SendSettingConfig sendSettingConfig = new SendSettingConfig();
     protected ScheduledTaskService scheduledTaskService;
     ObservableList<T> clientList = FXCollections.observableArrayList();
 
@@ -183,17 +186,43 @@ public abstract class BaseServerController<T> implements Initializable {
 
     @FXML
     void sendMsg(MouseEvent event) {
+        sendMsg();
+    }
+
+    private void sendMsg() {
+
+        if ("未定义数据边界!".equals(errorMsgLabel.getText())){
+            errorMsgLabel.setText("");
+        }
+
         if (!targetClientSet.isEmpty()) {
             targetClientSet.forEach((client) -> {
-                server.sendMessage(msgInput.getText(), client);
+                String text = msgInput.getText();
+                if (sendSettingConfig.isTextMode()) {
+                    server.sendMessage(text, client);
+                }
+
+                try {
+                    if (sendSettingConfig.isCustomMode()) {
+                        CustomDataConfig customDataConfig = sendSettingConfig.getCustomDataConfig();
+                        String msg = DataUtil.createMsg(customDataConfig.getCustomDataPattern(), customDataConfig.getBoundList());
+                        server.sendMessage(msg, client);
+                    }
+                } catch (UnSetBoundException e) {
+                    log.warn(e.getMessage());
+                    Platform.runLater(() -> {
+                        errorMsgLabel.setText("未定义数据边界!");
+                    });
+                }
             });
         }
     }
 
+
     @FXML
     void scheduleSend(MouseEvent event) {
         if (scheduleSendBtn.isSelected()) {
-            scheduledService = new ScheduledSendService(sendConfig, scheduledTaskService);
+            scheduledService = new ScheduledSendService(sendSettingConfig.getScheduledSendConfig(), scheduledTaskService);
             scheduledService.start();
         }
         if (!scheduleSendBtn.isSelected()) {
@@ -279,18 +308,30 @@ public abstract class BaseServerController<T> implements Initializable {
                 scheduleSendBtn.setSelected(false);
             }
         };
-        sendConfig.setTaskFactory(new SendTaskFactory(new TaskService() {
+        sendSettingConfig.getScheduledSendConfig().setTaskFactory(new SendTaskFactory(new TaskService() {
             @Override
             public void fireTask() {
-                if (!targetClientSet.isEmpty()) {
-                    targetClientSet.forEach((client) -> {
-                        server.sendMessage(msgInput.getText(), client);
-                    });
-                }
+                sendMsg();
             }
         }));
 
-        sendSettingPane = SendSettingPaneFactory.create(sendConfig);
+        sendSettingConfig.setOnModeChange(new TaskService() {
+            @Override
+            public void fireTask() {
+                if (sendSettingConfig.isTextMode()) {
+                    Platform.runLater(() -> {
+                        msgInput.setDisable(false);
+                    });
+                }
+                if (sendSettingConfig.isCustomMode()) {
+                    Platform.runLater(() -> {
+                        msgInput.setDisable(true);
+                    });
+                }
+            }
+        });
+
+        sendSettingPane = SendSettingPaneFactory.create(sendSettingConfig);
     }
 
     protected void initBtnTips() {

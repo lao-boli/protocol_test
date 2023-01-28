@@ -9,6 +9,7 @@ import javafx.stage.Stage;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.hqu.lly.constant.StageConsts;
+import org.hqu.lly.service.TaskService;
 import org.hqu.lly.view.handler.DragWindowHandler;
 
 import java.net.URL;
@@ -39,6 +40,12 @@ public class TitleBarController implements Initializable {
     public static final String DATA_SETTING = "数据设置";
     @Setter
     private Integer type;
+    /**
+     * 执行关闭窗口前的任务
+     */
+    @Setter
+    private TaskService onBeforeClose;
+
 
     /**
      * 当前程序窗口舞台
@@ -57,6 +64,9 @@ public class TitleBarController implements Initializable {
 
     @FXML
     void handleCloseWindow(MouseEvent event) {
+        if (onBeforeClose != null) {
+            onBeforeClose.fireTask();
+        }
         if (type.equals(StageConsts.MAIN_PANE)){
             exitApp();
         }

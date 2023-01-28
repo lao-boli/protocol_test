@@ -8,8 +8,8 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.hqu.lly.constant.ResLocConsts;
-import org.hqu.lly.domain.bean.ScheduledSendConfig;
-import org.hqu.lly.view.controller.ScheduleSendController;
+import org.hqu.lly.domain.bean.SendSettingConfig;
+import org.hqu.lly.view.controller.SendSettingController;
 
 import java.io.IOException;
 
@@ -24,14 +24,15 @@ import java.io.IOException;
  */
 public class SendSettingPaneFactory {
 
-    public static Stage create(ScheduledSendConfig sendConfig) {
+    public static Stage create(SendSettingConfig sendConfig) {
         try {
             Stage sendSettingStage = new Stage();
             FXMLLoader loader = new FXMLLoader(SendSettingPaneFactory.class.getClassLoader().getResource(ResLocConsts.SEND_SETTING_PANE));
             Parent contentPane = loader.load();
 
-            ScheduleSendController controller = loader.getController();
-            controller.setSendConfig(sendConfig);
+            SendSettingController controller = loader.getController();
+            controller.setSendSettingConfig(sendConfig);
+            controller.setScheduledSendConfig(sendConfig.getScheduledSendConfig());
             controller.setCustomDataConfig(sendConfig.getCustomDataConfig());
 
             Scene scene = new Scene(contentPane, 400, 300);

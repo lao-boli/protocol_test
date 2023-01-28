@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.hqu.lly.constant.StageConsts;
 import org.hqu.lly.domain.bean.CustomDataConfig;
 import org.hqu.lly.domain.component.DataItem;
+import org.hqu.lly.service.TaskService;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -28,8 +29,6 @@ import java.util.ResourceBundle;
 @Slf4j
 public class DataSettingController implements Initializable {
 
-    private static final Integer TIMES = 0;
-    private static final Integer MANUAL_STOP = 1;
     @FXML
     private TitleBarController titleBarController;
 
@@ -46,6 +45,10 @@ public class DataSettingController implements Initializable {
 
     @FXML
     void saveSetting(MouseEvent event) {
+        saveSetting();
+    }
+
+    void saveSetting() {
         boundList.clear();
         dataItemList.forEach(dataItem -> {
             boundList.add(dataItem.getData());
@@ -66,6 +69,12 @@ public class DataSettingController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         titleBarController.initTitleBar(StageConsts.DATA_SETTING);
+        titleBarController.setOnBeforeClose(new TaskService() {
+            @Override
+            public void fireTask() {
+                saveSetting();
+            }
+        });
     }
 
 }

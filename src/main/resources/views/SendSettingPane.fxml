@@ -2,7 +2,7 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<AnchorPane prefHeight="300.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.hqu.lly.view.controller.ScheduleSendController">
+<AnchorPane prefHeight="300.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.hqu.lly.view.controller.SendSettingController">
    <children>
          <fx:include fx:id="titleBar" prefWidth="400.0" source="titleBar.fxml" />
       <Label layoutX="20.0" layoutY="45.0" text="发送设定: " />
@@ -30,9 +30,9 @@
       </AnchorPane>
       <AnchorPane layoutX="20.0" layoutY="165.0" prefHeight="23.0" prefWidth="339.0">
          <children>
-            <TextArea fx:id="customFormTextArea" focusTraversable="false" layoutX="68.0" prefHeight="92.0" prefWidth="216.0" text="\\%.2f %d" wrapText="true" />
+            <TextArea fx:id="customFormTextArea" disable="true" focusTraversable="false" layoutX="68.0" prefHeight="92.0" prefWidth="216.0" text="\\%.2f %d" wrapText="true" />
             <Label layoutY="4.0" text="自定义格式:" />
-            <Button fx:id="formatConfirmBtn" layoutX="299.0" layoutY="67.0" mnemonicParsing="false" onMouseClicked="#showDataRangeSettingPane" text="确认" />
+            <Button fx:id="showBoundPaneBtn" disable="true" layoutX="299.0" layoutY="67.0" mnemonicParsing="false" onMouseClicked="#showDataRangeSettingPane" text="确认" />
          </children>
       </AnchorPane>
       <Button fx:id="saveSettingBtn" layoutX="296.0" layoutY="269.0" mnemonicParsing="false" onMouseClicked="#saveSetting" text="保存设置" />

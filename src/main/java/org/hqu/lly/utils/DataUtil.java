@@ -2,6 +2,7 @@ package org.hqu.lly.utils;
 
 import lombok.extern.slf4j.Slf4j;
 import org.hqu.lly.domain.component.DataItem;
+import org.hqu.lly.exception.UnSetBoundException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,9 +57,12 @@ public class DataUtil {
     }
 
     public static String createMsg(String patternText, List<Map<String,String>> boundList) {
+        if (boundList == null) {
+            throw new UnSetBoundException();
+        }
         Object[] vars = new Object[boundList.size()];
-        for (int i = 0; i < boundList.size(); i++) {
 
+        for (int i = 0; i < boundList.size(); i++) {
             Map<String, String> boundMap = boundList.get(i);
             String varName = boundMap.get(NAME);
 
@@ -87,24 +91,39 @@ public class DataUtil {
     }
 
     public static Float randomFloat(Map<String, String> boundMap) {
-        Float upperBound = Float.parseFloat(boundMap.get(UPPER_BOUND)) ;
-        Float lowerBound = Float.parseFloat(boundMap.get(LOWER_BOUND));
-        Float randomFloat = rand.nextFloat() * (upperBound - lowerBound) + lowerBound;
+        Float randomFloat = null;
+        try {
+            Float upperBound = Float.parseFloat(boundMap.get(UPPER_BOUND)) ;
+            Float lowerBound = Float.parseFloat(boundMap.get(LOWER_BOUND));
+            randomFloat = rand.nextFloat() * (upperBound - lowerBound) + lowerBound;
+        } catch (NumberFormatException e) {
+            throw new UnSetBoundException();
+        }
         return randomFloat;
     }
 
     public static Double randomDouble(Map<String, String> boundMap) {
-        Double upperBound = Double.parseDouble(boundMap.get(UPPER_BOUND)) ;
-        Double lowerBound = Double.parseDouble(boundMap.get(LOWER_BOUND));
-        Double randomDouble = rand.nextDouble() * (upperBound - lowerBound) + lowerBound;
+        Double randomDouble = null;
+        try {
+            Double upperBound = Double.parseDouble(boundMap.get(UPPER_BOUND)) ;
+            Double lowerBound = Double.parseDouble(boundMap.get(LOWER_BOUND));
+            randomDouble = rand.nextDouble() * (upperBound - lowerBound) + lowerBound;
+        } catch (NumberFormatException e) {
+            throw new UnSetBoundException();
+        }
         return randomDouble;
     }
 
     public static Integer randomInteger(Map<String, String> boundMap,int radix) {
-        Integer upperBound = Integer.parseInt(boundMap.get(UPPER_BOUND),radix);
-        Integer lowerBound = Integer.parseInt(boundMap.get(LOWER_BOUND),radix);
-        // [+1]保证能随机到上界,即随机区间为[lowerBound,upperBound]闭区间
-        int randomInteger = rand.nextInt(upperBound - lowerBound + 1) + lowerBound;
+        int randomInteger = 0;
+        try {
+            Integer upperBound = Integer.parseInt(boundMap.get(UPPER_BOUND),radix);
+            Integer lowerBound = Integer.parseInt(boundMap.get(LOWER_BOUND),radix);
+            // [+1]保证能随机到上界,即随机区间为[lowerBound,upperBound]闭区间
+            randomInteger = rand.nextInt(upperBound - lowerBound + 1) + lowerBound;
+        } catch (NumberFormatException e) {
+            throw new UnSetBoundException();
+        }
         return randomInteger;
     }
 
