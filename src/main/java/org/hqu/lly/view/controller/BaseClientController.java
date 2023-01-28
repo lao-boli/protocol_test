@@ -12,7 +12,8 @@ import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
 import org.hqu.lly.domain.base.BaseClient;
 import org.hqu.lly.domain.bean.CustomDataConfig;
-import org.hqu.lly.domain.bean.ScheduledSendConfig;
+import org.hqu.lly.domain.bean.SendSettingConfig;
+import org.hqu.lly.exception.UnSetBoundException;
 import org.hqu.lly.factory.SendSettingPaneFactory;
 import org.hqu.lly.factory.SendTaskFactory;
 import org.hqu.lly.service.ScheduledTaskService;
@@ -58,15 +59,8 @@ public abstract class BaseClientController<T extends BaseClient> implements Init
      */
     protected ScheduledSendService scheduledService;
 
-    /**
-     * 定时发送设置
-     */
-    protected ScheduledSendConfig sendConfig = new ScheduledSendConfig();
 
-    /**
-     * 定时发送设置
-     */
-    protected CustomDataConfig customDataConfig = new CustomDataConfig();
+    protected SendSettingConfig sendSettingConfig = new SendSettingConfig();
 
     /**
      * 定时任务服务
@@ -80,21 +74,6 @@ public abstract class BaseClientController<T extends BaseClient> implements Init
      * 当前面板的连接协议
      */
     protected String protocol;
-
-    /**
-     * 普通文本模式
-     */
-    protected final String TEXT = "text";
-
-    /**
-     * 自定义数据模式
-     */
-    protected final String CUSTOM = "custom";
-
-    /**
-     * 发送模式,默认为文本模式
-     */
-    protected String mode = CUSTOM;
 
     @FXML
     private TextField remoteAddressInput;
@@ -200,14 +179,32 @@ public abstract class BaseClientController<T extends BaseClient> implements Init
 
     @FXML
     void sendMsg(MouseEvent event) {
+        sendMsg();
+    }
+
+    private void sendMsg() {
+
+        if ("未定义数据边界!".equals(errorMsgLabel.getText())){
+            errorMsgLabel.setText("");
+        }
+
         String text = msgInput.getText();
-        if (mode.equals(TEXT)){
+        if (sendSettingConfig.isTextMode()){
             client.sendMessage(text);
         }
 
-        if (mode.equals(CUSTOM)){
-            String msg = DataUtil.createMsg(customDataConfig.getCustomDataPattern(), customDataConfig.getBoundList());
-            client.sendMessage(msg);
+        try {
+            if (sendSettingConfig.isCustomMode()){
+                CustomDataConfig customDataConfig = sendSettingConfig.getCustomDataConfig();
+                String msg = DataUtil.createMsg(customDataConfig.getCustomDataPattern(), customDataConfig.getBoundList());
+                client.sendMessage(msg);
+
+            }
+        } catch (UnSetBoundException e) {
+            log.warn(e.getMessage());
+            Platform.runLater(() -> {
+                errorMsgLabel.setText("未定义数据边界!");
+            });
         }
     }
 
@@ -233,7 +230,7 @@ public abstract class BaseClientController<T extends BaseClient> implements Init
     @FXML
     void scheduleSend(MouseEvent event) {
         if (scheduleSendBtn.isSelected()) {
-            scheduledService = new ScheduledSendService(sendConfig, scheduledTaskService);
+            scheduledService = new ScheduledSendService(sendSettingConfig.getScheduledSendConfig(), scheduledTaskService);
             scheduledService.start();
         }
         if (!scheduleSendBtn.isSelected()) {
@@ -292,24 +289,30 @@ public abstract class BaseClientController<T extends BaseClient> implements Init
                 scheduleSendBtn.setSelected(false);
             }
         };
-        sendConfig.setTaskFactory(new SendTaskFactory(new TaskService() {
+        sendSettingConfig.getScheduledSendConfig().setTaskFactory(new SendTaskFactory(new TaskService() {
             @Override
             public void fireTask() {
-                String text = msgInput.getText();
-                if (mode.equals(TEXT)){
-                    client.sendMessage(text);
-                }
-
-                if (mode.equals(CUSTOM)){
-                    String msg = DataUtil.createMsg(customDataConfig.getCustomDataPattern(), customDataConfig.getBoundList());
-                    client.sendMessage(msg);
-                }
+                sendMsg();
             }
         }));
+        sendSettingConfig.setOnModeChange(new TaskService() {
+            @Override
+            public void fireTask() {
+                if (sendSettingConfig.isTextMode()) {
+                    Platform.runLater(() -> {
+                        msgInput.setDisable(false);
+                    });
+                }
+                if (sendSettingConfig.isCustomMode()) {
+                    Platform.runLater(() -> {
+                        msgInput.setDisable(true);
+                    });
+                }
+            }
+        });
 
-        sendConfig.setCustomDataConfig(customDataConfig);
 
-        sendSettingPane = SendSettingPaneFactory.create(sendConfig);
+        sendSettingPane = SendSettingPaneFactory.create(sendSettingConfig);
 
         // 功能按钮悬浮tip提示
         initMsgSideBar();
