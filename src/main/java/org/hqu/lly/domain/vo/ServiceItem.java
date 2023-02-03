@@ -1,6 +1,7 @@
 package org.hqu.lly.domain.vo;
 
 import javafx.scene.control.TreeItem;
+import lombok.Data;
 import org.hqu.lly.service.SwitchPaneService;
 
 /**
@@ -12,6 +13,7 @@ import org.hqu.lly.service.SwitchPaneService;
  * @version 1.0
  * @date 2022/9/4 20:31
  */
+@Data
 public class ServiceItem<T> extends TreeItem {
 
     private SwitchPaneService switchPaneService;

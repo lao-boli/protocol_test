@@ -1,5 +1,6 @@
 package org.hqu.lly.domain.bean;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.hqu.lly.service.TaskService;
@@ -15,6 +16,7 @@ import org.hqu.lly.service.TaskService;
  */
 @Slf4j
 @Data
+@JsonIgnoreProperties(value = {"textMode","customMode","onModeChange"},ignoreUnknown = true)
 public class SendSettingConfig {
 
 
@@ -36,14 +38,19 @@ public class SendSettingConfig {
     /**
      * 普通文本模式
      */
-    private final String TEXT = "text";
+    private static final String TEXT = "text";
 
     /**
      * 自定义数据模式
      */
-    private final String CUSTOM = "custom";
+    private static final String CUSTOM = "custom";
 
     private TaskService onModeChange;
+
+    public SendSettingConfig(CustomDataConfig customDataConfig, ScheduledSendConfig scheduledSendConfig) {
+        this.customDataConfig = customDataConfig;
+        this.scheduledSendConfig = scheduledSendConfig;
+    }
 
     public SendSettingConfig() {
         scheduledSendConfig = new ScheduledSendConfig();

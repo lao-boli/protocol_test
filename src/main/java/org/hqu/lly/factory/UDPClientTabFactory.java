@@ -12,7 +12,7 @@ import org.hqu.lly.view.controller.UDPClientController;
  * @version 1.0
  * @date 2022/8/7 14:57
  */
-public class UDPClientTabFactory extends BaseClientTabFactory<UDPClientController> implements TabFactory {
+public class UDPClientTabFactory extends BaseClientTabFactory<UDPClientController>{
 
     private String tabName = "client";
 

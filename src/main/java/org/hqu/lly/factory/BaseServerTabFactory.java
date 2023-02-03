@@ -3,6 +3,7 @@ package org.hqu.lly.factory;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.Tab;
+import lombok.Getter;
 import org.hqu.lly.view.controller.BaseServerController;
 
 import java.io.IOException;
@@ -16,11 +17,14 @@ import java.io.IOException;
  * @version 1.0
  * @date 2023-01-29 20:25
  */
-public class BaseServerTabFactory<T extends BaseServerController<?>> implements TabFactory {
+public class BaseServerTabFactory<T extends BaseServerController<?>> implements TabFactory<T> {
 
     protected String tabName;
 
     protected String tabPanePath;
+
+    @Getter
+    private T controller;
 
     public BaseServerTabFactory() {
     }
@@ -31,7 +35,7 @@ public class BaseServerTabFactory<T extends BaseServerController<?>> implements 
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource(tabPanePath));
             Parent contentPane = loader.load();
-            T controller = loader.getController();
+            controller = loader.getController();
 
             tab.setContent(contentPane);
             tab.setOnClosed(event -> (controller).destroy());

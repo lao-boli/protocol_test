@@ -12,7 +12,7 @@ import org.hqu.lly.view.controller.UDPServerController;
  * @date 2022/8/7 14:57
  * @Version 1.0
  */
-public class UDPServerTabFactory extends BaseServerTabFactory<UDPServerController> implements TabFactory {
+public class UDPServerTabFactory extends BaseServerTabFactory<UDPServerController>{
 
     public UDPServerTabFactory() {
         super.tabName = "server";
