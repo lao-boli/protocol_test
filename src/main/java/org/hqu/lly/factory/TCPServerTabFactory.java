@@ -12,7 +12,7 @@ import org.hqu.lly.view.controller.TCPServerController;
  * @version 1.0
  * @date 2022/8/7 14:57
  */
-public class TCPServerTabFactory extends BaseServerTabFactory<TCPServerController> implements TabFactory {
+public class TCPServerTabFactory extends BaseServerTabFactory<TCPServerController>{
 
     public TCPServerTabFactory(){
         super.tabName = "server";

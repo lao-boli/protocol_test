@@ -1,5 +1,6 @@
 package org.hqu.lly.domain.bean;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.hqu.lly.factory.SendTaskFactory;
@@ -33,12 +34,9 @@ public class ScheduledSendConfig {
     /**
      * 消息发送任务工厂
      */
+    @JsonIgnore
     private SendTaskFactory taskFactory;
 
-    /**
-     * 自定义数据配置类
-     */
-    private CustomDataConfig customDataConfig;
 
     public ScheduledSendConfig() {
         defaultInit();

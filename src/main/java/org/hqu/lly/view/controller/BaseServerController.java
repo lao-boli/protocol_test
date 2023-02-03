@@ -15,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.hqu.lly.domain.base.BaseServer;
 import org.hqu.lly.domain.bean.CustomDataConfig;
 import org.hqu.lly.domain.bean.SendSettingConfig;
+import org.hqu.lly.domain.config.ServerConfig;
 import org.hqu.lly.exception.UnSetBoundException;
 import org.hqu.lly.factory.SendSettingPaneFactory;
 import org.hqu.lly.factory.SendTaskFactory;
@@ -43,7 +44,7 @@ import java.util.concurrent.FutureTask;
  * @date 2022/10/3 10:45
  */
 @Slf4j
-public abstract class BaseServerController<T> implements Initializable {
+public abstract class BaseServerController<T> extends BaseController implements Initializable {
 
     protected Executor executor = Executors.newSingleThreadExecutor();
 
@@ -90,6 +91,11 @@ public abstract class BaseServerController<T> implements Initializable {
     protected SendSettingConfig sendSettingConfig = new SendSettingConfig();
     protected ScheduledTaskService scheduledTaskService;
     ObservableList<T> clientList = FXCollections.observableArrayList();
+
+    /**
+     * 客户端面板配置类
+     */
+    protected ServerConfig serverConfig;
 
     public BaseServerController() {
         setServer();
@@ -332,6 +338,15 @@ public abstract class BaseServerController<T> implements Initializable {
         });
 
         sendSettingPane = SendSettingPaneFactory.create(sendSettingConfig);
+    }
+
+    @Override
+    public ServerConfig saveAndGetConfig() {
+        serverConfig = new ServerConfig();
+        serverConfig.setMsgInput(msgInput.getText());
+        serverConfig.setPort(serverPort.getText());
+        serverConfig.setSendSettingConfig(sendSettingConfig);
+        return serverConfig;
     }
 
     protected void initBtnTips() {

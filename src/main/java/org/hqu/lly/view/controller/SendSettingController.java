@@ -18,6 +18,7 @@ import org.hqu.lly.domain.bean.SendSettingConfig;
 import org.hqu.lly.factory.DataSettingPaneFactory;
 import org.hqu.lly.service.TaskService;
 import org.hqu.lly.service.impl.StageBridger;
+import org.hqu.lly.utils.ConfUtil;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -88,6 +89,8 @@ public class SendSettingController implements Initializable {
     void saveSetting(MouseEvent event) {
         scheduledSendConfig.setInterval(Integer.valueOf(intervalTextField.getText()));
         scheduledSendConfig.setSendTimes(Integer.valueOf(sendCountTextField.getText()));
+        ConfUtil.saveConf(sendSettingConfig);
+//        ConfUtil.loadConf();
     }
 
 

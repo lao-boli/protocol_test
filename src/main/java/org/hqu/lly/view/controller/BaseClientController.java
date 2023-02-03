@@ -13,6 +13,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.hqu.lly.domain.base.BaseClient;
 import org.hqu.lly.domain.bean.CustomDataConfig;
 import org.hqu.lly.domain.bean.SendSettingConfig;
+import org.hqu.lly.domain.config.ClientConfig;
+import org.hqu.lly.domain.config.TabConfig;
 import org.hqu.lly.exception.UnSetBoundException;
 import org.hqu.lly.factory.SendSettingPaneFactory;
 import org.hqu.lly.factory.SendTaskFactory;
@@ -40,7 +42,7 @@ import java.util.concurrent.FutureTask;
  * @date 2022/10/2 20:20
  */
 @Slf4j
-public abstract class BaseClientController<T extends BaseClient> implements Initializable {
+public abstract class BaseClientController<T extends BaseClient> extends BaseController implements Initializable {
 
     protected Executor executor = Executors.newSingleThreadExecutor();
 
@@ -75,6 +77,11 @@ public abstract class BaseClientController<T extends BaseClient> implements Init
      */
     protected String protocol;
 
+    /**
+     * 客户端面板配置类
+     */
+    protected ClientConfig clientConfig;
+
     @FXML
     private TextField remoteAddressInput;
     @FXML
@@ -101,6 +108,23 @@ public abstract class BaseClientController<T extends BaseClient> implements Init
     public BaseClientController() {
         setProtocol();
         setClient();
+    }
+
+    public void initByConfig(ClientConfig config) {
+        remoteAddressInput.setText(config.getServerAddr());
+        msgInput.setText(config.getMsgInput());
+        sendSettingConfig = config.getSendSettingConfig();
+        sendSetting();
+    }
+
+    @Override
+    public TabConfig saveAndGetConfig(){
+        clientConfig = new ClientConfig();
+        clientConfig.setProtocol(protocol);
+        clientConfig.setMsgInput(msgInput.getText());
+        clientConfig.setServerAddr(remoteAddressInput.getText());
+        clientConfig.setSendSettingConfig(sendSettingConfig);
+        return clientConfig;
     }
 
     /**
@@ -277,6 +301,19 @@ public abstract class BaseClientController<T extends BaseClient> implements Init
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
+        // 发送设置
+        sendSetting();
+
+        sendSettingPane = SendSettingPaneFactory.create(sendSettingConfig);
+
+        // 功能按钮悬浮tip提示
+        initMsgSideBar();
+
+        // 消息上下文菜单
+        msgList.setContextMenu(UIUtil.getMsgListMenu(msgList));
+    }
+
+    private void sendSetting() {
         // 定时任务设置
         scheduledTaskService = new ScheduledTaskService() {
             @Override
@@ -295,6 +332,8 @@ public abstract class BaseClientController<T extends BaseClient> implements Init
                 sendMsg();
             }
         }));
+
+        // 发送模式改变时的回调
         sendSettingConfig.setOnModeChange(new TaskService() {
             @Override
             public void fireTask() {
@@ -310,21 +349,20 @@ public abstract class BaseClientController<T extends BaseClient> implements Init
                 }
             }
         });
-
-
-        sendSettingPane = SendSettingPaneFactory.create(sendSettingConfig);
-
-        // 功能按钮悬浮tip提示
-        initMsgSideBar();
-
-        // 消息上下文菜单
-        msgList.setContextMenu(UIUtil.getMsgListMenu(msgList));
     }
 
     protected void initMsgSideBar() {
         softWrapBtn.setTooltip(UIUtil.getTooltip("长文本换行"));
         clearBtn.setTooltip(UIUtil.getTooltip("清空列表"));
         sendSettingBtn.setTooltip(UIUtil.getTooltip("发送设置"));
+
+    }
+
+    public void updateConfig(ClientConfig config){
+        SendSettingConfig sendSettingConfig = config.getSendSettingConfig();
+        this.sendSettingConfig.setMode(sendSettingConfig.getMode());
+        this.sendSettingConfig.getScheduledSendConfig().setSendTimes(sendSettingConfig.getScheduledSendConfig().getSendTimes());
+
 
     }
 

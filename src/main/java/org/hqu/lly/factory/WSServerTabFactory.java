@@ -12,7 +12,7 @@ import org.hqu.lly.view.controller.WebSocketServerController;
  * @date 2022/8/7 14:57
  * @version 1.0
  */
-public class WSServerTabFactory extends BaseServerTabFactory<WebSocketServerController> implements TabFactory {
+public class WSServerTabFactory extends BaseServerTabFactory<WebSocketServerController>{
 
     public WSServerTabFactory(){
         super.tabName = "server";

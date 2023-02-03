@@ -1,5 +1,6 @@
 package org.hqu.lly.domain.bean;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.hqu.lly.domain.component.DataItem;
@@ -28,6 +29,7 @@ public class CustomDataConfig {
     /**
      * 自定义数据控件列表
      */
+    @JsonIgnore
     private List<DataItem> dataItemList;
 
     /**
