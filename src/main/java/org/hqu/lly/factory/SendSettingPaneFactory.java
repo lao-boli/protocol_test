@@ -9,6 +9,7 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.hqu.lly.constant.ResLocConsts;
 import org.hqu.lly.domain.bean.SendSettingConfig;
+import org.hqu.lly.domain.config.TopConfig;
 import org.hqu.lly.view.controller.SendSettingController;
 
 import java.io.IOException;
@@ -24,6 +25,14 @@ import java.io.IOException;
  */
 public class SendSettingPaneFactory {
 
+    /**
+     * <p>
+     *     创建发送设置面板.
+     * </p>
+     * @param sendConfig 发送设置
+     * @return {@link Stage} 发送设置面板
+     * @date 2023-02-05 19:03:05 <br>
+     */
     public static Stage create(SendSettingConfig sendConfig) {
         try {
             Stage sendSettingStage = new Stage();
@@ -31,9 +40,16 @@ public class SendSettingPaneFactory {
             Parent contentPane = loader.load();
 
             SendSettingController controller = loader.getController();
+
+            // 载入要使用的配置类
             controller.setSendSettingConfig(sendConfig);
             controller.setScheduledSendConfig(sendConfig.getScheduledSendConfig());
             controller.setCustomDataConfig(sendConfig.getCustomDataConfig());
+
+            // 若存在本地配置文件,则加载.
+            if (TopConfig.isLoad()){
+                controller.loadConfig();
+            }
 
             Scene scene = new Scene(contentPane, 400, 300);
             DarculaFX.applyDarculaStyle(scene);
