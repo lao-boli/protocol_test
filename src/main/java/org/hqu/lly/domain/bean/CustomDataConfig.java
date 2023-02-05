@@ -11,7 +11,7 @@ import java.util.Map;
 
 /**
  * <p>
- *     自定义数据的配置类
+ *     自定义数据的配置类.
  * </p>
  * @author hqully
  * @version 1.0
@@ -41,9 +41,27 @@ public class CustomDataConfig {
 
     }
 
+    /**
+     * <p>
+     *     更新自定义数据面板的配置类,
+     *     并根据{@link #customDataPattern}生成{@link #dataItemList}.
+     * </p>
+     * @param customDataPattern 自定义数据格式
+     * @date 2023-01-14 10:31
+     */
     public void updateConfig(String customDataPattern) {
         this.customDataPattern = customDataPattern;
-        this.dataItemList = DataUtil.matchVars(customDataPattern);
+        this.dataItemList = DataUtil.initDataItems(customDataPattern);
+    }
+
+    /**
+     * <p>
+     *     根据本地配置类中的{@link #boundList}生成{@link #dataItemList}.
+     * </p>
+     * @date 2023-02-05 10:31
+     */
+    public void loadLocalConfig() {
+        this.dataItemList = DataUtil.initDataItems(boundList);
     }
 
 }

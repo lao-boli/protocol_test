@@ -4,6 +4,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.Tab;
 import lombok.Getter;
+import org.hqu.lly.domain.config.ServerConfig;
+import org.hqu.lly.domain.config.TabConfig;
 import org.hqu.lly.view.controller.BaseServerController;
 
 import java.io.IOException;
@@ -19,10 +21,21 @@ import java.io.IOException;
  */
 public class BaseServerTabFactory<T extends BaseServerController<?>> implements TabFactory<T> {
 
+    /**
+     * 标签页名称
+     */
     protected String tabName;
 
+    /**
+     * 标签页所在路径,<br>
+     * 应为{@link org.hqu.lly.constant.ResLocConsts}中的值.
+     */
     protected String tabPanePath;
 
+    /**
+     * 标签页d面板对应控制器,<br>
+     * 应为{@link BaseServerController}的子类.
+     */
     @Getter
     private T controller;
 
@@ -42,6 +55,22 @@ public class BaseServerTabFactory<T extends BaseServerController<?>> implements 
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return tab;
+    }
+
+    /**
+     * <p>
+     *     通过本地配置文件加载服务面板.<br>
+     *     本方法应只在通过本地配置文件加载服务面板时调用.
+     * </p>
+     * @param config 应为服务面板配置类{@link ServerConfig}.
+     * @return {@link Tab} 服务端标签页.
+     * @date 2023-02-05 17:32:00 <br>
+     */
+    @Override
+    public Tab create(TabConfig config) {
+        Tab tab = create();
+        controller.initByConfig((ServerConfig) config);
         return tab;
     }
 }

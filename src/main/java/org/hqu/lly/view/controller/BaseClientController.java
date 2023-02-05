@@ -15,6 +15,7 @@ import org.hqu.lly.domain.bean.CustomDataConfig;
 import org.hqu.lly.domain.bean.SendSettingConfig;
 import org.hqu.lly.domain.config.ClientConfig;
 import org.hqu.lly.domain.config.TabConfig;
+import org.hqu.lly.domain.config.TopConfig;
 import org.hqu.lly.exception.UnSetBoundException;
 import org.hqu.lly.factory.SendSettingPaneFactory;
 import org.hqu.lly.factory.SendTaskFactory;
@@ -62,6 +63,9 @@ public abstract class BaseClientController<T extends BaseClient> extends BaseCon
     protected ScheduledSendService scheduledService;
 
 
+    /**
+     * 发送设置配置类
+     */
     protected SendSettingConfig sendSettingConfig = new SendSettingConfig();
 
     /**
@@ -110,17 +114,38 @@ public abstract class BaseClientController<T extends BaseClient> extends BaseCon
         setClient();
     }
 
+    /**
+     * <p>
+     * 通过本地配置文件初始化加载数据
+     * </p>
+     *
+     * @param config 客户端配置文件类
+     * @date 2023-02-05 15:18:25 <br>
+     * @author hqully <br>
+     */
     public void initByConfig(ClientConfig config) {
         remoteAddressInput.setText(config.getServerAddr());
         msgInput.setText(config.getMsgInput());
         sendSettingConfig = config.getSendSettingConfig();
-        sendSetting();
+        initSendSetting();
     }
 
+    /**
+     * <p>
+     * 保存并返回当前标签页的客户端配置。
+     * 当前标签页的控制器应是 {@link BaseClientController}的子类。 <br>
+     * 保存的客户端配置包括：<br>
+     * 1.消息框中的文本;<br>
+     * 2.连接的服务端地址;<br>
+     * 3.发送设置.
+     * </p>
+     *
+     * @return {@link TabConfig} 客户端标签页配置
+     * @date 2023-02-06 10:50:53 <br>
+     */
     @Override
-    public TabConfig saveAndGetConfig(){
+    public TabConfig saveAndGetConfig() {
         clientConfig = new ClientConfig();
-        clientConfig.setProtocol(protocol);
         clientConfig.setMsgInput(msgInput.getText());
         clientConfig.setServerAddr(remoteAddressInput.getText());
         clientConfig.setSendSettingConfig(sendSettingConfig);
@@ -129,19 +154,19 @@ public abstract class BaseClientController<T extends BaseClient> extends BaseCon
 
     /**
      * <p>
-     *     为当前controller设置协议
+     * 为当前controller设置协议
      * </p>
+     *
      * @date 2022-10-23 18:38:41 <br>
-     * @author hqully <br>
      */
     protected abstract void setProtocol();
 
     /**
      * <p>
-     *     为当前controller设置客户端实体
+     * 为当前controller设置客户端实体
      * </p>
+     *
      * @date 2022-10-23 18:38:51 <br>
-     * @author hqully <br>
      */
     protected abstract void setClient();
 
@@ -206,19 +231,31 @@ public abstract class BaseClientController<T extends BaseClient> extends BaseCon
         sendMsg();
     }
 
+    /**
+     * <p>
+     * 根据发送模式的不同向服务端发送消息。
+     * 在自定义数据模式下，若未定义数据边界，
+     * 则会在 {@link #errorMsgLabel}中显示错误信息。
+     * </p>
+     *
+     * @date 2023-02-06 10:15:24 <br>
+     */
     private void sendMsg() {
 
-        if ("未定义数据边界!".equals(errorMsgLabel.getText())){
+        // 重置错误信息
+        if ("未定义数据边界!".equals(errorMsgLabel.getText())) {
             errorMsgLabel.setText("");
         }
 
+        // 普通文本模式
         String text = msgInput.getText();
-        if (sendSettingConfig.isTextMode()){
+        if (sendSettingConfig.isTextMode()) {
             client.sendMessage(text);
         }
 
+        // 自定义格式模式
         try {
-            if (sendSettingConfig.isCustomMode()){
+            if (sendSettingConfig.isCustomMode()) {
                 CustomDataConfig customDataConfig = sendSettingConfig.getCustomDataConfig();
                 String msg = DataUtil.createMsg(customDataConfig.getCustomDataPattern(), customDataConfig.getBoundList());
                 client.sendMessage(msg);
@@ -234,6 +271,7 @@ public abstract class BaseClientController<T extends BaseClient> extends BaseCon
 
     @FXML
     void clearMsg(MouseEvent event) {
+        // 移除消息列表中的所有消息
         msgList.getItems().remove(0, msgList.getItems().size());
         msgList.refresh();
     }
@@ -254,19 +292,32 @@ public abstract class BaseClientController<T extends BaseClient> extends BaseCon
     @FXML
     void scheduleSend(MouseEvent event) {
         if (scheduleSendBtn.isSelected()) {
+            // 新建定时任务并开启
             scheduledService = new ScheduledSendService(sendSettingConfig.getScheduledSendConfig(), scheduledTaskService);
             scheduledService.start();
         }
         if (!scheduleSendBtn.isSelected()) {
+            // 取消定时任务
             scheduledService.cancel();
         }
     }
 
     @FXML
     void showSendSetting(MouseEvent event) {
+        if (sendSettingPane == null) {
+            initSendSetting();
+        }
         sendSettingPane.show();
     }
 
+    /**
+     * <p>
+     * 标签页关闭前的回调函数。<br>
+     * 负责取消定时任务以及关闭客户端连接。
+     * </p>
+     *
+     * @date 2023-02-06 10:20:12 <br>
+     */
     public void destroy() {
         // 如果有定时任务正在执行,则取消
         if (scheduledService != null && scheduledService.isRunning()) {
@@ -301,10 +352,12 @@ public abstract class BaseClientController<T extends BaseClient> extends BaseCon
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
-        // 发送设置
-        sendSetting();
-
-        sendSettingPane = SendSettingPaneFactory.create(sendSettingConfig);
+        // 若不是从配置文件中加载面板,
+        // 则在本面板初始化时就可以初始化发送设置.
+        if (!TopConfig.isLoad()) {
+            // 发送设置
+            initSendSetting();
+        }
 
         // 功能按钮悬浮tip提示
         initMsgSideBar();
@@ -313,7 +366,18 @@ public abstract class BaseClientController<T extends BaseClient> extends BaseCon
         msgList.setContextMenu(UIUtil.getMsgListMenu(msgList));
     }
 
-    private void sendSetting() {
+    /**
+     * <p>
+     * 初始化发送设置面板。<br>
+     * 包括:<br>
+     * 1.定时任务设置;<br>
+     * 2.发送模式改变时触发的回调;<br>
+     * 3.发送设置面板的创建。<br>
+     * </p>
+     *
+     * @date 2023-02-06 10:10:24 <br>
+     */
+    private void initSendSetting() {
         // 定时任务设置
         scheduledTaskService = new ScheduledTaskService() {
             @Override
@@ -349,20 +413,26 @@ public abstract class BaseClientController<T extends BaseClient> extends BaseCon
                 }
             }
         });
+
+        // 创建发送设置面板
+        sendSettingPane = SendSettingPaneFactory.create(sendSettingConfig);
     }
 
+    /**
+     * <p>
+     * 为消息框的侧边栏按钮添加提示文字 {@link Tooltip}。<br>
+     * 包括：<br>
+     * &emsp 1.长文本换行; <br>
+     * &emsp 2.清空列表; <br>
+     * &emsp 3.发送设置。<br>
+     * </p>
+     *
+     * @date 2023-02-06 11:02:46 <br>
+     */
     protected void initMsgSideBar() {
         softWrapBtn.setTooltip(UIUtil.getTooltip("长文本换行"));
         clearBtn.setTooltip(UIUtil.getTooltip("清空列表"));
         sendSettingBtn.setTooltip(UIUtil.getTooltip("发送设置"));
-
-    }
-
-    public void updateConfig(ClientConfig config){
-        SendSettingConfig sendSettingConfig = config.getSendSettingConfig();
-        this.sendSettingConfig.setMode(sendSettingConfig.getMode());
-        this.sendSettingConfig.getScheduledSendConfig().setSendTimes(sendSettingConfig.getScheduledSendConfig().getSendTimes());
-
 
     }
 

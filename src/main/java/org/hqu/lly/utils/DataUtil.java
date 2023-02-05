@@ -36,26 +36,56 @@ public class DataUtil {
 
     /**
      * <p>
-     * 捕获自定义数据文本中的变量
+     * 捕获自定义数据文本中的变量,并初始化{@link DataItem}列表
      * </p>
      *
      * @param dataText 自定义格式文本
-     * @return {@link List<DataItem>}
+     * @return  {@link DataItem}列表
      * @date 2023-01-18 15:36:19 <br>
      * @author hqully <br>
      */
-    public static List<DataItem> matchVars(String dataText) {
-        ArrayList<DataItem> vars = new ArrayList<>();
+    public static List<DataItem> initDataItems(String dataText) {
+        ArrayList<DataItem> dataItems = new ArrayList<>();
         Matcher matcher = fsPattern.matcher(dataText);
         while (matcher.find()) {
             // [%%]为[%]的转义,故排除
             if (!"%%".equals(matcher.group())) {
-                vars.add(new DataItem(matcher.group()));
+                dataItems.add(new DataItem(matcher.group()));
             }
         }
-        return vars;
+        return dataItems;
     }
 
+    /**
+     * <p>
+     *     从本地配置文件加载{@link DataItem}列表.
+     * </p>
+     * @param boundList 数据的值域Map列表,包含[name,lowerBound,upperBound].
+     * @return  {@link DataItem}列表
+     * @date 2023-02-04 15:56:08 <br>
+     * @author hqully <br>
+     */
+    public static List<DataItem> initDataItems(List<Map<String, String>> boundList) {
+        ArrayList<DataItem> dataItems = new ArrayList<>();
+
+        if (boundList != null) {
+            for (Map<String, String> bound : boundList) {
+                dataItems.add(new DataItem(bound));
+            }
+
+        }
+        return dataItems;
+    }
+
+    /**
+     * <p>
+     * 生成自定义格式的消息.
+     * </p>
+     * @param patternText 自定义格式文本
+     * @param boundList 自定义格式的变量的值域列表
+     * @return {@link String} 根据值域列表生成的随机数据消息
+     * @date 2023-02-05 17:27:47 <br>
+     */
     public static String createMsg(String patternText, List<Map<String,String>> boundList) {
         if (boundList == null) {
             throw new UnSetBoundException();

@@ -19,6 +19,9 @@ import org.hqu.lly.domain.config.ServerConfig;
 import org.hqu.lly.exception.UnSetBoundException;
 import org.hqu.lly.factory.SendSettingPaneFactory;
 import org.hqu.lly.factory.SendTaskFactory;
+import org.hqu.lly.protocol.tcp.server.TCPServer;
+import org.hqu.lly.protocol.udp.server.UDPServer;
+import org.hqu.lly.protocol.websocket.server.WebSocketServer;
 import org.hqu.lly.service.ScheduledTaskService;
 import org.hqu.lly.service.TaskService;
 import org.hqu.lly.service.impl.ScheduledSendService;
@@ -79,23 +82,59 @@ public abstract class BaseServerController<T> extends BaseController implements 
     @FXML
     protected Button removeClientBtn;
 
+    /**
+     * netty服务端。<br>
+     * 应为 {@link TCPServer}、{@link UDPServer}、{@link WebSocketServer}
+     * 中的一个。
+     */
     protected BaseServer<T> server;
+    // XXX 以下两个set可能可以合二为一。
+    /**
+     * 要向其发送消息的地址集合(用于无连接协议)
+     */
     protected Set<T> clientAddrSet = ConcurrentHashMap.newKeySet();
+    /**
+     * 要向其发送消息的客户端集合
+     */
     protected Set<T> targetClientSet = ConcurrentHashMap.newKeySet();
+    /**
+     * 长文本是否换行flag
+     */
     protected boolean softWrap = false;
+    /**
+     * 是否全选客户端flag
+     */
     protected boolean selectAll = true;
+    /**
+     * 用于将netty接收的消息或发生的异常显示在GUI面板上
+     */
     protected ServerService serverService;
 
+    /**
+     * 发送设置面板
+     */
     protected Stage sendSettingPane;
+    /**
+     * 定时发送服务
+     */
     protected ScheduledSendService scheduledService;
+    /**
+     * 发送设置配置类
+     */
     protected SendSettingConfig sendSettingConfig = new SendSettingConfig();
-    protected ScheduledTaskService scheduledTaskService;
-    ObservableList<T> clientList = FXCollections.observableArrayList();
 
+    /**
+     * 定时发送任务
+     */
+    protected ScheduledTaskService scheduledTaskService;
     /**
      * 客户端面板配置类
      */
     protected ServerConfig serverConfig;
+    /**
+     * 显示在 {@link #clientListBox} 中的客户端列表
+     */
+    ObservableList<T> clientList = FXCollections.observableArrayList();
 
     public BaseServerController() {
         setServer();
@@ -104,33 +143,45 @@ public abstract class BaseServerController<T> extends BaseController implements 
 
     /**
      * <p>
-     * 设置服务端实例
+     * 通过本地配置文件初始化加载数据
+     * </p>
+     *
+     * @param config 服务端配置文件类
+     * @date 2023-02-06 11:34:25 <br>
+     */
+    public void initByConfig(ServerConfig config) {
+        serverPort.setText(config.getPort());
+        msgInput.setText(config.getMsgInput());
+        sendSettingConfig = config.getSendSettingConfig();
+        initSendSetting();
+    }
+
+    /**
+     * <p>
+     * 设置服务端实例 {@link #serverService},由子类重写。
      * </p>
      *
      * @date 2022-10-23 21:16:35 <br>
-     * @author hqully <br>
      */
     protected abstract void setServer();
 
 
     /**
      * <p>
-     * 设置服务端服务
+     * 设置服务端服务,主要为设置服务的生命周期回调函数。
      * </p>
      *
      * @date 2022-10-23 21:16:35 <br>
-     * @author hqully <br>
      */
     protected abstract void setServerService();
 
 
     /**
      * <p>
-     * 设置客户端列表的细胞工厂
+     * 设置客户端列表的细胞工厂,由子类重写。
      * </p>
      *
      * @date 2022-10-23 21:16:35 <br>
-     * @author hqully <br>
      */
     protected abstract void setClientBoxCellFactory();
 
@@ -156,6 +207,7 @@ public abstract class BaseServerController<T> extends BaseController implements 
     @FXML
     void removeClient(MouseEvent event) {
         ObservableList<T> removeItems = clientListBox.getSelectionModel().getSelectedItems();
+        // XXX clientAddrSet似乎没有必要，待优化
         clientAddrSet.removeAll(removeItems);
         clientList.removeAll(removeItems);
     }
@@ -197,7 +249,7 @@ public abstract class BaseServerController<T> extends BaseController implements 
 
     private void sendMsg() {
 
-        if ("未定义数据边界!".equals(errorMsgLabel.getText())){
+        if ("未定义数据边界!".equals(errorMsgLabel.getText())) {
             errorMsgLabel.setText("");
         }
 
@@ -261,7 +313,16 @@ public abstract class BaseServerController<T> extends BaseController implements 
         });
     }
 
+    /**
+     * <p>
+     * 标签页关闭前的回调函数。<br>
+     * 负责取消定时任务以及关闭服务端连接。
+     * </p>
+     *
+     * @date 2023-02-06 12:27:58 <br>
+     */
     public void destroy() {
+        // 如果有定时任务正在执行,则取消
         if (scheduledService != null && scheduledService.isRunning()) {
             scheduledService.cancel();
             scheduleSendBtn.setSelected(false);
@@ -272,7 +333,8 @@ public abstract class BaseServerController<T> extends BaseController implements 
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        initScheduleSetting();
+        initSendSetting();
+        // 初始化客户端列表盒子
         setClientBox();
         // 功能按钮悬浮tip提示
         initBtnTips();
@@ -281,6 +343,14 @@ public abstract class BaseServerController<T> extends BaseController implements 
         clientListBox.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
     }
 
+    /**
+     * <p>
+     * 初始化存放客户端集合的列表盒子 {@link ListView}.
+     * 为盒子中的客户端条目设置点击回调.
+     * </p>
+     *
+     * @date 2023-02-06 11:30:13 <br>
+     */
     protected void setClientBox() {
         setClientBoxCellFactory();
         // 点击时将当前的client设置为选中的client
@@ -302,7 +372,18 @@ public abstract class BaseServerController<T> extends BaseController implements 
         });
     }
 
-    protected void initScheduleSetting() {
+    /**
+     * <p>
+     * 初始化发送设置面板。<br>
+     * 包括:<br>
+     * 1.定时任务设置;<br>
+     * 2.发送模式改变时触发的回调;<br>
+     * 3.发送设置面板的创建。<br>
+     * </p>
+     *
+     * @date 2023-02-06 10:10:24 <br>
+     */
+    protected void initSendSetting() {
         scheduledTaskService = new ScheduledTaskService() {
             @Override
             public void onTaskStart() {
@@ -340,6 +421,19 @@ public abstract class BaseServerController<T> extends BaseController implements 
         sendSettingPane = SendSettingPaneFactory.create(sendSettingConfig);
     }
 
+    /**
+     * <p>
+     * 保存并返回当前标签页的服务端配置。
+     * 当前标签页的控制器应是 {@link BaseServerController}的子类。 <br>
+     * 保存的服务端配置包括：<br>
+     * 1.消息框中的文本;<br>
+     * 2.服务端端口;<br>
+     * 3.发送设置.
+     * </p>
+     *
+     * @return {@link ServerConfig} 服务端标签页配置
+     * @date 2023-02-06 11:26:53 <br>
+     */
     @Override
     public ServerConfig saveAndGetConfig() {
         serverConfig = new ServerConfig();
@@ -349,6 +443,21 @@ public abstract class BaseServerController<T> extends BaseController implements 
         return serverConfig;
     }
 
+    /**
+     * <p>
+     * 为界面按钮添加提示文字 {@link Tooltip}。<br>
+     * </p>
+     * 包括: <br>
+     * 信息框侧边栏按钮：<br>
+     * &emsp 1.长文本换行; <br>
+     * &emsp 2.清空列表; <br>
+     * &emsp 3.发送设置。<br>
+     * 客户端列表侧边按钮：<br>
+     * &emsp 1.全选/取消全选; <br>
+     * &emsp 2.删除客户端; <br>
+     *
+     * @date 2023-02-06 11:02:46 <br>
+     */
     protected void initBtnTips() {
         softWrapBtn.setTooltip(UIUtil.getTooltip("长文本换行"));
         clearBtn.setTooltip(UIUtil.getTooltip("清空列表"));
