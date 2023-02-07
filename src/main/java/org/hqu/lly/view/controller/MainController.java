@@ -3,13 +3,12 @@ package org.hqu.lly.view.controller;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
+import javafx.stage.Stage;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.hqu.lly.constant.ContentPaneConsts;
@@ -17,9 +16,9 @@ import org.hqu.lly.constant.StageConsts;
 import org.hqu.lly.domain.config.TabPaneConfig;
 import org.hqu.lly.domain.config.TopConfig;
 import org.hqu.lly.domain.vo.ServiceItem;
+import org.hqu.lly.factory.CustomAlertFactory;
 import org.hqu.lly.service.TaskService;
 import org.hqu.lly.service.impl.TabPaneManager;
-import org.hqu.lly.view.group.ControllerGroup;
 
 import java.net.URL;
 import java.util.*;
@@ -60,25 +59,8 @@ public class MainController implements Initializable {
         titleBarController.setOnBeforeClose(new TaskService() {
             @Override
             public void fireTask() {
-                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-                alert.setTitle("save config");
-                alert.setHeaderText("save config?");
-                alert.setContentText("Are you ok with this?");
-
-                Optional<ButtonType> result = alert.showAndWait();
-                if (result.get() == ButtonType.OK) {
-                    // ... user chose OK
-                    log.info("ok");
-
-                    for (TabPaneController controller : ControllerGroup.tabPaneControllerSet) {
-                        TopConfig.getInstance().addTabPaneConfig(controller.saveAndGetConfig());
-                    }
-                    TopConfig.getInstance().save();
-
-                } else {
-                    // ... user chose CANCEL or closed the dialog
-                    log.info("cancel");
-                }
+                Stage stage = CustomAlertFactory.create("save config","是否保存配置到本地？");
+                stage.showAndWait();
             }
         });
         initSideBar();
@@ -95,6 +77,7 @@ public class MainController implements Initializable {
      * @author hqully <br>
      */
     private void initByConfig() {
+        Stage stage = CustomAlertFactory.create("save config","是否保存配置到本地？");
         for (TabPaneConfig tabPaneConfig : TopConfig.getInstance().getTabPaneConfigs()) {
             managerMap.get(tabPaneConfig.getName()).createContentPane(tabPaneConfig);
         }

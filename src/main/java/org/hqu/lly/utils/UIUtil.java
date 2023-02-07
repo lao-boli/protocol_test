@@ -2,10 +2,15 @@ package org.hqu.lly.utils;
 
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Region;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import lombok.extern.slf4j.Slf4j;
@@ -46,6 +51,26 @@ public class UIUtil {
 
     /**
      * <p>
+     * 获取有阴影的窗口{@link Scene}
+     * </p>
+     *
+     * @param pane 要显示的面板节点
+     * @param width 窗口宽度
+     * @param height 窗口高度
+     * @return {@link Scene} 有阴影的窗口
+     * @date 2023-02-07 14:49:07 <br>
+     */
+    public static Scene getShadowScene(Parent pane, double width, double height) {
+        BorderPane borderPane = new BorderPane(pane);
+        borderPane.setBackground(Background.EMPTY);
+        borderPane.setPadding(new Insets(5, 5, 5, 5));
+        Scene scene = new Scene(borderPane, width, height, Color.TRANSPARENT);
+        return scene;
+
+    }
+
+    /**
+     * <p>
      * 获取toolTip
      * </p>
      *
@@ -53,7 +78,6 @@ public class UIUtil {
      * @param showDelay tooltip显示延时
      * @return {@link Tooltip}
      * @date 2022-09-22 14:31:56 <br>
-     * @author hqully <br>
      */
     public static Tooltip getTooltip(String content, long showDelay) {
         Tooltip tooltip = new Tooltip(content);
@@ -69,7 +93,6 @@ public class UIUtil {
      * @param content tip内容
      * @return {@link Tooltip}
      * @date 2022-10-02 17:27:19 <br>
-     * @author hqully <br>
      */
     public static Tooltip getTooltip(String content) {
         return getTooltip(content, 300);
@@ -85,7 +108,6 @@ public class UIUtil {
      * @param softWrap 长消息是否换行标识
      * @return {@link Label} 消息label
      * @date 2022-09-24 09:17:06 <br>
-     * @author hqully <br>
      */
     public static Label getMsgLabel(String msg, double fixWidth, boolean softWrap) {
         Label msgLabel = new Label(msg);
@@ -102,9 +124,8 @@ public class UIUtil {
      * </p>
      *
      * @param rawWidth msgLabel所在的父容器宽度
-     * @return {@link double}
+     * @return 修正后的msgLabel长度
      * @date 2022-10-02 19:13:08 <br>
-     * @author hqully <br>
      */
     public static double getFixMsgLabelWidth(double rawWidth) {
         return rawWidth - 30;
@@ -118,7 +139,6 @@ public class UIUtil {
      * @param msgList 要设置菜单的消息列表本身
      * @return {@link ContextMenu} 菜单
      * @date 2022-09-24 14:50:53 <br>
-     * @author hqully <br>
      */
     public static ContextMenu getMsgListMenu(ListView<Label> msgList) {
         ContextMenu menu = new ContextMenu();
@@ -148,9 +168,7 @@ public class UIUtil {
      * </p>
      *
      * @param text 要复制的文本
-     * @return void
      * @date 2022-09-24 10:35:43 <br>
-     * @author hqully <br>
      */
     private static void copyToClipboard(String text) {
         ClipboardContent content = new ClipboardContent();
@@ -166,9 +184,7 @@ public class UIUtil {
      * @param msgLabel 消息label
      * @param fixWidth label宽度,用于指定在何地换行
      * @param softWrap 长消息是否换行标识
-     * @return void
      * @date 2022-09-24 09:17:06 <br>
-     * @author hqully <br>
      */
     public static void changeMsgLabel(Label msgLabel, double fixWidth, boolean softWrap) {
         msgLabel.setPrefWidth(fixWidth);
