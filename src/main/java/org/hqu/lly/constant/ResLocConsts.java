@@ -15,6 +15,7 @@ public class ResLocConsts {
     public static final String MAIN_PANE = "views/MainPane.fxml";
     public static final String SEND_SETTING_PANE = "views/SendSettingPane.fxml";
     public static final String DATA_SETTING_PANE = "views/DataSettingPane.fxml";
+    public static final String CUSTOM_ALERT = "components/CustomAlert.fxml";
     public static final String TCP_CLIENT_PANE = "views/TCPClientPane.fxml";
     public static final String TCP_SERVER_PANE = "views/TCPServerPane.fxml";
     public static final String UDP_CLIENT_PANE = "views/UDPClientPane.fxml";

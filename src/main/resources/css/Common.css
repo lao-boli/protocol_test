@@ -1,0 +1,46 @@
+.root {
+    -darcula-base: #3c3f41; /*60 63 65*/
+    -darcula-focus-color: #4b6eaf; /*75 110 175*/
+    -darcula-background-darkest: #2b2b2b; /*43 43 43*/
+    -darcula-border-color: #646464;
+
+    -darcula-text: #bbbbbb;
+    -darcula-text-input-background: #45494a; /*69 73 74*/
+    -darcula-text-highlight: #4b6baf;
+    -darcula-text-disabled: #777777;
+
+    -darcula-accent: #808080;
+
+}
+
+Text {
+    -fx-fill: #bbbbbb;
+}
+
+Text:disabled {
+    -fx-fill: -darcula-text-disabled;
+}
+.mainPane {
+    -fx-background-color: #3c3f41;
+}
+.common-button {
+    -fx-background-color: #646464, #4c5052; /*linear-gradient(to bottom, #555a5c, #414648)*/
+    -fx-background-insets: 0, 1;
+    -fx-background-radius: 3px, 3px;
+    -fx-text-fill: #bbbbbb;
+}
+.common-button:default {
+    -fx-background-color: #4c708c, #365880; /*linear-gradient(to bottom, #384f6b, #233143)*/
+}
+
+.common-button:armed,
+.common-button:focused {
+    -fx-background-color: #60afff32, #60afff64, #60afffb4, #60afff78, #60afff46, #4c5052;
+    -fx-background-insets: -2, -1, 0, 1, 2;
+    -fx-background-radius: 6, 5, 4, 3, 2;
+}
+
+.common-button:armed:default,
+.common-button:focused:default {
+    -fx-background-color: #60afff32, #60afff64, #60afffb4, #60afff78, #60afff46, #365880;
+}

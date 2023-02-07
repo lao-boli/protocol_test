@@ -14,6 +14,7 @@ import org.hqu.lly.view.handler.DragWindowHandler;
 
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.concurrent.Callable;
 
 /**
  * <p>
@@ -28,10 +29,20 @@ import java.util.ResourceBundle;
 public class TitleBarController implements Initializable {
     @FXML
     private BorderPane titleBar;
+
+    /**
+     * 标题栏标题
+     */
     @FXML
     private Label titleLabel;
+    /**
+     * 关闭窗口图标
+     */
     @FXML
     private Label closeLabel;
+    /**
+     * 最小化窗口图标
+     */
     @FXML
     private Label minimizeLabel;
 
@@ -45,6 +56,9 @@ public class TitleBarController implements Initializable {
      */
     @Setter
     private TaskService onBeforeClose;
+
+    private Callable<Boolean> onBeforeClose2;
+
 
 
     /**
@@ -63,9 +77,12 @@ public class TitleBarController implements Initializable {
     }
 
     @FXML
-    void handleCloseWindow(MouseEvent event) {
+    void handleCloseWindow(MouseEvent event) throws Exception {
         if (onBeforeClose != null) {
             onBeforeClose.fireTask();
+        }
+        if (onBeforeClose2 != null) {
+            Boolean pass = onBeforeClose2.call();
         }
         if (type.equals(StageConsts.MAIN_PANE)){
             exitApp();
@@ -117,6 +134,46 @@ public class TitleBarController implements Initializable {
             minimizeLabel.setVisible(false);
             titleLabel.setText(SEND_SETTING);
         }
+    }
+
+    /**
+     * <p>
+     *     初始化标题栏
+     * </p>
+     * @param title 标题栏上显示的标题
+     * @param miniVisible 是否显示 {@link #minimizeLabel}
+     * @param closeVisible 是否显示 {@link #closeLabel}
+     * @date 2023-02-06 19:56:54 <br>
+     */
+    public void init(String title,Boolean miniVisible,Boolean closeVisible) {
+        titleLabel.setText(title);
+        minimizeLabel.setVisible(miniVisible);
+        closeLabel.setVisible(closeVisible);
+    }
+
+    /**
+     * <p>
+     *     初始化标题栏,不显示 {@link #minimizeLabel}
+     * </p>
+     * @param title 标题栏上显示的标题
+     * @date 2023-02-06 19:56:54 <br>
+     */
+    public void initHideMini(String title){
+        init(title,false,true);
+        titleLabel.setText(title);
+    }
+
+    /**
+     * <p>
+     *     初始化标题栏
+     * </p>
+     * @param title 标题栏上显示的标题
+     * @param miniVisible 是否显示 {@link #minimizeLabel}
+     * @date 2023-02-06 19:56:54 <br>
+     */
+    public void init(String title,Boolean miniVisible){
+        init(title,miniVisible,true);
+        titleLabel.setText(title);
     }
 
     @Override
