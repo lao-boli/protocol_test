@@ -328,6 +328,7 @@ public abstract class BaseServerController<T> extends BaseController implements 
             scheduleSendBtn.setSelected(false);
         }
         server.destroy();
+        destroyed = true;
     }
 
 

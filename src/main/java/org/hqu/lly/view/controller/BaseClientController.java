@@ -62,7 +62,6 @@ public abstract class BaseClientController<T extends BaseClient> extends BaseCon
      */
     protected ScheduledSendService scheduledService;
 
-
     /**
      * 发送设置配置类
      */
@@ -325,6 +324,7 @@ public abstract class BaseClientController<T extends BaseClient> extends BaseCon
             scheduleSendBtn.setSelected(false);
         }
         client.destroy();
+        destroyed = true;
     }
 
     protected void setActiveUI() {
