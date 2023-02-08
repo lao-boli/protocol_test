@@ -9,7 +9,6 @@ import javafx.scene.control.TreeView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.hqu.lly.constant.ContentPaneConsts;
 import org.hqu.lly.domain.component.CustomAlert;
@@ -21,6 +20,7 @@ import org.hqu.lly.service.TaskService;
 import org.hqu.lly.service.impl.TabPaneManager;
 import org.hqu.lly.view.group.ControllerGroup;
 
+import java.io.FileNotFoundException;
 import java.net.URL;
 import java.util.*;
 import java.util.concurrent.Callable;
@@ -54,7 +54,6 @@ public class MainController implements Initializable {
 
     private final Map<String, TabPaneManager> managerMap = new HashMap<>(6);
 
-    @SneakyThrows
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
@@ -94,8 +93,12 @@ public class MainController implements Initializable {
         });
 
         initSideBar();
-        TopConfig.load();
-        initByConfig();
+        try {
+            TopConfig.load();
+            initByConfig();
+        } catch (FileNotFoundException e) {
+            log.warn("miss match config file");
+        }
     }
 
     /**
