@@ -48,10 +48,16 @@ public class BaseServerTabFactory<T extends BaseServerController<?>> implements 
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource(tabPanePath));
             Parent contentPane = loader.load();
-            controller = loader.getController();
+            // 不能直接赋值给成员变量，
+            // 否则会导致标签页的关闭回调里的controller
+            // 永远只有最新创建的tab页的controller
+            T controller = loader.getController();
 
             tab.setContent(contentPane);
             tab.setOnClosed(event -> (controller).destroy());
+
+            // 设置完回调以后再赋值给成员变量，方便调用者获取。
+            this.controller = controller;
         } catch (IOException e) {
             e.printStackTrace();
         }
