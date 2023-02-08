@@ -11,15 +11,14 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.hqu.lly.constant.StageConsts;
 import org.hqu.lly.domain.bean.CustomDataConfig;
 import org.hqu.lly.domain.bean.ScheduledSendConfig;
 import org.hqu.lly.domain.bean.SendSettingConfig;
 import org.hqu.lly.factory.DataSettingPaneFactory;
-import org.hqu.lly.service.TaskService;
 
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.concurrent.Callable;
 
 import static org.hqu.lly.utils.CommonUtil.intToStr;
 import static org.hqu.lly.utils.CommonUtil.strToInt;
@@ -148,11 +147,12 @@ public class SendSettingController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         // 标题栏初始化
-        titleBarController.initTitleBar(StageConsts.SEND_SETTING);
-        titleBarController.setOnBeforeClose(new TaskService() {
+        titleBarController.initHideMini("发送设置");
+        titleBarController.setOnBeforeClose(new Callable<Boolean>() {
             @Override
-            public void fireTask() {
+            public Boolean call() throws Exception {
                 saveSetting();
+                return true;
             }
         });
 

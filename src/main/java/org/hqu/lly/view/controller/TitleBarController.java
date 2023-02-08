@@ -52,12 +52,17 @@ public class TitleBarController implements Initializable {
     @Setter
     private Integer type;
     /**
+     * 执行关闭窗口任务
+     */
+    @Setter
+    private TaskService onClose;
+
+    /**
      * 执行关闭窗口前的任务
      */
     @Setter
-    private TaskService onBeforeClose;
+    private Callable<Boolean> onBeforeClose;
 
-    private Callable<Boolean> onBeforeClose2;
 
 
 
@@ -78,22 +83,16 @@ public class TitleBarController implements Initializable {
 
     @FXML
     void handleCloseWindow(MouseEvent event) throws Exception {
-        if (onBeforeClose != null) {
-            onBeforeClose.fireTask();
-        }
-        if (onBeforeClose2 != null) {
-            Boolean pass = onBeforeClose2.call();
-        }
-        if (type.equals(StageConsts.MAIN_PANE)){
-            exitApp();
-        }
-        if (type.equals(StageConsts.SEND_SETTING)){
-            stage.close();
-        }
-        if (type.equals(StageConsts.DATA_SETTING)){
-            stage.close();
+
+        if (onBeforeClose.call()){
+            if (onClose != null) {
+                onClose.fireTask();
+            }else {
+                stage.close();
+            }
         }
     }
+
 
     private void exitApp() {
         System.exit(0);

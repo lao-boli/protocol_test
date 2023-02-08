@@ -3,25 +3,27 @@ package org.hqu.lly.view.controller;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
-import javafx.stage.Stage;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.hqu.lly.constant.ContentPaneConsts;
-import org.hqu.lly.constant.StageConsts;
+import org.hqu.lly.domain.component.CustomAlert;
 import org.hqu.lly.domain.config.TabPaneConfig;
 import org.hqu.lly.domain.config.TopConfig;
 import org.hqu.lly.domain.vo.ServiceItem;
 import org.hqu.lly.factory.CustomAlertFactory;
 import org.hqu.lly.service.TaskService;
 import org.hqu.lly.service.impl.TabPaneManager;
+import org.hqu.lly.view.group.ControllerGroup;
 
 import java.net.URL;
 import java.util.*;
+import java.util.concurrent.Callable;
 
 /**
  * <p>
@@ -55,14 +57,42 @@ public class MainController implements Initializable {
     @SneakyThrows
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        titleBarController.initTitleBar(StageConsts.MAIN_PANE);
-        titleBarController.setOnBeforeClose(new TaskService() {
+
+        titleBarController.init("协议测试工具",true);
+
+        titleBarController.setOnBeforeClose(new Callable<Boolean>() {
             @Override
-            public void fireTask() {
-                Stage stage = CustomAlertFactory.create("save config","是否保存配置到本地？");
-                stage.showAndWait();
+            public Boolean call() throws Exception {
+                CustomAlert alert = CustomAlertFactory.create("save config", "是否保存配置到本地？");
+                assert alert != null;
+                alert.setForceResume(true);
+                alert.setOnConfirm(new TaskService() {
+                    @Override
+                    public void fireTask() {
+                        // 通知各级控制器保存配置
+                        for (TabPaneController controller : ControllerGroup.tabPaneControllerSet) {
+                            TabPaneConfig tabPaneConfig = controller.saveAndGetConfig();
+                            if (tabPaneConfig != null) {
+                                TopConfig.getInstance().addTabPaneConfig(tabPaneConfig);
+                            }
+                        }
+                        // 写入文件
+                        TopConfig.getInstance().save();
+                    }
+                });
+                // 显示是否保存配置的弹窗
+                Optional<ButtonType> buttonType = alert.showAndWait();
+                return buttonType.get().equals(ButtonType.OK);
             }
         });
+
+        titleBarController.setOnClose(new TaskService() {
+            @Override
+            public void fireTask() {
+                System.exit(0);
+            }
+        });
+
         initSideBar();
         TopConfig.load();
         initByConfig();
@@ -77,7 +107,6 @@ public class MainController implements Initializable {
      * @author hqully <br>
      */
     private void initByConfig() {
-        Stage stage = CustomAlertFactory.create("save config","是否保存配置到本地？");
         for (TabPaneConfig tabPaneConfig : TopConfig.getInstance().getTabPaneConfigs()) {
             managerMap.get(tabPaneConfig.getName()).createContentPane(tabPaneConfig);
         }
