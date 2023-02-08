@@ -6,16 +6,15 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.hqu.lly.constant.StageConsts;
 import org.hqu.lly.domain.bean.CustomDataConfig;
 import org.hqu.lly.domain.component.DataItem;
-import org.hqu.lly.service.TaskService;
 
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.concurrent.Callable;
 
 /**
  * <p>
@@ -68,11 +67,12 @@ public class DataSettingController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        titleBarController.initTitleBar(StageConsts.DATA_SETTING);
-        titleBarController.setOnBeforeClose(new TaskService() {
+        titleBarController.initHideMini("数据值域设置");
+        titleBarController.setOnBeforeClose(new Callable<Boolean>() {
             @Override
-            public void fireTask() {
+            public Boolean call() throws Exception {
                 saveSetting();
+                return true;
             }
         });
     }

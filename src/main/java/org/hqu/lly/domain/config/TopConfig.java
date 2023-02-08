@@ -5,6 +5,7 @@ import org.hqu.lly.utils.ConfUtil;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.function.Predicate;
 
 /**
  * <p>
@@ -33,6 +34,15 @@ public class TopConfig {
      * @param tabPaneConfig 标签面板配置类
      */
     public void addTabPaneConfig(TabPaneConfig tabPaneConfig) {
+        // 若直接添加到set中,若已存在,不会更新配置
+        // 故需要先删除原本的相同元素,
+        // TabPaneConfig的equals已重写,故此处可直接调用
+        tabPaneConfigs.removeIf(new Predicate<TabPaneConfig>() {
+            @Override
+            public boolean test(TabPaneConfig config) {
+                return config.equals(tabPaneConfig);
+            }
+        });
         tabPaneConfigs.add(tabPaneConfig);
     }
 

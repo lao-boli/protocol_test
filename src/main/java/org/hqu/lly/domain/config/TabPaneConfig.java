@@ -1,6 +1,8 @@
 package org.hqu.lly.domain.config;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import org.hqu.lly.constant.ContentPaneConsts;
 
 import java.util.ArrayList;
@@ -15,7 +17,9 @@ import java.util.List;
  * @version 1.0
  * @date 2023/1/29 13:15
  */
-@Data
+@Getter
+@Setter
+@ToString
 public class TabPaneConfig extends Config {
 
     /**
@@ -44,6 +48,9 @@ public class TabPaneConfig extends Config {
         subTabConfigs = new ArrayList<>();
     }
 
+    public TabPaneConfig() {
+    }
+
     /**
      * <p>
      * 添加本 {@link org.hqu.lly.view.controller.TabPaneController}
@@ -54,6 +61,19 @@ public class TabPaneConfig extends Config {
      */
     public void addSubConfig(TabConfig subTabConfig) {
         subTabConfigs.add(subTabConfig);
+    }
+
+    @Override
+    public int hashCode() {
+        return this.getName().hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof TabPaneConfig){
+            return this.getName().equals(((TabPaneConfig) obj).getName());
+        }
+        return false;
     }
 
 }

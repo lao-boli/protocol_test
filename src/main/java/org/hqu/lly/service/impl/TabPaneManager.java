@@ -83,6 +83,8 @@ public class TabPaneManager implements SwitchPaneService {
     public void createContentPane(TabPaneConfig config) {
         // 创建面板
         createContentPane();
+
+        controller.setTabPaneConfig(config);
         // 根据配置创建标签页
         for (TabConfig subTabConfig : config.getSubTabConfigs()) {
             controller.createNewTab(subTabConfig);

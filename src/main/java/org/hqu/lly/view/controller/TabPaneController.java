@@ -29,28 +29,29 @@ import java.util.ResourceBundle;
 public class TabPaneController extends BaseController implements Initializable {
 
     /**
+     * 本 {@link #mainTabPane}下的标签页 {@link Tab}的控制器列表 <br>
+     * 用于遍历来获取并保存每一个标签页的配置类。
+     */
+    private final List<BaseController> controllers;
+    /**
      * fxml的tabPane节点
      */
     @FXML
     private TabPane mainTabPane;
-
     @FXML
     private Tab createTab;
-
     private TabFactory tabFactory;
-
     /**
      * 标签页面板名称<br>
      * 应为 {@link ContentPaneConsts}中的一种.
      */
     @Setter
     private String tabPaneName;
-
     /**
-     * 本 {@link #mainTabPane}下的标签页 {@link Tab}的控制器列表 <br>
-     * 用于遍历来获取并保存每一个标签页的配置类。
+     * 本页面配置类
      */
-    private final List<BaseController> controllers;
+    @Setter
+    private TabPaneConfig tabPaneConfig;
 
     public TabPaneController() {
         controllers = new ArrayList<>();
@@ -106,6 +107,7 @@ public class TabPaneController extends BaseController implements Initializable {
 
     @Override
     public TabPaneConfig saveAndGetConfig() {
+//        TopConfig.getInstance().removeTabPaneConfig(tabPaneConfig);
         TabPaneConfig tabPaneConfig = new TabPaneConfig(tabPaneName);
         for (BaseController controller : controllers) {
             Config subTabConfig = controller.saveAndGetConfig();
