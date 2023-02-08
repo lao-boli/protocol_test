@@ -3,6 +3,7 @@ package org.hqu.lly.domain.config;
 import lombok.Data;
 import org.hqu.lly.utils.ConfUtil;
 
+import java.io.FileNotFoundException;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Predicate;
@@ -60,9 +61,10 @@ public class TopConfig {
      * <p>
      * 从本地配置文件中加载配置.
      * </p>
+     * @throws FileNotFoundException 配置文件不存在
      * @date 2023-02-05 19:11:46 <br>
      */
-    public static void load(){
+    public static void load() throws FileNotFoundException {
         TopConfigHolder.load();
         isLoad = true;
     }
@@ -101,7 +103,7 @@ public class TopConfig {
      */
     private static class TopConfigHolder {
         public static TopConfig instance = new TopConfig();
-        public static void load(){
+        public static void load() throws FileNotFoundException {
             instance = ConfUtil.loadTopConf();
         }
     }

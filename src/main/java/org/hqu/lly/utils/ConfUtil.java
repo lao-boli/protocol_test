@@ -6,10 +6,11 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
-import org.hqu.lly.domain.bean.SendSettingConfig;
 import org.hqu.lly.domain.config.TopConfig;
 
-import java.io.*;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -25,39 +26,67 @@ import java.nio.file.Path;
 @Slf4j
 public class ConfUtil {
 
-    private static ObjectMapper mapper = new ObjectMapper();
-    private static String path = System.getProperty("user.dir") + "\\config2.json";;
-    {
+    /**
+     * JSON映射器
+     */
+    private static final ObjectMapper mapper = new ObjectMapper();
+    /**
+     * 配置文件读取和保存路径
+     */
+    private static final String path = System.getProperty("user.dir") + "\\config";
+    /**
+     * 配置文件名称
+     */
+    private static final String name = "\\config.json";
+    ;
+
+    static {
         mapper.configure(
                 DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 
+    /**
+     * <p>
+     * 保存配置文件
+     * </p>
+     *
+     * @param o 配置文件对象
+     * @date 2023-02-08 13:46:35 <br>
+     */
     public static void saveConf(Object o) {
         try {
+            boolean notExists = Files.notExists(Path.of(path + name));
+            if (notExists) {
+                Files.createDirectory(Path.of(path));
+            }
             String s = mapper.writeValueAsString(o);
-            log.info(s);
-
-            OutputStream os = new FileOutputStream(new File(path));
-            Files.writeString(Path.of(path), s);
-//            mapper.writeValue(new File(path),s);
+            log.debug(s);
+            Files.writeString(Path.of(path + name), s);
 
         } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public static TopConfig loadTopConf(){
+    /**
+     * <p>
+     * 加载配置文件
+     * </p>
+     *
+     * @return {@link TopConfig} 全局配置文件
+     * @throws FileNotFoundException 未读取到本地配置文件
+     * @date 2023-02-08 13:47:11 <br>
+     */
+    public static TopConfig loadTopConf() throws FileNotFoundException {
         try {
-            FileInputStream fileInputStream = new FileInputStream(path);
+            FileInputStream fileInputStream = new FileInputStream(path + name);
             TopConfig config = mapper.readValue(fileInputStream, TopConfig.class);
             return config;
 
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            throw e;
         } catch (JsonParseException e) {
             e.printStackTrace();
         } catch (JsonMappingException e) {
@@ -68,22 +97,5 @@ public class ConfUtil {
         return null;
     }
 
-    public static SendSettingConfig loadConf(){
-        try {
-            FileInputStream fileInputStream = new FileInputStream(path);
-            SendSettingConfig sendSettingConfig = mapper.readValue(fileInputStream, SendSettingConfig.class);
-            System.out.println();
-
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (JsonParseException e) {
-            e.printStackTrace();
-        } catch (JsonMappingException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
 
 }
