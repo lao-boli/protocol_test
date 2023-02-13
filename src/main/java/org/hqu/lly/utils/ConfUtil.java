@@ -55,7 +55,7 @@ public class ConfUtil {
      */
     public static void saveConf(Object o) {
         try {
-            boolean notExists = Files.notExists(Path.of(path + name));
+            boolean notExists = Files.notExists(Path.of(path));
             if (notExists) {
                 Files.createDirectory(Path.of(path));
             }
