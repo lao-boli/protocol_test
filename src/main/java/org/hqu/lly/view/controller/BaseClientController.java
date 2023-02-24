@@ -220,7 +220,7 @@ public abstract class BaseClientController<T extends BaseClient> extends BaseCon
 
     @FXML
     void disconnect(MouseEvent event) {
-        destroy();
+        destroyTask();
         setInactiveUI();
     }
 
@@ -318,13 +318,23 @@ public abstract class BaseClientController<T extends BaseClient> extends BaseCon
      * @date 2023-02-06 10:20:12 <br>
      */
     public void destroy() {
+        destroyTask();
+        destroyed = true;
+    }
+
+    /**
+     * <p>
+     *     销毁任务,断开连接、关闭tab页时调用
+     * </p>
+     * @date 2023-02-24 20:22:37 <br>
+     */
+    public void destroyTask() {
         // 如果有定时任务正在执行,则取消
         if (scheduledService != null && scheduledService.isRunning()) {
             scheduledService.cancel();
             scheduleSendBtn.setSelected(false);
         }
         client.destroy();
-        destroyed = true;
     }
 
     protected void setActiveUI() {
