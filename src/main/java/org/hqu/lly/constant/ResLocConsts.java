@@ -23,4 +23,6 @@ public class ResLocConsts {
     public static final String WEB_SOCKET_SERVER_PANE = "views/WebSocketServerPane.fxml";
     public static final String WEB_SOCKET_CLIENT_PANE = "views/WebSocketClientPane.fxml";
 
+    public static final String TAB_TITLE = "css/tabTitle.css";
+
 }

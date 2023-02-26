@@ -3,7 +3,6 @@ package org.hqu.lly.factory;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.Tab;
-import lombok.Getter;
 import org.hqu.lly.domain.config.ServerConfig;
 import org.hqu.lly.domain.config.TabConfig;
 import org.hqu.lly.view.controller.BaseServerController;
@@ -19,25 +18,8 @@ import java.io.IOException;
  * @version 1.0
  * @date 2023-01-29 20:25
  */
-public class BaseServerTabFactory<T extends BaseServerController<?>> implements TabFactory<T> {
+public class BaseServerTabFactory<T extends BaseServerController<?>> extends BaseTabFactory<T>{
 
-    /**
-     * 标签页名称
-     */
-    protected String tabName;
-
-    /**
-     * 标签页所在路径,<br>
-     * 应为{@link org.hqu.lly.constant.ResLocConsts}中的值.
-     */
-    protected String tabPanePath;
-
-    /**
-     * 标签页d面板对应控制器,<br>
-     * 应为{@link BaseServerController}的子类.
-     */
-    @Getter
-    private T controller;
 
     public BaseServerTabFactory() {
     }

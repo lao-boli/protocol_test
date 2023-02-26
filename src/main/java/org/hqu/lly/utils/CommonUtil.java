@@ -1,5 +1,7 @@
 package org.hqu.lly.utils;
 
+import lombok.SneakyThrows;
+
 /**
  * <p>
  * 通用工具类
@@ -43,6 +45,22 @@ public class CommonUtil {
             return null;
         }
         return i.toString();
+    }
+
+    /**
+     * <p>
+     *     获取字符串的半角字符长度(英文、数字1个字符，汉字2个字符)
+     * </p>
+     * @param str 字符串
+     * @return 字符串真实长度
+     * @date 2023-02-26 13:52:24 <br>
+     * @author hqully <br>
+     */
+    @SneakyThrows
+    public static int getRealLength(String str) {
+        // 若编码为unicode,则汉字将占3字节，不符合要求。
+        // 故指定编码为gbk。
+        return  str.getBytes("gbk").length;
     }
 
 }

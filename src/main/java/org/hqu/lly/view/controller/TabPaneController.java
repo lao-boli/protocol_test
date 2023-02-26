@@ -10,12 +10,13 @@ import org.hqu.lly.constant.ContentPaneConsts;
 import org.hqu.lly.domain.config.Config;
 import org.hqu.lly.domain.config.TabConfig;
 import org.hqu.lly.domain.config.TabPaneConfig;
-import org.hqu.lly.factory.TabFactory;
+import org.hqu.lly.factory.BaseTabFactory;
 
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.function.Consumer;
 
 /**
  * <p>
@@ -40,7 +41,7 @@ public class TabPaneController extends BaseController implements Initializable {
     private TabPane mainTabPane;
     @FXML
     private Tab createTab;
-    private TabFactory tabFactory;
+    private BaseTabFactory tabFactory;
     /**
      * 标签页面板名称<br>
      * 应为 {@link ContentPaneConsts}中的一种.
@@ -57,7 +58,7 @@ public class TabPaneController extends BaseController implements Initializable {
         controllers = new ArrayList<>();
     }
 
-    public void setTabFactory(TabFactory tabFactory) {
+    public void setTabFactory(BaseTabFactory tabFactory) {
         this.tabFactory = tabFactory;
     }
 
@@ -79,6 +80,7 @@ public class TabPaneController extends BaseController implements Initializable {
      * @date 2023-02-05 20:09:11 <br>
      */
     public void createNewTab() {
+        tabFactory.setSelect((Consumer<Tab>) tab -> mainTabPane.getSelectionModel().select(tab));
         Tab tab = tabFactory.create();
         controllers.add(tabFactory.getController());
 
@@ -96,6 +98,7 @@ public class TabPaneController extends BaseController implements Initializable {
      * @date 2023-02-05 20:09:11 <br>
      */
     public void createNewTab(TabConfig config) {
+        tabFactory.setSelect((Consumer<Tab>) tab -> mainTabPane.getSelectionModel().select(tab));
         Tab tab = tabFactory.create(config);
         controllers.add(tabFactory.getController());
 

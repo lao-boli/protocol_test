@@ -27,9 +27,9 @@ public enum TabFactoryEnum {
 
     private String paneType;
 
-    private TabFactory tabFactory;
+    private BaseTabFactory tabFactory;
 
-    TabFactoryEnum(String paneType, TabFactory tabFactory) {
+    TabFactoryEnum(String paneType, BaseTabFactory tabFactory) {
         this.paneType = paneType;
         this.tabFactory = tabFactory;
     }

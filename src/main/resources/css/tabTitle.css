@@ -1,0 +1,27 @@
+.text-field {
+    -fx-background-color: transparent;
+    -fx-padding: 4 0 4 0;
+}
+.text-field:focused {
+    -fx-background-color: transparent;
+    -fx-padding: 4 0 4 0;
+}
+
+.tooltip {
+    -fx-text-fill: #bbbbbb;
+    -fx-background-color: #4b4d4d;
+    -fx-font-size: 12px;
+    -fx-effect: none;
+    -fx-border-style: solid;
+    -fx-border-color: #636569;
+    -fx-padding: 4;
+}
+
+.test {
+    -fx-background-color: wheat;
+    -fx-padding: 4 0 4 0;
+}
+.test:focused {
+    -fx-background-color: wheat;
+    -fx-padding: 4 0 4 0;
+}
