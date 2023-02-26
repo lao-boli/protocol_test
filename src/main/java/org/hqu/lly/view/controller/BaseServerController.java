@@ -11,6 +11,7 @@ import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
 import javafx.stage.Stage;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.hqu.lly.domain.base.BaseServer;
 import org.hqu.lly.domain.bean.CustomDataConfig;
@@ -83,6 +84,11 @@ public abstract class BaseServerController<T> extends BaseController implements 
     protected Button removeClientBtn;
 
     /**
+     * 当前标签页的标题
+     */
+    @Setter
+    protected TextField tabTitle;
+    /**
      * netty服务端。<br>
      * 应为 {@link TCPServer}、{@link UDPServer}、{@link WebSocketServer}
      * 中的一个。
@@ -150,6 +156,7 @@ public abstract class BaseServerController<T> extends BaseController implements 
      * @date 2023-02-06 11:34:25 <br>
      */
     public void initByConfig(ServerConfig config) {
+        tabTitle.setText(config.getTabName());
         serverPort.setText(config.getPort());
         msgInput.setText(config.getMsgInput());
         sendSettingConfig = config.getSendSettingConfig();
@@ -438,6 +445,7 @@ public abstract class BaseServerController<T> extends BaseController implements 
     @Override
     public ServerConfig saveAndGetConfig() {
         serverConfig = new ServerConfig();
+        serverConfig.setTabName(tabTitle.getText());
         serverConfig.setMsgInput(msgInput.getText());
         serverConfig.setPort(serverPort.getText());
         serverConfig.setSendSettingConfig(sendSettingConfig);
