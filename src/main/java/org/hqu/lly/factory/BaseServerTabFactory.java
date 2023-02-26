@@ -3,6 +3,7 @@ package org.hqu.lly.factory;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.Tab;
+import org.hqu.lly.domain.component.TitleTab;
 import org.hqu.lly.domain.config.ServerConfig;
 import org.hqu.lly.domain.config.TabConfig;
 import org.hqu.lly.view.controller.BaseServerController;
@@ -26,7 +27,7 @@ public class BaseServerTabFactory<T extends BaseServerController<?>> extends Bas
 
     @Override
     public Tab create() {
-        Tab tab = new Tab(tabName);
+        TitleTab tab = new TitleTab(tabName, select);
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource(tabPanePath));
             Parent contentPane = loader.load();
@@ -34,6 +35,7 @@ public class BaseServerTabFactory<T extends BaseServerController<?>> extends Bas
             // 否则会导致标签页的关闭回调里的controller
             // 永远只有最新创建的tab页的controller
             T controller = loader.getController();
+            controller.setTabTitle(tab.getTabTitleField());
 
             tab.setContent(contentPane);
             tab.setOnClosed(event -> (controller).destroy());
