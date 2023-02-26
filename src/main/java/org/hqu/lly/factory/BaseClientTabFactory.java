@@ -28,7 +28,7 @@ public class BaseClientTabFactory<T extends BaseClientController<?>> extends Bas
     @Override
     public Tab create() {
 
-        TitleTab tab = new TitleTab(tabName,select);
+        TitleTab tab = new TitleTab(tabName,tabPane);
 
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource(tabPanePath));
