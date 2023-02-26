@@ -1,14 +1,11 @@
 package org.hqu.lly.factory;
 
-import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import lombok.Getter;
 import lombok.Setter;
 import org.hqu.lly.view.controller.BaseClientController;
 import org.hqu.lly.view.controller.BaseController;
 import org.hqu.lly.view.controller.BaseServerController;
-
-import java.util.function.Consumer;
 
 /**
  * <p>
@@ -41,10 +38,10 @@ public abstract class BaseTabFactory<T extends BaseController> implements TabFac
     protected T controller;
 
     /**
-     * 让 {@link TabPane}选中本{@link Tab}的回调
+     * 标签页所在的标签面板
      */
     @Setter
-    protected Consumer<Tab> select;
+    protected TabPane tabPane;
 
     public BaseTabFactory() {
     }

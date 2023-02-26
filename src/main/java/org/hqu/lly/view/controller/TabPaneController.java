@@ -16,7 +16,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
-import java.util.function.Consumer;
 
 /**
  * <p>
@@ -80,7 +79,7 @@ public class TabPaneController extends BaseController implements Initializable {
      * @date 2023-02-05 20:09:11 <br>
      */
     public void createNewTab() {
-        tabFactory.setSelect((Consumer<Tab>) tab -> mainTabPane.getSelectionModel().select(tab));
+        tabFactory.setTabPane(mainTabPane);
         Tab tab = tabFactory.create();
         controllers.add(tabFactory.getController());
 
@@ -98,7 +97,7 @@ public class TabPaneController extends BaseController implements Initializable {
      * @date 2023-02-05 20:09:11 <br>
      */
     public void createNewTab(TabConfig config) {
-        tabFactory.setSelect((Consumer<Tab>) tab -> mainTabPane.getSelectionModel().select(tab));
+        tabFactory.setTabPane(mainTabPane);
         Tab tab = tabFactory.create(config);
         controllers.add(tabFactory.getController());
 

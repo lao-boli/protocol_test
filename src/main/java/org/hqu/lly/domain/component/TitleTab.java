@@ -1,16 +1,24 @@
 package org.hqu.lly.domain.component;
 
+import javafx.application.Platform;
 import javafx.geometry.Bounds;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Cursor;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
+import javafx.scene.image.WritableImage;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.DataFormat;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.TransferMode;
+import javafx.scene.robot.Robot;
 import lombok.Getter;
 import org.hqu.lly.constant.ResLocConsts;
 import org.hqu.lly.utils.UIUtil;
 
-import java.util.function.Consumer;
+import java.text.DateFormat;
 
 import static org.hqu.lly.utils.CommonUtil.getRealLength;
 
@@ -26,10 +34,17 @@ import static org.hqu.lly.utils.CommonUtil.getRealLength;
 public class TitleTab extends Tab {
 
     /**
+     * 将 {@link Tab}在 {@link #tabPane}中的索引作为 {@link DateFormat}.
+     */
+    private static DataFormat tabIndex = new DataFormat("tab");
+    /**
+     * 标签页所在的标签面板
+     */
+    protected TabPane tabPane;
+    /**
      * tab页标题
      */
     private String tabTitle;
-
     /**
      * tab页标题输入框
      */
@@ -37,32 +52,27 @@ public class TitleTab extends Tab {
     private TextField tabTitleField;
 
     /**
-     * 让 {@link TabPane}选中本{@link Tab}的回调
-     */
-    private Consumer<Tab> select;
-
-    /**
      * <p>
      * {@link TitleTab}构造方法。
      * </p>
      *
      * @param tabTitle 标签页标题
-     * @param select 让 {@link TabPane}选中本{@link Tab}的回调
+     * @param tabPane 标签页所在的标签面板
      * @return {@link TitleTab}
      * @date 2023-02-26 13:36:11 <br>
-     * @author hqully <br>
      */
-    public TitleTab(String tabTitle, Consumer<Tab> select) {
+    public TitleTab(String tabTitle, TabPane tabPane) {
         super();
         this.tabTitle = tabTitle;
-        this.select = select;
+        this.tabPane = tabPane;
         initTitle();
     }
 
     /**
      * <p>
-     *     初始化标题设置
+     * 初始化标题设置
      * </p>
+     *
      * @date 2023-02-26 13:38:00 <br>
      */
     private void initTitle() {
@@ -84,7 +94,7 @@ public class TitleTab extends Tab {
             }
             // 单击切换到本标签页
             if (event.getClickCount() == 1) {
-                select.accept(this);
+                tabPane.getSelectionModel().select(this);
             }
         });
         title.focusedProperty().addListener((observable, oldValue, newValue) -> {
@@ -96,13 +106,62 @@ public class TitleTab extends Tab {
 
         setTooltip(title);
 
+
+        handleDrag(title);
+
         this.setGraphic(title);
+    }
+
+    private void handleDrag(TextField title) {
+        Tab tab = this;
+
+        title.setOnDragDetected(event -> {
+            Dragboard db = title.startDragAndDrop(TransferMode.MOVE);
+            // 设置拖拽时的图片
+            Robot robot = new Robot();
+            Bounds bounds = title.localToScreen(title.getBoundsInLocal());
+            WritableImage capture = robot.getScreenCapture(null, new Rectangle2D(bounds.getMinX()-2, bounds.getMinY()+2, 66, 25), false);
+            db.setDragView(capture,20,40);
+
+
+            // 传输数据内容
+            ClipboardContent content = new ClipboardContent();
+            // 被拖拽时，本tab为source
+            content.put(tabIndex, tabPane.getTabs().indexOf(tab));
+            db.setContent(content);
+        });
+
+        title.setOnDragOver(event -> event.acceptTransferModes(TransferMode.MOVE));
+
+        title.setOnDragDropped(event -> {
+            // 触发本回调时，本tab为target
+            int targetIndex = tabPane.getTabs().indexOf(tab);
+
+            Dragboard db = event.getDragboard();
+            int sourceIndex = (int) db.getContent(tabIndex);
+
+            // 位置不变，直接返回
+            if (targetIndex == sourceIndex){
+                return;
+            }
+
+            // 交换两个tab
+            Platform.runLater(() -> {
+                Tab sourceTab = tabPane.getTabs().remove(sourceIndex);
+                tabPane.getTabs().add(targetIndex, sourceTab);
+
+                tabPane.getTabs().remove(tab);
+                tabPane.getTabs().add(sourceIndex, tab);
+            });
+
+        });
     }
 
     /**
      * <p>
-     *     为标题 {@link TextField}设置 {@link Tooltip}
+     * 为标题 {@link TextField}设置 {@link Tooltip}
      * </p>
+     *
      * @param title 标题{@link TextField}
      * @date 2023-02-26 13:47:27 <br>
      */
