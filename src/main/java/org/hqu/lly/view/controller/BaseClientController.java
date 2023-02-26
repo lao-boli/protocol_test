@@ -9,6 +9,7 @@ import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
 import javafx.stage.Stage;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.hqu.lly.domain.base.BaseClient;
 import org.hqu.lly.domain.bean.CustomDataConfig;
@@ -81,6 +82,12 @@ public abstract class BaseClientController<T extends BaseClient> extends BaseCon
     protected String protocol;
 
     /**
+     * 当前标签页的标题
+     */
+    @Setter
+    protected TextField tabTitle;
+
+    /**
      * 客户端面板配置类
      */
     protected ClientConfig clientConfig;
@@ -123,6 +130,7 @@ public abstract class BaseClientController<T extends BaseClient> extends BaseCon
      * @author hqully <br>
      */
     public void initByConfig(ClientConfig config) {
+        tabTitle.setText(config.getTabName());
         remoteAddressInput.setText(config.getServerAddr());
         msgInput.setText(config.getMsgInput());
         sendSettingConfig = config.getSendSettingConfig();
@@ -146,6 +154,7 @@ public abstract class BaseClientController<T extends BaseClient> extends BaseCon
     public TabConfig saveAndGetConfig() {
         clientConfig = new ClientConfig();
         clientConfig.setMsgInput(msgInput.getText());
+        clientConfig.setTabName(tabTitle.getText());
         clientConfig.setServerAddr(remoteAddressInput.getText());
         clientConfig.setSendSettingConfig(sendSettingConfig);
         return clientConfig;
