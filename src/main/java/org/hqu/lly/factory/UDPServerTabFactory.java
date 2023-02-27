@@ -1,6 +1,6 @@
 package org.hqu.lly.factory;
 
-import org.hqu.lly.constant.ResLocConsts;
+import org.hqu.lly.constant.ResLoc;
 import org.hqu.lly.view.controller.UDPServerController;
 
 /**
@@ -16,7 +16,7 @@ public class UDPServerTabFactory extends BaseServerTabFactory<UDPServerControlle
 
     public UDPServerTabFactory() {
         super.tabName = "server";
-        super.tabPanePath = ResLocConsts.UDP_SERVER_PANE;
+        super.tabPanePath = ResLoc.UDP_SERVER_PANE;
     }
 
 }

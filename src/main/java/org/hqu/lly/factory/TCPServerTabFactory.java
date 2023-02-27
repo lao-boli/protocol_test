@@ -1,6 +1,6 @@
 package org.hqu.lly.factory;
 
-import org.hqu.lly.constant.ResLocConsts;
+import org.hqu.lly.constant.ResLoc;
 import org.hqu.lly.view.controller.TCPServerController;
 
 /**
@@ -16,7 +16,7 @@ public class TCPServerTabFactory extends BaseServerTabFactory<TCPServerControlle
 
     public TCPServerTabFactory(){
         super.tabName = "server";
-        super.tabPanePath = ResLocConsts.TCP_SERVER_PANE;
+        super.tabPanePath = ResLoc.TCP_SERVER_PANE;
     }
 
 }

@@ -7,7 +7,7 @@ import javafx.scene.Scene;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import org.hqu.lly.constant.ResLocConsts;
+import org.hqu.lly.constant.ResLoc;
 import org.hqu.lly.domain.bean.SendSettingConfig;
 import org.hqu.lly.domain.config.TopConfig;
 import org.hqu.lly.view.controller.SendSettingController;
@@ -36,7 +36,7 @@ public class SendSettingPaneFactory {
     public static Stage create(SendSettingConfig sendConfig) {
         try {
             Stage sendSettingStage = new Stage();
-            FXMLLoader loader = new FXMLLoader(SendSettingPaneFactory.class.getClassLoader().getResource(ResLocConsts.SEND_SETTING_PANE));
+            FXMLLoader loader = new FXMLLoader(ResLoc.SEND_SETTING_PANE);
             Parent contentPane = loader.load();
 
             SendSettingController controller = loader.getController();

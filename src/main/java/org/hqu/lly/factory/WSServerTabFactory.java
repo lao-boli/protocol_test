@@ -1,6 +1,6 @@
 package org.hqu.lly.factory;
 
-import org.hqu.lly.constant.ResLocConsts;
+import org.hqu.lly.constant.ResLoc;
 import org.hqu.lly.view.controller.WebSocketServerController;
 
 /**
@@ -16,7 +16,7 @@ public class WSServerTabFactory extends BaseServerTabFactory<WebSocketServerCont
 
     public WSServerTabFactory(){
         super.tabName = "server";
-        super.tabPanePath = ResLocConsts.WEB_SOCKET_SERVER_PANE;
+        super.tabPanePath = ResLoc.WEB_SOCKET_SERVER_PANE;
     }
 
 }

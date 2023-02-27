@@ -1,6 +1,6 @@
 package org.hqu.lly.factory;
 
-import org.hqu.lly.constant.ResLocConsts;
+import org.hqu.lly.constant.ResLoc;
 import org.hqu.lly.view.controller.TCPClientController;
 
 /**
@@ -16,7 +16,7 @@ public class TCPClientTabFactory extends BaseClientTabFactory<TCPClientControlle
 
     public TCPClientTabFactory() {
         super.tabName = "client";
-        super.tabPanePath = ResLocConsts.TCP_CLIENT_PANE;
+        super.tabPanePath = ResLoc.TCP_CLIENT_PANE;
     }
 
 }

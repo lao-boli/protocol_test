@@ -1,6 +1,6 @@
 package org.hqu.lly.factory;
 
-import org.hqu.lly.constant.ResLocConsts;
+import org.hqu.lly.constant.ResLoc;
 import org.hqu.lly.view.controller.WebSocketClientController;
 
 /**
@@ -16,7 +16,7 @@ public class WSClientTabFactory extends BaseClientTabFactory<WebSocketClientCont
 
     public WSClientTabFactory() {
         super.tabName = "client";
-        super.tabPanePath = ResLocConsts.WEB_SOCKET_CLIENT_PANE;
+        super.tabPanePath = ResLoc.WEB_SOCKET_CLIENT_PANE;
     }
 
 }
