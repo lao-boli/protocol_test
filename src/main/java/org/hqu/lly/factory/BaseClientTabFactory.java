@@ -31,7 +31,7 @@ public class BaseClientTabFactory<T extends BaseClientController<?>> extends Bas
         TitleTab tab = new TitleTab(tabName,tabPane);
 
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource(tabPanePath));
+            FXMLLoader loader = new FXMLLoader(tabPanePath);
             Parent contentPane = loader.load();
             // 不能直接赋值给成员变量，
             // 否则会导致标签页的关闭回调里的controller,

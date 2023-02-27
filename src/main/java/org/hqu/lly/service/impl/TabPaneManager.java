@@ -5,7 +5,7 @@ import javafx.scene.Parent;
 import javafx.scene.layout.Pane;
 import lombok.SneakyThrows;
 import org.hqu.lly.constant.ContentPaneConsts;
-import org.hqu.lly.constant.ResLocConsts;
+import org.hqu.lly.constant.ResLoc;
 import org.hqu.lly.domain.config.TabConfig;
 import org.hqu.lly.domain.config.TabPaneConfig;
 import org.hqu.lly.enums.TabFactoryEnum;
@@ -102,7 +102,7 @@ public class TabPaneManager implements SwitchPaneService {
     @SneakyThrows
     private Parent createContentPane() {
         // 加载资源文件
-        FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource(ResLocConsts.TAB_PANE));
+        FXMLLoader loader = new FXMLLoader(ResLoc.TAB_PANE);
         Parent contentPane = loader.load();
         controller = loader.getController();
 

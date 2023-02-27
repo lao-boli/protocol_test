@@ -7,18 +7,15 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import org.hqu.lly.constant.ResLocConsts;
+import org.hqu.lly.constant.ResLoc;
 import org.hqu.lly.utils.UIUtil;
 import org.hqu.lly.view.controller.MainController;
-
-import java.net.URL;
 
 public class App extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         FXMLLoader fxmlLoader = new FXMLLoader();
-        URL resource = getClass().getClassLoader().getResource(ResLocConsts.MAIN_PANE);
-        fxmlLoader.setLocation(resource);
+        fxmlLoader.setLocation(ResLoc.MAIN_PANE);
         Parent root = fxmlLoader.load();
        MainController controller = fxmlLoader.getController();
 

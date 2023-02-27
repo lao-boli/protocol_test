@@ -8,7 +8,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import lombok.extern.slf4j.Slf4j;
-import org.hqu.lly.constant.ResLocConsts;
+import org.hqu.lly.constant.ResLoc;
 import org.hqu.lly.domain.bean.CustomDataConfig;
 import org.hqu.lly.view.controller.DataSettingController;
 
@@ -29,7 +29,7 @@ public class DataSettingPaneFactory {
     public static Stage create(CustomDataConfig dataConfig) {
         try {
             Stage dataSettingStage = new Stage();
-            FXMLLoader loader = new FXMLLoader(DataSettingPaneFactory.class.getClassLoader().getResource(ResLocConsts.DATA_SETTING_PANE));
+            FXMLLoader loader = new FXMLLoader(ResLoc.DATA_SETTING_PANE);
             Parent contentPane = loader.load();
 
             DataSettingController controller = loader.getController();

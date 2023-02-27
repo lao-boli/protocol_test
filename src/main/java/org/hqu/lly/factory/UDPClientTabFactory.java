@@ -1,6 +1,6 @@
 package org.hqu.lly.factory;
 
-import org.hqu.lly.constant.ResLocConsts;
+import org.hqu.lly.constant.ResLoc;
 import org.hqu.lly.view.controller.UDPClientController;
 
 /**
@@ -19,7 +19,7 @@ public class UDPClientTabFactory extends BaseClientTabFactory<UDPClientControlle
 
     public UDPClientTabFactory() {
         super.tabName = "client";
-        super.tabPanePath = ResLocConsts.UDP_CLIENT_PANE;
+        super.tabPanePath = ResLoc.UDP_CLIENT_PANE;
     }
 
 }

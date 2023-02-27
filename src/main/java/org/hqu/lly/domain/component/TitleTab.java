@@ -15,7 +15,7 @@ import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 import javafx.scene.robot.Robot;
 import lombok.Getter;
-import org.hqu.lly.constant.ResLocConsts;
+import org.hqu.lly.constant.ResLoc;
 import org.hqu.lly.utils.UIUtil;
 
 import java.text.DateFormat;
@@ -79,7 +79,7 @@ public class TitleTab extends Tab {
         TextField title = new TextField(tabTitle);
         this.tabTitleField = title;
         // 加载css
-        title.getStylesheets().add(getClass().getClassLoader().getResource(ResLocConsts.TAB_TITLE).toExternalForm());
+        title.getStylesheets().add(ResLoc.TAB_TITLE.toExternalForm());
 
         title.setMaxWidth(40);
         title.setEditable(false);

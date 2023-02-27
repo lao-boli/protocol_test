@@ -7,7 +7,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.hqu.lly.component.controller.CustomAlertController;
-import org.hqu.lly.constant.ResLocConsts;
+import org.hqu.lly.constant.ResLoc;
 import org.hqu.lly.domain.component.CustomAlert;
 import org.hqu.lly.utils.UIUtil;
 
@@ -38,7 +38,7 @@ public class CustomAlertFactory{
     public static CustomAlert create(String title, String info) {
         try {
             Stage stage = new Stage();
-            FXMLLoader loader = new FXMLLoader(CustomAlertFactory.class.getClassLoader().getResource(ResLocConsts.CUSTOM_ALERT));
+            FXMLLoader loader = new FXMLLoader(ResLoc.CUSTOM_ALERT);
             Parent contentPane = loader.load();
 
             CustomAlertController controller = loader.getController();
