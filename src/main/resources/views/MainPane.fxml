@@ -3,16 +3,14 @@
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.TreeView?>
 <?import javafx.scene.layout.AnchorPane?>
-<AnchorPane prefHeight="450.0" prefWidth="620.0" xmlns="http://javafx.com/javafx/8.0.171"
-            xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.hqu.lly.view.controller.MainController">
+<AnchorPane prefHeight="450.0" prefWidth="620.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.hqu.lly.view.controller.MainController">
     <children>
-        <fx:include fx:id="titleBar" prefHeight="35.0" prefWidth="650.0" source="titleBar.fxml"/>
-        <SplitPane fx:id="mainSplitPane" dividerPositions="0.20735785953177258" layoutY="37.0" prefHeight="416.0"
-                   prefWidth="650.0">
+        <fx:include fx:id="titleBar" prefHeight="35.0" prefWidth="650.0" source="titleBar.fxml" />
+        <SplitPane fx:id="mainSplitPane" dividerPositions="0.20735785953177258" layoutY="35.0" prefHeight="415.0" prefWidth="650.0">
             <items>
                 <TreeView fx:id="menuTree" prefHeight="398.0" prefWidth="80.0">
                 </TreeView>
-                <AnchorPane fx:id="mainPane" prefHeight="384.0" prefWidth="570.0"/>
+                <AnchorPane fx:id="mainPane" prefHeight="384.0" prefWidth="570.0" />
             </items>
         </SplitPane>
    </children>

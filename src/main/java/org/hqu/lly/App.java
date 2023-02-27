@@ -12,14 +12,15 @@ import org.hqu.lly.utils.UIUtil;
 import org.hqu.lly.view.controller.MainController;
 
 public class App extends Application {
+
     @Override
     public void start(Stage primaryStage) throws Exception {
         FXMLLoader fxmlLoader = new FXMLLoader();
         fxmlLoader.setLocation(ResLoc.MAIN_PANE);
         Parent root = fxmlLoader.load();
-       MainController controller = fxmlLoader.getController();
+        MainController controller = fxmlLoader.getController();
 
-        Scene scene = new Scene(root, 650, 450);
+        Scene scene = UIUtil.getShadowScene(root, 660, 600);
 
         DarculaFX.applyDarculaStyle(scene);
         primaryStage.initStyle(StageStyle.TRANSPARENT);
@@ -27,4 +28,5 @@ public class App extends Application {
         UIUtil.setPrimaryStage(primaryStage);
         primaryStage.show();
     }
+
 }
