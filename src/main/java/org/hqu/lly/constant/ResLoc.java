@@ -28,6 +28,7 @@ public class ResLoc {
     public static final URL WEB_SOCKET_CLIENT_PANE = realPath("views/WebSocketClientPane.fxml");
 
     public static final URL TAB_TITLE = realPath("css/tabTitle.css");
+    public static final URL COMMON_CSS = realPath("css/Common.css");
 
 
     /**

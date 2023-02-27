@@ -5,9 +5,10 @@ import javafx.geometry.Insets;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.effect.BlurType;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
-import javafx.scene.layout.Background;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
@@ -62,9 +63,14 @@ public class UIUtil {
      */
     public static Scene getShadowScene(Parent pane, double width, double height) {
         BorderPane borderPane = new BorderPane(pane);
-        borderPane.setBackground(Background.EMPTY);
+        pane.setEffect(new DropShadow(BlurType.GAUSSIAN, Color.BLACK,5,0.1,0,0));
         borderPane.setPadding(new Insets(5, 5, 5, 5));
+
+        // 以css的方式设置背景为透明，防止被其他css覆盖
+        borderPane.setStyle("-fx-background-color: transparent;");
+
         Scene scene = new Scene(borderPane, width, height, Color.TRANSPARENT);
+
         return scene;
 
     }
