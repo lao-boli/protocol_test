@@ -1,6 +1,7 @@
 package org.hqu.lly.utils;
 
-import org.junit.Test;
+
+import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 
