@@ -2,10 +2,7 @@ package org.hqu.lly.protocol.mqtt.router;
 
 import lombok.Data;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * <p>
@@ -28,64 +25,58 @@ public class TopicNode {
     private boolean containMulti = false;
     private boolean containSingle = false;
 
-    public TopicNode() {
-    }
-
-    public TopicNode(String path, String indices) {
-        this.path = path;
-        this.indices = indices;
-    }
-
-    public TopicNode(String path, String indices, List<TopicNode> children) {
-        this.path = path;
-        this.indices = indices;
-        this.children = children;
-    }
-
-    public TopicNode(String path, NodeType type, String indices, List<TopicNode> children) {
+    public TopicNode(String path, NodeType type, String indices, List<TopicNode> children, Set<Dog> channels, boolean containMulti, boolean containSingle) {
         this.path = path;
         this.type = type;
         this.indices = indices;
         this.children = children;
+        this.channels = channels;
+        this.containMulti = containMulti;
+        this.containSingle = containSingle;
     }
 
-    public void printTree(TopicNode node,String level, boolean isLast, StringBuilder sb) {
-        List<TopicNode> children = node.getChildren();
-        if (children.isEmpty()){
-            return;
-        }
-        if (children.size() == 1){
-            sb.append("\n").append(level).append("└─ ").append(children.get(0).desc());
-            children.get(0).printTree(children.get(0),level+"  ",true,sb);
-            return;
-        }
+    public TopicNode() {
+    }
 
+    public TopicNode(String path) {
+        this.path = path;
+    }
+
+    public void printTree(TopicNode node, String level, StringBuilder sb) {
+        List<TopicNode> children = node.getChildren();
+        if (children.isEmpty()) {
+            return;
+        }
         for (int i = 0; i < children.size(); i++) {
             sb.append("\n").append(level);
-            if (i == children.size() - 1){
+            if (i == children.size() - 1) {
                 sb.append("└─ ").append(children.get(i).desc());
-                children.get(i).printTree(children.get(i),level + "   ", true, sb);
-            }else {
+                children.get(i).printTree(children.get(i), level + "   ", sb);
+            } else {
                 sb.append("├─ ").append(children.get(i).desc());
-                children.get(i).printTree(children.get(i),level + "|  ", false, sb);
+                children.get(i).printTree(children.get(i), level + "|  ", sb);
             }
         }
     }
 
+    /**
+     * 节点信息描述
+     *
+     * @return 描述信息
+     */
     private String desc() {
         StringBuilder sb = new StringBuilder();
         sb.append("p=").append(path)
                 .append(", is=").append(indices)
-                .append(", cm=").append(containMulti)
                 .append(", dogs=").append(channels);
-        return  sb.toString();
+        return sb.toString();
     }
 
 
     public void printTree() {
         StringBuilder sb = new StringBuilder();
         sb.append(desc());
-        printTree(this,"",true,sb);
+        printTree(this, "", sb);
         System.out.println(sb.toString());
     }
 
@@ -111,8 +102,8 @@ public class TopicNode {
                 return this;
             }
 
+            // 订阅话题已存在,添加channel
             if (path.equals(this.path)) {
-                // todo handle equal
                 addChannel(channel);
                 return this;
             }
@@ -124,19 +115,14 @@ public class TopicNode {
                 }
             }
 
-            // 如果相同前缀的长度比当前节点保存的 path 短
+            // 如果相同前缀的长度比当前节点保存的 path 短,节点将进行分裂
             if (pos > 0 && pos < this.path.length()) {
-                // 复制本节点为子节点
-                TopicNode child = new TopicNode(this.path.substring(pos), NodeType.STATIC, indices, children);
-                child.setChannels(this.channels);
-                child.setContainMulti(this.containMulti);
-                child.setContainSingle(this.containSingle);
+                // 复制本节点为子节点,并设置为本节点的子节点数组
+                TopicNode child = new TopicNode(this.path.substring(pos), NodeType.STATIC, indices, children, channels, containMulti, containSingle);
+                this.setChildren(new ArrayList<>(Arrays.asList(child)));
 
-                //
-                ArrayList<TopicNode> children = new ArrayList<>();
-                children.add(child);
-                this.setChildren(children);
-                // 子路径的首个字符作为索引
+                // 将本节点设置为路径节点
+                // 由本节点复制的子节点路径的首个字符作为索引
                 this.setIndices(this.path.substring(pos, pos + 1));
                 // 更新当前节点的 path 为新的公共前缀
                 this.setPath(this.path.substring(0, pos));
@@ -165,9 +151,9 @@ public class TopicNode {
                 }
             }
 
-            // 将新路径插入子节点中
+            // 不和已存在的子路径存在公共前缀，
+            //将新路径插入子节点中
             this.insertChild(rpPath, String.valueOf(c), channel);
-
         } else {
             // 当前节点为空,直接设置
             this.setPath(path);
@@ -193,18 +179,25 @@ public class TopicNode {
             return;
         }
 
-        TopicNode child = new TopicNode(path, "");
+        TopicNode child = new TopicNode(path);
         child.addChannel(channel);
+
         this.indices += prefix;
         children.add(child);
     }
 
+    /**
+     * 插入通配符节点"+"
+     *
+     * @param path    要添加的路径
+     * @param channel 要添加的channel
+     */
     private void insertSingle(String path, Dog channel) {
         TopicNode single = null;
         if (this.containSingle) {
             single = children.get(indices.indexOf("+"));
         } else {
-            single = new TopicNode("+/", "");
+            single = new TopicNode("+/");
             single.setType(NodeType.SINGLE);
             children.add(single);
             indices += "+";
@@ -226,8 +219,7 @@ public class TopicNode {
             multi.addChannel(channel);
             return;
         }
-
-        TopicNode multi = new TopicNode("#", "");
+        TopicNode multi = new TopicNode("#");
         multi.setType(NodeType.MULTI);
         multi.addChannel(channel);
 
@@ -238,6 +230,9 @@ public class TopicNode {
     }
 
     public void getValues(String path, Set<Dog> res) {
+        // "#"中的channel匹配/a/,/a/#,
+        // 当匹配路径为/a/时,要返回 "/a/"和"/a/#"中的channel
+        // 子节点中含有"#"节点,将其中的channel添加到res中
         if (this.containMulti) {
             res.addAll(children.get(indices.indexOf("#")).getChannels());
         }
