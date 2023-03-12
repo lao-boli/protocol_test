@@ -49,22 +49,44 @@ public class TopicNode {
         this.children = children;
     }
 
-    public void printTree(int ind) {
+    public void printTree(TopicNode node,String level, boolean isLast, StringBuilder sb) {
+        List<TopicNode> children = node.getChildren();
+        if (children.isEmpty()){
+            return;
+        }
+        if (children.size() == 1){
+            sb.append("\n").append(level).append("└─ ").append(children.get(0).desc());
+            children.get(0).printTree(children.get(0),level+"  ",true,sb);
+            return;
+        }
+
+        for (int i = 0; i < children.size(); i++) {
+            sb.append("\n").append(level);
+            if (i == children.size() - 1){
+                sb.append("└─ ").append(children.get(i).desc());
+                children.get(i).printTree(children.get(i),level + "   ", true, sb);
+            }else {
+                sb.append("├─ ").append(children.get(i).desc());
+                children.get(i).printTree(children.get(i),level + "|  ", false, sb);
+            }
+        }
+    }
+
+    private String desc() {
         StringBuilder sb = new StringBuilder();
-        sb.append(" ".repeat(ind));
-        sb.append("|─");
         sb.append("p=").append(path)
                 .append(", is=").append(indices)
                 .append(", cm=").append(containMulti)
                 .append(", dogs=").append(channels);
-        System.out.println(sb.toString());
-        for (TopicNode child : children) {
-            child.printTree(ind + 2);
-        }
+        return  sb.toString();
     }
 
+
     public void printTree() {
-        printTree(0);
+        StringBuilder sb = new StringBuilder();
+        sb.append(desc());
+        printTree(this,"",true,sb);
+        System.out.println(sb.toString());
     }
 
     private String min(String s1, String s2) {
