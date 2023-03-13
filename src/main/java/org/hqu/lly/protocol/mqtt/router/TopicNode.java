@@ -16,9 +16,23 @@ import java.util.*;
 @Data
 public class TopicNode {
 
+    @Override
+    public String toString() {
+        return "TopicNode{" +
+                "path='" + path + '\'' +
+                ", type=" + type +
+                ", indices='" + indices + '\'' +
+                ", children=" + children +
+                ", channels=" + channels +
+                ", containMulti=" + containMulti +
+                ", containSingle=" + containSingle +
+                '}';
+    }
+
     private String path;
     private NodeType type;
     private String indices = "";
+    private TopicNode parent;
     private List<TopicNode> children = new ArrayList<>();
     //    private Set<Channel> channels = new HashSet<>();
     private Set<Dog> channels = new HashSet<>();
@@ -42,7 +56,7 @@ public class TopicNode {
         this.path = path;
     }
 
-    public void printTree(TopicNode node, String level, StringBuilder sb) {
+    public void getTree(TopicNode node, String level, StringBuilder sb) {
         List<TopicNode> children = node.getChildren();
         if (children.isEmpty()) {
             return;
@@ -51,10 +65,10 @@ public class TopicNode {
             sb.append("\n").append(level);
             if (i == children.size() - 1) {
                 sb.append("└─ ").append(children.get(i).desc());
-                children.get(i).printTree(children.get(i), level + "   ", sb);
+                children.get(i).getTree(children.get(i), level + "   ", sb);
             } else {
                 sb.append("├─ ").append(children.get(i).desc());
-                children.get(i).printTree(children.get(i), level + "|  ", sb);
+                children.get(i).getTree(children.get(i), level + "|  ", sb);
             }
         }
     }
@@ -64,20 +78,26 @@ public class TopicNode {
      *
      * @return 描述信息
      */
-    private String desc() {
+    public String desc() {
         StringBuilder sb = new StringBuilder();
         sb.append("p=").append(path)
+                .append(", t=").append(type)
                 .append(", is=").append(indices)
+                .append(", pa=").append(parent == null ? "" : parent.getPath())
                 .append(", dogs=").append(channels);
         return sb.toString();
     }
 
 
     public void printTree() {
+        System.out.println(getTree().toString());
+    }
+
+    public StringBuilder getTree(){
         StringBuilder sb = new StringBuilder();
         sb.append(desc());
-        printTree(this, "", sb);
-        System.out.println(sb.toString());
+        getTree(this, "", sb);
+        return sb;
     }
 
     private String min(String s1, String s2) {
@@ -118,7 +138,10 @@ public class TopicNode {
             // 如果相同前缀的长度比当前节点保存的 path 短,节点将进行分裂
             if (pos > 0 && pos < this.path.length()) {
                 // 复制本节点为子节点,并设置为本节点的子节点数组
-                TopicNode child = new TopicNode(this.path.substring(pos), NodeType.STATIC, indices, children, channels, containMulti, containSingle);
+                TopicNode child = new TopicNode(this.path.substring(pos), NodeType.CHANNEL, indices, children, channels, containMulti, containSingle);
+                // 更改本节点的子节点的引用为复制后的子节点
+                children.forEach(cc -> cc.setParent(child));
+                child.setParent(this);
                 this.setChildren(new ArrayList<>(Arrays.asList(child)));
 
                 // 将本节点设置为路径节点
@@ -127,6 +150,7 @@ public class TopicNode {
                 // 更新当前节点的 path 为新的公共前缀
                 this.setPath(this.path.substring(0, pos));
                 this.setChannels(null);
+                this.setType(NodeType.STATIC);
                 this.setContainMulti(false);
                 this.setContainSingle(false);
             }
@@ -162,6 +186,33 @@ public class TopicNode {
     }
 
     /**
+     * 移除路由
+     *
+     * @param path 要添加的路径
+     * @return 节点
+     */
+    public TopicNode removeRoute(String path, Dog channel) {
+        TopicNode node = getNode(path);
+        node.removeChannel(channel);
+
+        if (node.getChildren().isEmpty()){
+            TopicNode parent = node.getParent();
+            parent.removeChild(node);
+            // 父节点是只保存路径的节点,且父节点只有一个子节点
+            if (NodeType.STATIC.equals(parent.getType()) && parent.getChildren().size() == 1){
+                TopicNode child = parent.getChildren().remove(0);
+                child.setPath(parent.getPath() + child.getPath());
+                child.setParent(parent.getParent());
+                parent.getParent().replaceChild(parent,child);
+            }
+
+        }
+
+        return this;
+    }
+
+
+    /**
      * 将新路径节点插入本节点的子节点列表中
      *
      * @param path   去除公共前缀后的子节点路径
@@ -180,10 +231,25 @@ public class TopicNode {
         }
 
         TopicNode child = new TopicNode(path);
+        child.setType(NodeType.CHANNEL);
         child.addChannel(channel);
+        child.setParent(this);
 
         this.indices += prefix;
         children.add(child);
+    }
+
+
+    /**
+     * 移除子节点
+     */
+    public void removeChild(TopicNode node) {
+        children.remove(node);
+        indices = indices.replace(node.getPath().substring(0,1),"");
+    }
+
+    public void replaceChild(TopicNode oldNode,TopicNode newNode) {
+        children.set(children.indexOf(oldNode),newNode);
     }
 
     /**
@@ -199,6 +265,7 @@ public class TopicNode {
         } else {
             single = new TopicNode("+/");
             single.setType(NodeType.SINGLE);
+            single.setParent(this);
             children.add(single);
             indices += "+";
         }
@@ -213,6 +280,10 @@ public class TopicNode {
         return;
     }
 
+    /**
+     * 插入通配符节点"#"
+     * @param channel 发起话题订阅的channel
+     */
     private void insertMulti(Dog channel) {
         if (this.containMulti) {
             TopicNode multi = children.get(indices.indexOf("#"));
@@ -222,6 +293,7 @@ public class TopicNode {
         TopicNode multi = new TopicNode("#");
         multi.setType(NodeType.MULTI);
         multi.addChannel(channel);
+        multi.setParent(this);
 
         children.add(multi);
         indices += "#";
@@ -229,6 +301,39 @@ public class TopicNode {
         return;
     }
 
+    /**
+     * 获取子节点.
+     * @param path 子节点路径
+     * @return 子节点
+     */
+    public TopicNode getNode(String path) {
+        if (path.length() > this.path.length()) {
+            // 如果寻找的路径和节点保存的路径有相同的前缀
+            if (path.startsWith(this.path)) {
+                // 将寻找路径的前缀部分去除
+                String subPath = path.substring(this.path.length());
+                // 通过查找路径的首字符，快速找到包含这个字符的子节点
+                for (int i = 0; i < indices.length(); i++) {
+                    // 找到节点,递归查询
+                    if (subPath.charAt(0) == indices.charAt(i)) {
+                        return children.get(i).getNode(subPath);
+                    }
+                }
+            }
+        }
+
+        if (path.equals(this.path)) {
+            return this;
+        }
+
+        return null;
+    }
+
+    /**
+     * 获取匹配路径的所有channel
+     * @param path 匹配路径
+     * @param res 存放结果的集合,应为一个空集合。
+     */
     public void getValues(String path, Set<Dog> res) {
         // "#"中的channel匹配/a/,/a/#,
         // 当匹配路径为/a/时,要返回 "/a/"和"/a/#"中的channel
@@ -291,6 +396,13 @@ public class TopicNode {
             this.channels = new HashSet<>();
         }
         this.channels.add(channel);
+    }
+
+    public void removeChannel(Dog channel) {
+        if (this.channels == null) {
+            return;
+        }
+        this.channels.remove(channel);
     }
 
 }

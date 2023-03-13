@@ -19,6 +19,10 @@ enum NodeType {
      */
     STATIC,
     /**
+     * 含channel的节点
+     */
+    CHANNEL,
+    /**
      * 单层通配符: "+"
      */
     SINGLE,
