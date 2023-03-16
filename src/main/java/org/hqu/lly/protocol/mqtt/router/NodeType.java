@@ -9,7 +9,7 @@ package org.hqu.lly.protocol.mqtt.router;
  * @version 1.0
  * @date 2023/3/5 11:00
  */
-enum NodeType {
+public enum NodeType {
     /**
      * 根节点
      */
