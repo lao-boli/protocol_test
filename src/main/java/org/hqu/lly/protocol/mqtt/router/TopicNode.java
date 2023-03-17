@@ -5,6 +5,8 @@ import lombok.Data;
 
 import java.util.*;
 
+import static org.hqu.lly.protocol.mqtt.router.NodeType.ROOT;
+
 /**
  * <p>
  * mqtt topic 节点
@@ -109,17 +111,20 @@ public class TopicNode {
      * @return 节点
      */
     public TopicNode addRoute(String path, Channel channel) {
+        if (this.type.equals(ROOT)){
+            int i = indices.indexOf(path.charAt(0));
+            if (i>-1){
+                children.get(i).addRoute(path,channel);
+            }else {
+                insertChild(path,channel);
+            }
+            return this;
+        }
+
         // 公共前缀长度/位置
         int pos;
         // 当前节点不为空
         if (this.path.length() > 0 || !children.isEmpty()) {
-
-            // 处理连续的两个+路径，如test/+/+/的情况
-            // if (path.startsWith("+/")) {
-            //     insertSingle(path, channel);
-            //     return this;
-            // }
-
             // 订阅话题已存在,添加channel
             if (path.equals(this.path)) {
                 addChannel(channel);
@@ -152,7 +157,6 @@ public class TopicNode {
                 this.setContainMulti(false);
                 this.setContainSingle(false);
             }
-
 
             // 去除公共前缀后的路径[removed prefix path]
             String rpPath = path.substring(pos);
@@ -242,9 +246,15 @@ public class TopicNode {
             }
         }
 
-        if ("#".equals(path.substring(0, 1))) {
-            insertMulti(channel);
-            return;
+         i = path.indexOf("#");
+        if (i > -1) {
+            if (i == 0) {
+                insertMulti(channel);
+                return;
+            } else {
+                insertStatic(path.substring(0, i)).insertMulti(channel);
+                return;
+            }
         }
 
         insertCommon(path, channel);
@@ -353,17 +363,22 @@ public class TopicNode {
      * @return 子节点
      */
     public TopicNode getNode(String path) {
+        if (ROOT.equals(type)){
+            int i = indices.indexOf(path.charAt(0));
+            if (i > -1){
+                return children.get(i).getNode(path);
+            }
+        }
         if (path.length() > this.path.length()) {
             // 如果寻找的路径和节点保存的路径有相同的前缀
             if (path.startsWith(this.path)) {
                 // 将寻找路径的前缀部分去除
                 String subPath = path.substring(this.path.length());
                 // 通过查找路径的首字符，快速找到包含这个字符的子节点
-                for (int i = 0; i < indices.length(); i++) {
-                    // 找到节点,递归查询
-                    if (subPath.charAt(0) == indices.charAt(i)) {
-                        return children.get(i).getNode(subPath);
-                    }
+                int i = indices.indexOf(subPath.charAt(0));
+                // 找到节点,递归查询
+                if (i > -1){
+                    return children.get(i).getNode(subPath);
                 }
             }
         }
@@ -402,6 +417,17 @@ public class TopicNode {
             } else {
                 single.getValues(p, res);
             }
+        }
+
+        if (ROOT.equals(this.type)){
+            // 通过查找路径的首字符，快速找到包含这个字符的子节点
+            for (int i = 0; i < indices.length(); i++) {
+                // 找到节点,递归查询
+                if (path.charAt(0) == indices.charAt(i)) {
+                    children.get(i).getValues(path, res);
+                }
+            }
+            return;
         }
 
         if (NodeType.SINGLE.equals(this.type)) {
