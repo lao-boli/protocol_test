@@ -1,16 +1,19 @@
 package org.hqu.lly.protocol.mqtt.server.handler;
 
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-import io.netty.handler.codec.mqtt.MqttFixedHeader;
-import io.netty.handler.codec.mqtt.MqttMessage;
-import io.netty.handler.codec.mqtt.MqttMessageType;
-import io.netty.handler.codec.mqtt.MqttPublishMessage;
+import io.netty.handler.codec.mqtt.*;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.hqu.lly.protocol.mqtt.server.group.MQTTChannelGroup;
 import org.hqu.lly.protocol.mqtt.server.util.MqttMsgBack;
 import org.hqu.lly.service.impl.ConnectedServerService;
+
+import java.util.List;
+
+import static org.hqu.lly.protocol.mqtt.server.group.MQTTChannelGroup.topicTrees;
 
 /**
  * <p>
@@ -22,9 +25,13 @@ import org.hqu.lly.service.impl.ConnectedServerService;
  * @date 2022/9/16 20:04
  */
 @Slf4j
+@ChannelHandler.Sharable
 public class MQTTServerConnectHandler extends SimpleChannelInboundHandler<MqttMessage> {
 
     private ConnectedServerService serverService;
+
+    @Setter
+    private Channel bindChannel;
 
     public MQTTServerConnectHandler(ConnectedServerService serverService) {
         this.serverService = serverService;
@@ -55,16 +62,10 @@ public class MQTTServerConnectHandler extends SimpleChannelInboundHandler<MqttMe
                 //	客户端发布消息
                 case PUBLISH:
                     //	PUBACK报文是对QoS 1等级的PUBLISH报文的响应
-                    MqttMsgBack.puback(channel, msg);
+                    // MqttMsgBack.puback(channel, msg);
                     // 传递给下一个handler进行消息的分发
                     ctx.fireChannelRead(((MqttPublishMessage) msg).retain());
-/*
-                    MqttFixedHeader recFixHeader = mqttPublishMessage.fixedHeader();
-                    MqttFixedHeader pubFixHeader = new MqttFixedHeader(MqttMessageType.PUBLISH,recFixHeader.isDup(), recFixHeader.qosLevel(), recFixHeader.isRetain(), 0);
-                    MqttPublishVariableHeader variableHeader = new MqttPublishVariableHeader(mqttPublishMessage.variableHeader().topicName(), 0);
-                    MqttPublishMessage message = (MqttPublishMessage) MqttMessageFactory.newMessage(pubFixHeader, variableHeader, Unpooled.buffer().writeBytes("aaa".getBytes(StandardCharsets.UTF_8)));
-                    ctx.writeAndFlush(message);
-*/
+
                     break;
                 //	发布释放
                 case PUBREL:
@@ -79,12 +80,15 @@ public class MQTTServerConnectHandler extends SimpleChannelInboundHandler<MqttMe
                     //	SUBSCRIBE报文也（为每个订阅）指定了最大的QoS等级，服务端根据这个发送应用消息给客户端
                     // 	to do
                     MqttMsgBack.suback(channel, msg);
+                    List<MqttTopicSubscription> subscriptions = ((MqttSubscribePayload) msg.payload()).topicSubscriptions();
+                    subscriptions.forEach(item -> topicTrees.get(bindChannel).addRoute(item.topicName(),channel));
                     break;
                 //	客户端取消订阅
                 case UNSUBSCRIBE:
                     //	客户端发送UNSUBSCRIBE报文给服务端，用于取消订阅主题
                     //	to do
                     MqttMsgBack.unsuback(channel, msg);
+                    topicTrees.get(bindChannel).removeRoute(((MqttUnsubscribeMessage) msg).payload().topics().get(0),channel);
                     break;
                 //	客户端发起心跳
                 case PINGREQ:

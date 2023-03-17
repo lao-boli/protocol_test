@@ -15,6 +15,9 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
 import org.hqu.lly.domain.bean.ConnectedServer;
+import org.hqu.lly.protocol.mqtt.router.NodeType;
+import org.hqu.lly.protocol.mqtt.router.TopicNode;
+import org.hqu.lly.protocol.mqtt.server.group.MQTTChannelGroup;
 import org.hqu.lly.protocol.mqtt.server.handler.MQTTServerConnectHandler;
 import org.hqu.lly.protocol.mqtt.server.handler.MQTTServerExceptionHandler;
 import org.hqu.lly.protocol.mqtt.server.handler.MQTTServerMessageHandler;
@@ -66,19 +69,33 @@ public class MQTTServer extends ConnectedServer {
                     .childOption(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT);
 
             serverBootstrap.group(bossGroup, workerGroup);
+
+            MQTTServerConnectHandler connectHandler = new MQTTServerConnectHandler(serverService);
+            MQTTServerMessageHandler messageHandler = new MQTTServerMessageHandler(serverService);
+
             serverBootstrap.childHandler(new ChannelInitializer<SocketChannel>() {
                 @Override
                 protected void initChannel(SocketChannel ch) throws Exception {
                     ch.pipeline().addLast(new IdleStateHandler(600, 600, 1200));
                     ch.pipeline().addLast("encoder", MqttEncoder.INSTANCE);
                     ch.pipeline().addLast("decoder", new MqttDecoder());
-                    ch.pipeline().addLast("MQTTServerConnectHandler", new MQTTServerConnectHandler(serverService));
-                    ch.pipeline().addLast("MQTTServerMessageHandler", new MQTTServerMessageHandler(serverService));
+                    ch.pipeline().addLast("MQTTServerConnectHandler", connectHandler);
+                    ch.pipeline().addLast("MQTTServerMessageHandler", messageHandler);
                     ch.pipeline().addLast("MQTTExceptionHandler", new MQTTServerExceptionHandler());
                 }
             });
 
             channel = serverBootstrap.bind(port).sync().channel();
+
+            // 初始化话题树根节点
+            TopicNode root = new TopicNode();
+            root.setType(NodeType.ROOT);
+            root.setPath("");
+            MQTTChannelGroup.topicTrees.put(channel, root);
+
+            connectHandler.setBindChannel(channel);
+            messageHandler.setBindChannel(channel);
+
 
             channel.closeFuture().addListener(promise -> {
                 bossGroup.shutdownGracefully();
