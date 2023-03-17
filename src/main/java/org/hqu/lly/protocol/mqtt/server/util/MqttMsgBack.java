@@ -48,16 +48,12 @@ public class MqttMsgBack {
 	public static void puback (Channel channel, MqttMessage mqttMessage) {
 		MqttPublishMessage mqttPublishMessage = (MqttPublishMessage) mqttMessage;
 		MqttFixedHeader mqttFixedHeaderInfo = mqttPublishMessage.fixedHeader();
-		MqttQoS qos = (MqttQoS) mqttFixedHeaderInfo.qosLevel();
-        byte[] headBytes = new byte[mqttPublishMessage.payload().readableBytes()];
-        mqttPublishMessage.payload().readBytes(headBytes);
-        String data = new String(headBytes);
-        System.out.println("publish data--"+data);
- 
+		MqttQoS qos = mqttFixedHeaderInfo.qosLevel();
+
         switch (qos) {
-	        case AT_MOST_ONCE: 		//	至多一次
+	        case AT_MOST_ONCE:
 	            break;
-	        case AT_LEAST_ONCE:		//	至少一次
+	        case AT_LEAST_ONCE:
 	    		//	构建返回报文， 可变报头
 	    		MqttMessageIdVariableHeader mqttMessageIdVariableHeaderBack = MqttMessageIdVariableHeader.from(mqttPublishMessage.variableHeader().packetId());
 	    		//	构建返回报文， 固定报头
@@ -67,7 +63,7 @@ public class MqttMsgBack {
 	    		log.info("back--"+pubAck.toString());
 	    		channel.writeAndFlush(pubAck);
 	            break;
-	        case EXACTLY_ONCE:		//	刚好一次
+	        case EXACTLY_ONCE:
 	            //	构建返回报文， 固定报头
 	        	MqttFixedHeader mqttFixedHeaderBack2 = new MqttFixedHeader(MqttMessageType.PUBREC,false, MqttQoS.AT_LEAST_ONCE,false,0x02);
 	            //	构建返回报文， 可变报头
