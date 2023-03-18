@@ -3,106 +3,144 @@
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.*?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.VBox?>
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="355.0"
-            prefWidth="520.0" stylesheets="@../css/TabPane.css" xmlns="http://javafx.com/javafx/8.0.171"
-            xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.hqu.lly.view.controller.WebSocketServerController">
+<?import javafx.scene.layout.*?>
+<VBox spacing="10.0" stylesheets="@../css/TabPane.css" VBox.vgrow="ALWAYS" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.hqu.lly.view.controller.WebSocketServerController">
     <children>
-        <Label layoutX="39.0" layoutY="23.0" text="port:"/>
-        <TextField fx:id="serverPort" layoutX="78.0" layoutY="19.0" prefHeight="23.0" prefWidth="54.0" text="10250"/>
-        <Button fx:id="confirmButton" layoutX="140.0" layoutY="19.0" mnemonicParsing="false"
-                onMouseClicked="#startServer" text="确定"/>
-        <Button fx:id="closeServerButton" disable="true" layoutX="188.0" layoutY="19.0" mnemonicParsing="false"
-                onMouseClicked="#closeServer" text="关闭服务"/>
-        <Label fx:id="errorMsgLabel" layoutX="53.0" layoutY="49.0" prefHeight="15.0" prefWidth="174.0" text=""
-               textFill="#c65551"/>
-        <ListView fx:id="clientListBox" layoutX="278.0" layoutY="14.0" prefHeight="57.0" prefWidth="189.0"/>
-        <VBox fx:id="clientBoxToolBar" layoutX="473.0" layoutY="16.0" prefHeight="57.0" prefWidth="24.0" spacing="3.0" styleClass="sidebar">
+        <HBox alignment="CENTER_LEFT" maxHeight="100.0" prefHeight="81.0" prefWidth="520.0" spacing="5.0" VBox.vgrow="ALWAYS">
             <children>
-                <Button fx:id="selectAllBtn" mnemonicParsing="false" onMouseClicked="#selectAllClient" prefHeight="20.0" prefWidth="20.0" styleClass="icon-button">
+                <VBox HBox.hgrow="ALWAYS">
+                    <children>
+                        <HBox spacing="10.0">
+                            <children>
+                                <Label prefHeight="22.0" prefWidth="27.0" text="port:" />
+                                <TextField fx:id="serverPort" prefHeight="23.0" prefWidth="54.0" text="10250" HBox.hgrow="ALWAYS" />
+                                <Button fx:id="confirmButton" mnemonicParsing="false" onMouseClicked="#startServer" text="确定" />
+                                <Button fx:id="closeServerButton" disable="true" mnemonicParsing="false" onMouseClicked="#closeServer" text="关闭服务" />
+                            </children>
+                            <padding>
+                                <Insets top="15.0" />
+                            </padding>
+                            <VBox.margin>
+                                <Insets left="25.0" />
+                            </VBox.margin>
+                        </HBox>
+                        <Label fx:id="errorMsgLabel" alignment="TOP_LEFT" prefHeight="15.0" prefWidth="174.0" textFill="#c65551">
+                            <VBox.margin>
+                                <Insets left="25.0" top="10.0" />
+                            </VBox.margin>
+                        </Label>
+                    </children>
+                </VBox>
+                <ListView fx:id="clientListBox" prefHeight="57.0" prefWidth="189.0" HBox.hgrow="ALWAYS" />
+                <VBox fx:id="clientBoxToolBar" prefHeight="57.0" prefWidth="24.0" spacing="3.0" styleClass="sidebar">
+                    <children>
+                        <Button fx:id="selectAllBtn" mnemonicParsing="false" onMouseClicked="#selectAllClient" prefHeight="20.0" prefWidth="20.0" styleClass="icon-button">
+                            <padding>
+                                <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
+                            </padding>
+                            <graphic>
+                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true" styleClass="clear-button">
+                                    <image>
+                                        <Image url="@../icon/select_all.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </Button>
+                        <Button fx:id="removeClientBtn" mnemonicParsing="false" onMouseClicked="#removeClient" prefHeight="20.0" prefWidth="20.0" styleClass="icon-button">
+                            <padding>
+                                <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
+                            </padding>
+                            <graphic>
+                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true" styleClass="clear-button">
+                                    <image>
+                                        <Image url="@../icon/remove.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </Button>
+                    </children>
                     <padding>
-                        <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
+                        <Insets top="-1.0" />
                     </padding>
-                    <graphic>
-                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true" styleClass="clear-button">
-                            <image>
-                                <Image url="@../icon/select_all.png" />
-                            </image>
-                        </ImageView>
-                    </graphic>
-                </Button>
-                <Button fx:id="removeClientBtn" mnemonicParsing="false" onMouseClicked="#removeClient" prefHeight="20.0" prefWidth="20.0" styleClass="icon-button">
-                    <padding>
-                        <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
-                    </padding>
-                    <graphic>
-                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true" styleClass="clear-button">
-                            <image>
-                                <Image url="@../icon/remove.png" />
-                            </image>
-                        </ImageView>
-                    </graphic>
-                </Button>
+                    <HBox.margin>
+                        <Insets top="2.0" />
+                    </HBox.margin>
+                </VBox>
             </children>
-            <padding>
-                <Insets top="-1.0" />
-            </padding>
-        </VBox>
-        <TextArea fx:id="msgInput" disable="true" layoutX="41.0" layoutY="257.0" prefHeight="52.0" prefWidth="430.0"
-                  text="test text 123" wrapText="true"/>
-        <ListView fx:id="msgList" layoutX="41.0" layoutY="85.0" prefHeight="159.0" prefWidth="425.0"/>
-        <VBox layoutX="13.0" layoutY="85.0" prefHeight="159.0" prefWidth="24.0" spacing="3.0" styleClass="sidebar">
+        </HBox>
+        <HBox VBox.vgrow="ALWAYS">
             <children>
-                <ToggleButton fx:id="softWrapBtn" contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0"
-                              mnemonicParsing="false" onMouseClicked="#handleSoftWrap" prefHeight="20.0"
-                              prefWidth="20.0">
+                <VBox alignment="TOP_CENTER" prefHeight="159.0" prefWidth="24.0" spacing="3.0" styleClass="sidebar">
+                    <children>
+                        <ToggleButton fx:id="softWrapBtn" contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" maxHeight="20.0" maxWidth="20.0" mnemonicParsing="false" onMouseClicked="#handleSoftWrap" prefHeight="17.0" prefWidth="18.0">
+                            <graphic>
+                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../icon/wrap.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                            <padding>
+                                <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
+                            </padding>
+                        </ToggleButton>
+                        <Button fx:id="clearBtn" mnemonicParsing="false" onMouseClicked="#clearMsg" prefHeight="20.0" prefWidth="20.0" styleClass="icon-button">
+                            <graphic>
+                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../icon/clear.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                            <padding>
+                                <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
+                            </padding>
+                        </Button>
+                    </children>
                     <padding>
-                        <Insets top="-1.0"/>
+                        <Insets top="-1.0" />
+                    </padding>
+                </VBox>
+                <ListView fx:id="msgList" prefHeight="159.0" prefWidth="425.0" HBox.hgrow="ALWAYS">
+                    <HBox.margin>
+                        <Insets left="3.0" />
+                    </HBox.margin>
+                </ListView>
+            </children>
+        </HBox>
+        <HBox VBox.vgrow="ALWAYS">
+            <children>
+                <Button fx:id="sendSettingBtn" mnemonicParsing="false" onMouseClicked="#showSendSetting" prefHeight="20.0" prefWidth="20.0" styleClass="icon-button">
+                    <padding>
+                        <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
                     </padding>
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                             <image>
-                                <Image url="@../icon/wrap.png"/>
-                            </image>
-                        </ImageView>
-                    </graphic>
-                </ToggleButton>
-                <Button fx:id="clearBtn" mnemonicParsing="false" onMouseClicked="#clearMsg" prefHeight="20.0"
-                        prefWidth="20.0" styleClass="icon-button">
-                    <padding>
-                        <Insets bottom="1.0" left="1.0" right="1.0" top="1.0"/>
-                    </padding>
-                    <graphic>
-                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true"
-                                   styleClass="clear-button">
-                            <image>
-                                <Image url="@../icon/clear.png"/>
+                                <Image url="@../icon/setting.png" />
                             </image>
                         </ImageView>
                     </graphic>
                 </Button>
+                <TextArea fx:id="msgInput" disable="true" prefHeight="52.0" prefWidth="425.0" text="test text 123" wrapText="true" HBox.hgrow="ALWAYS">
+                    <HBox.margin>
+                        <Insets left="3.0" />
+                    </HBox.margin>
+                </TextArea>
             </children>
-            <padding>
-                <Insets top="-1.0"/>
-            </padding>
-        </VBox>
-        <Button fx:id="sendMsgButton" disable="true" layoutX="405.0" layoutY="317.0" mnemonicParsing="false"
-                onMouseClicked="#sendMsg" text="发送消息"/>
-        <Button fx:id="sendSettingBtn" layoutX="13.0" layoutY="257.0" mnemonicParsing="false"
-                onMouseClicked="#showSendSetting" prefHeight="20.0" prefWidth="20.0" styleClass="icon-button">
-            <padding>
-                <Insets bottom="1.0" left="1.0" right="1.0" top="1.0"/>
-            </padding>
-            <graphic>
-                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                    <image>
-                        <Image url="@../icon/setting.png"/>
-                    </image>
-                </ImageView>
-            </graphic>
-        </Button>
-        <ToggleButton fx:id="scheduleSendBtn" disable="true" layoutX="333.0" layoutY="317.0" mnemonicParsing="false"
-                      onMouseClicked="#scheduleSend" text="定时发送"/>
+        </HBox>
+        <HBox alignment="TOP_RIGHT" spacing="10.0">
+            <children>
+                <Button fx:id="sendMsgButton" disable="true" mnemonicParsing="false" onMouseClicked="#sendMsg" text="发送消息" />
+                <ToggleButton fx:id="scheduleSendBtn" disable="true" mnemonicParsing="false" onMouseClicked="#scheduleSend" text="定时发送">
+                    <HBox.margin>
+                        <Insets />
+                    </HBox.margin>
+                </ToggleButton>
+            </children>
+        </HBox>
     </children>
-</AnchorPane>
+    <padding>
+        <Insets bottom="15.0" left="5.0" right="5.0" top="5.0" />
+    </padding>
+</VBox>

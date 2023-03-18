@@ -7,8 +7,8 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.VBox;
 import lombok.extern.slf4j.Slf4j;
 import org.hqu.lly.constant.ContentPaneConsts;
 import org.hqu.lly.domain.component.CustomAlert;
@@ -50,7 +50,7 @@ public class MainController implements Initializable {
      * 主面板节点
      */
     @FXML
-    private AnchorPane mainPane;
+    private VBox mainPane;
 
     private final Map<String, TabPaneManager> managerMap = new HashMap<>(6);
 
