@@ -3,6 +3,8 @@ package org.hqu.lly.service.impl;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
 import lombok.SneakyThrows;
 import org.hqu.lly.constant.ContentPaneConsts;
 import org.hqu.lly.constant.ResLoc;
@@ -65,7 +67,8 @@ public class TabPaneManager implements SwitchPaneService {
         if (contentPane != null) {
             rootPane.getChildren().add(contentPane);
         } else {
-            rootPane.getChildren().add(createContentPane());
+            Parent child = createContentPane();
+            rootPane.getChildren().add(child);
             // 新创建面板后默认创建一个标签页
             controller.createNewTab();
         }
@@ -113,6 +116,7 @@ public class TabPaneManager implements SwitchPaneService {
         // 添加到全局controller集合，便于在退出整个程序前保存配置
         ControllerGroup.tabPaneControllerSet.add(controller);
 
+        VBox.setVgrow(contentPane, Priority.ALWAYS);
         // 添加到全局contentPane集合，便于切换各个功能面板
         ContentPaneGroup.contentPaneMap.put(tabPaneName, contentPane);
         return contentPane;

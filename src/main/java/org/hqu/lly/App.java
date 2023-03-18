@@ -20,7 +20,7 @@ public class App extends Application {
         Parent root = fxmlLoader.load();
         MainController controller = fxmlLoader.getController();
 
-        Scene scene = UIUtil.getShadowScene(root, 660, 600);
+        Scene scene = UIUtil.getShadowScene(root, 660, 400);
 
         DarculaFX.applyDarculaStyle(scene);
         primaryStage.initStyle(StageStyle.TRANSPARENT);
