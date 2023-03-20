@@ -8,6 +8,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.hqu.lly.constant.ResLoc;
+import org.hqu.lly.utils.DragUtil;
 import org.hqu.lly.utils.UIUtil;
 import org.hqu.lly.view.controller.MainController;
 
@@ -25,6 +26,7 @@ public class App extends Application {
         DarculaFX.applyDarculaStyle(scene);
         primaryStage.initStyle(StageStyle.TRANSPARENT);
         primaryStage.setScene(scene);
+        DragUtil.setDrag(primaryStage,scene.getRoot());
         UIUtil.setPrimaryStage(primaryStage);
         primaryStage.show();
     }
