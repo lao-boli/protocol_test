@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.TreeView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.VBox?>
-<BorderPane fx:id="root" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.hqu.lly.view.controller.MainController">
+<BorderPane fx:id="root" minWidth="1.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.hqu.lly.view.controller.MainController">
     <center>
-        <SplitPane fx:id="mainSplitPane" dividerPositions="0.20735785953177258" prefHeight="415.0" prefWidth="650.0" BorderPane.alignment="CENTER">
+        <SplitPane fx:id="mainSplitPane" dividerPositions="0.20735785953177258" BorderPane.alignment="CENTER">
             <items>
                 <TreeView fx:id="menuTree" prefHeight="398.0" prefWidth="80.0">
                 </TreeView>
