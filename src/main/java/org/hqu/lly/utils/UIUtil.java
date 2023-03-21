@@ -74,6 +74,10 @@ public class UIUtil {
         return scene;
 
     }
+    public static void noShadowScene(Parent pane) {
+        BorderPane borderPane = new BorderPane(pane);
+        pane.setEffect(null);
+    }
 
     /**
      * <p>

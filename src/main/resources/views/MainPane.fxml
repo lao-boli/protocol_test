@@ -15,6 +15,6 @@
         </SplitPane>
     </center>
     <top>
-        <fx:include fx:id="titleBar" prefHeight="35.0" prefWidth="${root.width}" source="titleBar.fxml" />
+        <fx:include fx:id="titleBar" prefWidth="${root.width}" source="titleBar.fxml" />
     </top>
 </BorderPane>

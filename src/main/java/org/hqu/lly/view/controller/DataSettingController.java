@@ -67,7 +67,7 @@ public class DataSettingController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        titleBarController.initHideMini("数据值域设置");
+        titleBarController.initOnlyClose("数据值域设置");
         titleBarController.setOnBeforeClose(new Callable<Boolean>() {
             @Override
             public Boolean call() throws Exception {

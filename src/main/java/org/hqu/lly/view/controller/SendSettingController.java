@@ -147,7 +147,7 @@ public class SendSettingController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         // 标题栏初始化
-        titleBarController.initHideMini("发送设置");
+        titleBarController.initOnlyClose("发送设置");
         titleBarController.setOnBeforeClose(new Callable<Boolean>() {
             @Override
             public Boolean call() throws Exception {

@@ -8,6 +8,18 @@
     -fx-padding: 0 0 0 10;
     -fx-text-fill: #a9a9a9;
 }
+.max-label,
+.min-label,
+.pin-label {
+    -fx-background-color: #3c3f41;
+    -fx-text-fill: #a9a9a9;
+}
+.max-label:hover,
+.min-label:hover,
+.pin-label:hover{
+    -fx-background-color: #4f5254;
+    -fx-text-fill: #a9a9a9;
+}
 .close-button {
     -fx-text-background-color: -darcula-text-disabled;
     -fx-text-fill: #a9a9a9;

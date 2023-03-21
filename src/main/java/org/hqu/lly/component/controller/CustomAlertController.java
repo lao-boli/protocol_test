@@ -125,7 +125,7 @@ public class CustomAlertController implements Initializable {
      */
     public void init(String title, String info) {
         getStage();
-        titleBarController.initHideMini(title);
+        titleBarController.initOnlyClose(title);
         titleBarController.setOnBeforeClose(new Callable<Boolean>() {
             @Override
             public Boolean call() throws Exception {
