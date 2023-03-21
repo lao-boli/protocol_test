@@ -2,13 +2,18 @@ package org.hqu.lly.view.controller;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.hqu.lly.constant.StageConsts;
+import org.hqu.lly.constant.ResLoc;
 import org.hqu.lly.service.TaskService;
 import org.hqu.lly.view.handler.DragWindowHandler;
 
@@ -46,11 +51,18 @@ public class TitleBarController implements Initializable {
     @FXML
     private Label minimizeLabel;
 
-    public static final String MAIN_PANE = "协议测试工具";
-    public static final String SEND_SETTING = "发送设置";
-    public static final String DATA_SETTING = "数据设置";
-    @Setter
-    private Integer type;
+    /**
+     * 最大化窗口图标
+     */
+    @FXML
+    private Label maxLabel;
+
+    /**
+     * 窗口固定图标
+     */
+    @FXML
+    private Label pinLabel;
+
     /**
      * 执行关闭窗口任务
      */
@@ -63,9 +75,6 @@ public class TitleBarController implements Initializable {
     @Setter
     private Callable<Boolean> onBeforeClose;
 
-
-
-
     /**
      * 当前程序窗口舞台
      */
@@ -76,6 +85,18 @@ public class TitleBarController implements Initializable {
      */
     private boolean firstMoveIn = true;
 
+    /**
+     * stage固定标识
+     */
+    private boolean pined = true;
+
+    /**
+     * 窗口最大化标识
+     */
+    private boolean maxed = true;
+    private ImageView restoreIcon;
+    private ImageView maxIcon;
+
     @FXML
     void minimizeWindow(MouseEvent mouseEvent) {
         stage.setIconified(true);
@@ -83,7 +104,6 @@ public class TitleBarController implements Initializable {
 
     @FXML
     void handleCloseWindow(MouseEvent event) throws Exception {
-
         if (onBeforeClose.call()){
             if (onClose != null) {
                 onClose.fireTask();
@@ -93,9 +113,42 @@ public class TitleBarController implements Initializable {
         }
     }
 
+    @FXML
+    void pinStage(MouseEvent event) {
+        stage.setAlwaysOnTop(pined);
+        if (pined){
+            pinLabel.setStyle("-fx-background-color: #5c6164");
+        }else {
+            pinLabel.setStyle("-fx-background-color: #3c3f41");
+        }
+        pined = !pined;
+    }
 
-    private void exitApp() {
-        System.exit(0);
+    @FXML
+    void switchSize(MouseEvent event) {
+        BorderPane back = (BorderPane) stage.getScene().getRoot();
+        if (maxed){
+            back.setPadding(new Insets(0));
+            stage.setMaximized(maxed);
+            correctSize(stage);
+            maxLabel.setGraphic(restoreIcon);
+        }else {
+            back.setPadding(new Insets(5));
+            stage.setMaximized(maxed);
+            maxLabel.setGraphic(maxIcon);
+        }
+        maxed = !maxed;
+    }
+
+    /**
+     * 修正stage的长度和宽度,保证在最大化时不遮挡任务栏
+     * @param stage 主stage
+     * @date 2023-03-21 19:44:51 <br>
+     */
+    private void correctSize(Stage stage){
+        Rectangle2D bounds = Screen.getPrimary().getVisualBounds();
+        stage.setHeight(bounds.getHeight());
+        stage.setWidth(bounds.getWidth());
     }
 
     @FXML
@@ -117,21 +170,6 @@ public class TitleBarController implements Initializable {
     private void getStage() {
         if (stage == null) {
             stage = (Stage) titleBar.getScene().getWindow();
-        }
-    }
-
-    public void initTitleBar(Integer type){
-        this.type = type;
-        if (type.equals(StageConsts.MAIN_PANE)){
-            titleLabel.setText(MAIN_PANE);
-        }
-        if (type.equals(StageConsts.SEND_SETTING)){
-            minimizeLabel.setVisible(false);
-            titleLabel.setText(SEND_SETTING);
-        }
-        if (type.equals(StageConsts.DATA_SETTING)){
-            minimizeLabel.setVisible(false);
-            titleLabel.setText(SEND_SETTING);
         }
     }
 
@@ -163,6 +201,18 @@ public class TitleBarController implements Initializable {
     }
 
     /**
+     * 初始化一个只显示关闭按钮的标题栏
+     * @param title 标题文本
+     * @date 2023-03-21 19:43:35 <br>
+     */
+    public void initOnlyClose(String title){
+        minimizeLabel.setVisible(false);
+        maxLabel.setVisible(false);
+        pinLabel.setVisible(false);
+        titleLabel.setText(title);
+    }
+
+    /**
      * <p>
      *     初始化标题栏
      * </p>
@@ -177,6 +227,28 @@ public class TitleBarController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        pinLabel.addEventFilter(MouseEvent.MOUSE_MOVED,e -> {
+            if (pined){
+                pinLabel.setStyle("-fx-background-color:  #4f5254;");
+            }
+        });
+        pinLabel.addEventFilter(MouseEvent.MOUSE_EXITED,e -> {
+            if (pined){
+                pinLabel.setStyle("-fx-background-color: #3c3f41;");
+            }
+        });
 
+
+        restoreIcon = new ImageView(new Image(ResLoc.RESTORE_ICON.toString()));
+        restoreIcon.setFitHeight(15);
+        restoreIcon.setFitWidth(15);
+        restoreIcon.setPreserveRatio(true);
+        restoreIcon.setPickOnBounds(true);
+
+        maxIcon = new ImageView(new Image(ResLoc.MAX_ICON.toString()));
+        maxIcon.setFitHeight(15);
+        maxIcon.setFitWidth(15);
+        maxIcon.setPreserveRatio(true);
+        maxIcon.setPickOnBounds(true);
     }
 }

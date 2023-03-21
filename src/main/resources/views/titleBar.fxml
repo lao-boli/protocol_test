@@ -1,27 +1,82 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.text.Font?>
-<BorderPane fx:id="titleBar" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onMouseMoved="#initDrag" prefHeight="35.0" prefWidth="620.0" styleClass="root" stylesheets="@../css/titleBar.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.hqu.lly.view.controller.TitleBarController">
+<BorderPane fx:id="titleBar" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onMouseMoved="#initDrag" prefHeight="26.0" prefWidth="620.0" styleClass="root" stylesheets="@../css/titleBar.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.hqu.lly.view.controller.TitleBarController">
     <left>
-        <Label fx:id="titleLabel" layoutX="8.0" layoutY="1.0" prefHeight="35.0" prefWidth="91.0" styleClass="title" stylesheets="@../css/titleBar.css" text="title" textFill="#f4f3f3" textOverrun="CENTER_ELLIPSIS" />
+        <Label fx:id="titleLabel" layoutX="8.0" layoutY="1.0" prefHeight="25.0" prefWidth="91.0" styleClass="title" stylesheets="@../css/titleBar.css" text="title" textFill="#f4f3f3" textOverrun="CENTER_ELLIPSIS" />
     </left>
     <right>
-        <AnchorPane fx:id="btnGroup" layoutX="550.0">
-            <children>
-                <Label fx:id="closeLabel" alignment="CENTER" layoutX="35.0" onMouseClicked="#handleCloseWindow" prefHeight="35.0" prefWidth="35.0" styleClass="close-button" stylesheets="@../css/titleBar.css" text="×" textAlignment="RIGHT" textFill="#f4f3f3" textOverrun="CENTER_ELLIPSIS">
-                    <font>
-                        <Font size="24.0" />
-                    </font>
-                </Label>
-                <Label fx:id="minimizeLabel" alignment="CENTER" layoutY="1.0" onMouseClicked="#minimizeWindow" prefHeight="35.0" prefWidth="35.0" styleClass="close-button" stylesheets="@../css/titleBar.css" text="—" textAlignment="RIGHT" textFill="#f4f3f3" textOverrun="CENTER_ELLIPSIS">
+      <HBox prefHeight="26.0">
+         <children>
+            <Label fx:id="pinLabel" alignment="CENTER" onMouseClicked="#pinStage" prefHeight="25.0" prefWidth="30.0" styleClass="min-label" stylesheets="@../css/titleBar.css" textAlignment="RIGHT" textFill="#f4f3f3" textOverrun="CENTER_ELLIPSIS">
+               <font>
+                  <Font size="14.0" />
+               </font>
+               <padding>
+                  <Insets bottom="1.0" />
+               </padding>
+               <graphic>
+                  <ImageView fitHeight="15.0" fitWidth="15.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../icon/pin.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Label>
+                <Label fx:id="minimizeLabel" alignment="CENTER" onMouseClicked="#minimizeWindow" prefHeight="25.0" prefWidth="30.0" styleClass="min-label" stylesheets="@../css/titleBar.css" textAlignment="RIGHT" textFill="#f4f3f3" textOverrun="CENTER_ELLIPSIS">
                     <font>
                         <Font size="14.0" />
                     </font>
+               <HBox.margin>
+                  <Insets />
+               </HBox.margin>
+               <padding>
+                  <Insets bottom="1.0" />
+               </padding>
+               <graphic>
+                  <ImageView fitHeight="15.0" fitWidth="15.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../icon/minimize.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
                 </Label>
-            </children>
-        </AnchorPane>
+            <Label fx:id="maxLabel" alignment="CENTER" onMouseClicked="#switchSize" prefHeight="25.0" prefWidth="30.0" styleClass="max-label" stylesheets="@../css/titleBar.css" textAlignment="CENTER" textFill="#f4f3f3" textOverrun="CENTER_ELLIPSIS">
+               <font>
+                  <Font size="19.0" />
+               </font>
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets>
+               <padding>
+                  <Insets bottom="-1.0" />
+               </padding>
+               <graphic>
+                  <ImageView fitHeight="15.0" fitWidth="15.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../icon/max.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Label>
+                <Label fx:id="closeLabel" alignment="CENTER" contentDisplay="GRAPHIC_ONLY" onMouseClicked="#handleCloseWindow" prefHeight="30.0" prefWidth="30.0" styleClass="close-button" stylesheets="@../css/titleBar.css" textAlignment="RIGHT" textFill="#f4f3f3" textOverrun="CENTER_ELLIPSIS">
+                    <font>
+                        <Font size="20.0" />
+                    </font>
+               <graphic>
+                  <ImageView fitHeight="15.0" fitWidth="15.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../icon/close.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+                </Label>
+         </children>
+      </HBox>
     </right>
 </BorderPane>
