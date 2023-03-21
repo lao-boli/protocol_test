@@ -131,12 +131,12 @@
         </HBox>
         <HBox alignment="TOP_RIGHT" spacing="10.0">
             <children>
-                <Button fx:id="sendMsgButton" disable="true" mnemonicParsing="false" onMouseClicked="#sendMsg" text="发送消息" />
                 <ToggleButton fx:id="scheduleSendBtn" disable="true" mnemonicParsing="false" onMouseClicked="#scheduleSend" text="定时发送">
                     <HBox.margin>
                         <Insets />
                     </HBox.margin>
                 </ToggleButton>
+                <Button fx:id="sendMsgButton" disable="true" mnemonicParsing="false" onMouseClicked="#sendMsg" text="发送消息" />
             </children>
         </HBox>
     </children>
