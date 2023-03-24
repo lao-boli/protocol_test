@@ -1,20 +1,21 @@
 package org.hqu.lly.domain.component;
 
 import javafx.application.Platform;
+import javafx.event.Event;
 import javafx.geometry.Bounds;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Cursor;
+import javafx.scene.Parent;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
+import javafx.scene.control.skin.TabPaneSkin;
 import javafx.scene.image.WritableImage;
-import javafx.scene.input.ClipboardContent;
-import javafx.scene.input.DataFormat;
-import javafx.scene.input.Dragboard;
-import javafx.scene.input.TransferMode;
+import javafx.scene.input.*;
 import javafx.scene.robot.Robot;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import org.hqu.lly.constant.ResLoc;
 import org.hqu.lly.utils.UIUtil;
 
@@ -31,6 +32,7 @@ import static org.hqu.lly.utils.CommonUtil.getRealLength;
  * @version 1.0
  * @date 2023/2/26 13:23
  */
+@Slf4j
 public class TitleTab extends Tab {
 
     /**
@@ -50,6 +52,12 @@ public class TitleTab extends Tab {
      */
     @Getter
     private TextField tabTitleField;
+
+    /**
+     * 参见 {@link #getTabSkin(TextField)}
+     */
+    private Parent tabSkin;
+
 
     /**
      * <p>
@@ -80,38 +88,64 @@ public class TitleTab extends Tab {
         this.tabTitleField = title;
         // 加载css
         title.getStylesheets().add(ResLoc.TAB_TITLE.toExternalForm());
-
-        title.setMaxWidth(40);
         title.setEditable(false);
-        title.setCursor(Cursor.DEFAULT);
 
-        // 点击回调
-        title.setOnMouseClicked(event -> {
+        title.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            // 失去焦点事件
+            title.setEditable(false);
+            tabTitle = title.getText();
+            this.setText(tabTitle);
+        });
+
+        // 传递拖拽相关事件给原生的tab处理类处理
+        title.addEventFilter(MouseEvent.MOUSE_PRESSED, event -> {
             // 双击编辑标题
             if (event.getClickCount() == 2) {
                 title.setEditable(true);
                 title.setCursor(Cursor.TEXT);
             }
-            // 单击切换到本标签页
-            if (event.getClickCount() == 1) {
-                tabPane.getSelectionModel().select(this);
+            // 单击且标题未处于编辑状态时传递事件
+            if (event.getClickCount() == 1 && !title.isEditable()) {
+                transmitEvent(title, event);
             }
         });
-        title.focusedProperty().addListener((observable, oldValue, newValue) -> {
-            // 失去焦点事件
-            title.setEditable(false);
-            title.setCursor(Cursor.DEFAULT);
-            tabTitle = title.getText();
-        });
-
+        title.addEventFilter(MouseEvent.MOUSE_DRAGGED, event -> transmitEvent(title, event));
+        title.addEventFilter(MouseEvent.MOUSE_RELEASED, event -> transmitEvent(title, event));
         setTooltip(title);
 
-
-        handleDrag(title);
-
         this.setGraphic(title);
+        this.setText(tabTitle);
     }
 
+
+    /**
+     * 传递拖拽相关事件给原生的tab处理类处理
+     * @param title 标签页的 {@link #getGraphic()} 的返回值
+     * @param event 传递的事件
+     * @date 2023-03-22 21:30
+     */
+    private void transmitEvent(TextField title, MouseEvent event) {
+        getTabSkin(title);
+        Event.fireEvent(tabSkin, (Event) event.clone());
+    }
+
+    /**
+     * 获取 {@link TabPaneSkin.TabHeaderSkin}, 原生的tab拖拽事件在此类中处理. <br>
+     * 此方法应只在事件回调 EventHandler 或 EventFilter 中调用,否则可能造成空指针异常
+     * @param title 标签页的 {@link #getGraphic()} 的返回值
+     * @date 2023-03-22 21:27
+     */
+    private void getTabSkin(TextField title) {
+        if (tabSkin == null) {
+            tabSkin = title.getParent().getParent().getParent();
+        }
+    }
+
+    /**
+     * @deprecated 通过 {@link TabPane#setTabDragPolicy(TabPane.TabDragPolicy)} 使用原生拖拽
+     * @param title
+     *  @date 2023-03-22 21:14
+     */
     private void handleDrag(TextField title) {
         Tab tab = this;
 
@@ -180,10 +214,8 @@ public class TitleTab extends Tab {
             }
         });
 
-        title.setOnMouseExited(event -> {
-            // 移动出标题框就隐藏提示框
-            tooltip.hide();
-        });
+        // 移动出标题框就隐藏提示框
+        title.setOnMouseExited(event -> tooltip.hide());
 
         title.setTooltip(tooltip);
     }

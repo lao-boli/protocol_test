@@ -1,6 +1,8 @@
 .text-field {
     -fx-background-color: transparent;
     -fx-padding: 4 0 4 0;
+    -fx-max-width: 40px;
+    -fx-cursor: default;
 }
 .text-field:focused {
     -fx-background-color: transparent;
@@ -17,11 +19,3 @@
     -fx-padding: 4;
 }
 
-.test {
-    -fx-background-color: wheat;
-    -fx-padding: 4 0 4 0;
-}
-.test:focused {
-    -fx-background-color: wheat;
-    -fx-padding: 4 0 4 0;
-}
