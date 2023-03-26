@@ -9,7 +9,7 @@ package org.hqu.lly.service;
  * @version 1.0
  * @date 2022/8/10 8:26
  */
-public interface MessageService extends UIService {
+public interface MessageService<T> extends UIService {
 
     /**
      * <p>
@@ -21,5 +21,5 @@ public interface MessageService extends UIService {
      * @date 2022-08-10 11:04:04 <br>
      * @author hqully <br>
      */
-    void updateMsgList(String msg);
+    void updateMsgList(T msg);
 }

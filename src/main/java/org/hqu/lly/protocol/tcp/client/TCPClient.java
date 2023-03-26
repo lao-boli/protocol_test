@@ -15,6 +15,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
 import org.hqu.lly.domain.base.BaseClient;
+import org.hqu.lly.domain.component.MsgLabel;
 import org.hqu.lly.protocol.BaseHandler.BaseClientConnectHandler;
 import org.hqu.lly.protocol.tcp.client.handler.TCPClientExceptionHandler;
 import org.hqu.lly.protocol.tcp.client.handler.TCPClientMessageHandler;
@@ -56,7 +57,7 @@ public class TCPClient extends BaseClient {
         channel.writeAndFlush(message);
         String formattedText = MsgUtil.formatSendMsg(message, channel.remoteAddress().toString());
         log.info(formattedText);
-        clientService.updateMsgList(formattedText);
+        clientService.updateMsgList(new MsgLabel(formattedText));
     }
 
 

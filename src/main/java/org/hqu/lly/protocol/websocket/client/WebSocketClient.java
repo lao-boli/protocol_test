@@ -15,6 +15,7 @@ import io.netty.handler.codec.http.websocketx.WebSocketVersion;
 import io.netty.handler.stream.ChunkedWriteHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.hqu.lly.domain.base.BaseClient;
+import org.hqu.lly.domain.component.MsgLabel;
 import org.hqu.lly.protocol.websocket.client.handler.WebSocketClientConnectHandler;
 import org.hqu.lly.protocol.websocket.client.handler.WebSocketClientExceptionHandler;
 import org.hqu.lly.protocol.websocket.client.handler.WebSocketClientMessageHandler;
@@ -113,7 +114,7 @@ public class WebSocketClient extends BaseClient {
     public void sendMessage(String message) {
         super.sendMessage(message);
         channel.writeAndFlush(new TextWebSocketFrame(message));
-        clientService.updateMsgList(MsgUtil.formatSendMsg(message, channel.remoteAddress().toString()));
+        clientService.updateMsgList(new MsgLabel(MsgUtil.formatSendMsg(message, channel.remoteAddress().toString())));
     }
 
     @Override

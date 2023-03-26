@@ -12,6 +12,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
 import org.hqu.lly.domain.bean.ConnectedServer;
+import org.hqu.lly.domain.component.MsgLabel;
 import org.hqu.lly.protocol.websocket.server.initalizer.WebSocketServerChannelInitializer;
 import org.hqu.lly.service.impl.ConnectedServerService;
 import org.hqu.lly.service.impl.ServerService;
@@ -101,7 +102,7 @@ public class WebSocketServer extends ConnectedServer {
     public void sendMessage(String msg, Channel channel) {
         channel.writeAndFlush(new TextWebSocketFrame(msg));
         String formatSendMsg = MsgUtil.formatSendMsg(msg, channel.remoteAddress().toString());
-        serverService.updateMsgList(formatSendMsg);
+        serverService.updateMsgList(new MsgLabel(formatSendMsg));
         log.info(formatSendMsg);
     }
 

@@ -16,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.hqu.lly.domain.base.BaseServer;
 import org.hqu.lly.domain.bean.CustomDataConfig;
 import org.hqu.lly.domain.bean.SendSettingConfig;
+import org.hqu.lly.domain.component.MsgLabel;
 import org.hqu.lly.domain.config.ServerConfig;
 import org.hqu.lly.exception.UnSetBoundException;
 import org.hqu.lly.factory.SendSettingPaneFactory;
@@ -67,7 +68,7 @@ public abstract class BaseServerController<T> extends BaseController implements 
     @FXML
     protected Button closeServerButton;
     @FXML
-    protected ListView<Label> msgList;
+    protected ListView<MsgLabel> msgList;
     @FXML
     protected ListView<T> clientListBox;
     @FXML
@@ -311,13 +312,9 @@ public abstract class BaseServerController<T> extends BaseController implements 
     void handleSoftWrap(MouseEvent event) {
         softWrap = !softWrap;
         double labelWidth = softWrap ? msgList.getWidth() - 20 : Region.USE_COMPUTED_SIZE;
-        ObservableList<Label> msgItems = msgList.getItems();
-        msgItems.forEach(msg -> {
-            UIUtil.changeMsgLabel(msg, labelWidth, softWrap);
-        });
-        Platform.runLater(() -> {
-            msgList.setItems(msgItems);
-        });
+        ObservableList<MsgLabel> msgItems = msgList.getItems();
+        msgItems.forEach(msgLabel -> msgLabel.setPrefWidth(labelWidth));
+        Platform.runLater(() -> msgList.setItems(msgItems));
     }
 
     /**
@@ -347,7 +344,7 @@ public abstract class BaseServerController<T> extends BaseController implements 
         // 功能按钮悬浮tip提示
         initBtnTips();
         // 消息上下文菜单
-        msgList.setContextMenu(UIUtil.getMsgListMenu(msgList));
+        // msgList.setContextMenu(UIUtil.getMsgListMenu(msgList));
         clientListBox.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
     }
 

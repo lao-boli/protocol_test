@@ -3,6 +3,7 @@ package org.hqu.lly.protocol.mqtt.client.handler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import lombok.extern.slf4j.Slf4j;
+import org.hqu.lly.domain.component.MsgLabel;
 import org.hqu.lly.service.impl.ClientService;
 import org.hqu.lly.utils.MsgUtil;
 
@@ -29,7 +30,7 @@ public class MQTTClientMessageHandler extends SimpleChannelInboundHandler<String
         String serverAddr = ctx.channel().remoteAddress().toString();
         String receiveText = msg;
         String formattedReceiveText = MsgUtil.formatReceiveMsg(receiveText, serverAddr);
-        clientService.updateMsgList(formattedReceiveText);
+        clientService.updateMsgList(new MsgLabel(formattedReceiveText));
         log.info(formattedReceiveText);
     }
 

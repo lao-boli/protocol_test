@@ -3,6 +3,7 @@ package org.hqu.lly.protocol.tcp.server.handler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import lombok.extern.slf4j.Slf4j;
+import org.hqu.lly.domain.component.MsgLabel;
 import org.hqu.lly.service.impl.ConnectedServerService;
 import org.hqu.lly.utils.MsgUtil;
 
@@ -29,12 +30,12 @@ public class TCPServerMessageHandler extends SimpleChannelInboundHandler<String>
         String clientAddr = ctx.channel().remoteAddress().toString();
         String receiveText = msg;
         String formatReceiveMsg = MsgUtil.formatReceiveMsg(receiveText, clientAddr);
-        serverService.updateMsgList(formatReceiveMsg);
+        serverService.updateMsgList(new MsgLabel(formatReceiveMsg));
         log.info(formatReceiveMsg);
 
         String responseText = "your message is " + msg;
         String formatSendMsg = MsgUtil.formatSendMsg(responseText, clientAddr);
-        serverService.updateMsgList(formatSendMsg);
+        serverService.updateMsgList(new MsgLabel(formatSendMsg));
         log.info(formatSendMsg);
 
         ctx.channel().writeAndFlush(responseText);
