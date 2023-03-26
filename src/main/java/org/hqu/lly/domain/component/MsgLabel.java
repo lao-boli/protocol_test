@@ -25,7 +25,10 @@ import java.time.format.DateTimeFormatter;
 @Data
 public class MsgLabel extends TextFlow {
 
- public enum MsgType {
+    /**
+     * 消息类型枚举
+     */
+ public enum Type {
         /**
          * 接收消息类型
          */
@@ -50,16 +53,7 @@ public class MsgLabel extends TextFlow {
 
     private Text msgText;
 
-    private MsgType type;
-
-    public MsgLabel(String time, String host, String msg) {
-        super();
-        initTimeText();
-        initHostText(host);
-        this.lengthText = new Text();
-        this.msgText = new Text(msg);
-        this.getChildren().addAll(this.timeText, this.hostText, this.hostText, this.msgText);
-    }
+    private Type type;
 
     /**
      * 普通消息构造器
@@ -76,7 +70,13 @@ public class MsgLabel extends TextFlow {
         this.getChildren().addAll(this.timeText, this.hostText, this.lengthText, this.msgText);
     }
 
-    public MsgLabel(MsgType type, String host, String msg) {
+    /**
+     * 网络消息构造器
+     * @param type 消息类型 应为 {@link Type}中的值
+     * @param host 消息收发地址
+     * @param msg 消息内容
+     */
+    public MsgLabel(Type type, String host, String msg) {
         super();
         this.type = type;
         initTimeText();
@@ -94,10 +94,10 @@ public class MsgLabel extends TextFlow {
 
     private void initHostText(String host) {
         StringBuilder sb = new StringBuilder();
-        if (MsgType.RECEIVE.equals(type)) {
+        if (Type.SEND.equals(type)) {
             sb.append("---> ");
         }
-        if (MsgType.SEND.equals(type)) {
+        if (Type.RECEIVE.equals(type)) {
             sb.append("<--- ");
         }
         sb.append(host).append(" :");
@@ -106,6 +106,26 @@ public class MsgLabel extends TextFlow {
 
     private void initLengthText(String msg) {
         this.lengthText = new Text("[" + CommonUtil.getRealLength(msg) + "字节]");
+    }
+    public void setDisplayOpt(){
+
+    }
+
+    public void showTime(boolean showTime) {
+        timeText.setVisible(showTime);
+        timeText.setManaged(showTime);
+    }
+    public void showLength(boolean showLength) {
+        lengthText.setVisible(showLength);
+        lengthText.setManaged(showLength);
+    }
+    public void showHost(boolean showHost) {
+        hostText.setVisible(showHost);
+        hostText.setManaged(showHost);
+    }
+    public void showMsg(boolean showMsg) {
+        msgText.setVisible(showMsg);
+        msgText.setManaged(showMsg);
     }
 
 }

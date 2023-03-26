@@ -93,9 +93,8 @@ public class UDPServer extends ConnectionlessServer {
     @Override
     public void sendMessage(String message, InetSocketAddress dstAddr) {
         channel.writeAndFlush(new DatagramPacket(Unpooled.copiedBuffer(message, CharsetUtil.UTF_8), dstAddr));
-        String formatSendMsg = MsgUtil.formatSendMsg(message, dstAddr.toString());
-        serverService.updateMsgList(new MsgLabel(formatSendMsg));
-        log.info(formatSendMsg);
+        serverService.updateMsgList(new MsgLabel(MsgLabel.Type.SEND, dstAddr.toString(),message));
+        log.info(MsgUtil.formatSendMsg(message, dstAddr.toString()));
     }
 
 }

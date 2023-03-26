@@ -107,9 +107,8 @@ public class TCPServer extends ConnectedServer {
     @Override
     public void sendMessage(String msg, Channel channel) {
         channel.writeAndFlush(msg);
-        String formatSendMsg = MsgUtil.formatSendMsg(msg, channel.remoteAddress().toString());
-        serverService.updateMsgList(new MsgLabel(formatSendMsg));
-        log.info(formatSendMsg);
+        serverService.updateMsgList(new MsgLabel(MsgLabel.Type.SEND, channel.remoteAddress().toString(),msg));
+        log.info(MsgUtil.formatSendMsg(msg, channel.remoteAddress().toString()));
     }
 
 

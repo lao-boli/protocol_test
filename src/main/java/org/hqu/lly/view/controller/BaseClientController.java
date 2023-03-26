@@ -46,6 +46,7 @@ import java.util.concurrent.FutureTask;
 @Slf4j
 public abstract class BaseClientController<T extends BaseClient> extends BaseController implements Initializable {
 
+    private boolean showTime = true;
     protected Executor executor = Executors.newSingleThreadExecutor();
 
     /**
@@ -246,6 +247,8 @@ public abstract class BaseClientController<T extends BaseClient> extends BaseCon
     @FXML
     void clearMsg(MouseEvent event) {
         // 移除消息列表中的所有消息
+        // msgList.getItems().forEach(item -> item.showTime(showTime));
+        // showTime = !showTime;
         msgList.getItems().remove(0, msgList.getItems().size());
         msgList.refresh();
     }
@@ -255,13 +258,8 @@ public abstract class BaseClientController<T extends BaseClient> extends BaseCon
         softWrap = !softWrap;
         double labelWidth = softWrap ? UIUtil.getFixMsgLabelWidth(msgList.getWidth()) : Region.USE_COMPUTED_SIZE;
         ObservableList<MsgLabel> msgItems = msgList.getItems();
-        msgItems.forEach(msgLabel -> {
-            msgLabel.setPrefWidth(labelWidth);
-            // UIUtil.changeMsgLabel((Label) msg, labelWidth, softWrap);
-        });
-        Platform.runLater(() -> {
-            msgList.setItems(msgItems);
-        });
+        msgItems.forEach(msgLabel -> msgLabel.setPrefWidth(labelWidth));
+        Platform.runLater(() -> msgList.setItems(msgItems));
     }
 
     @FXML

@@ -28,8 +28,7 @@ public class UDPClientHandler extends SimpleChannelInboundHandler<DatagramPacket
     protected void channelRead0(ChannelHandlerContext channelHandlerContext, DatagramPacket datagramPacket) throws Exception {
         String receiveText = datagramPacket.content().toString(CharsetUtil.UTF_8);
         String serverAddr = datagramPacket.sender().toString();
-        // String formatReceiveMsg = MsgUtil.formatReceiveMsg(receiveText, serverAddr);
-        clientService.updateMsgList(new MsgLabel(MsgLabel.MsgType.SEND,receiveText,serverAddr));
+        clientService.updateMsgList(new MsgLabel(MsgLabel.Type.RECEIVE, serverAddr, receiveText));
     }
 
 }

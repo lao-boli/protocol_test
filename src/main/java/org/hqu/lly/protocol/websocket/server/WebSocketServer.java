@@ -16,7 +16,6 @@ import org.hqu.lly.domain.component.MsgLabel;
 import org.hqu.lly.protocol.websocket.server.initalizer.WebSocketServerChannelInitializer;
 import org.hqu.lly.service.impl.ConnectedServerService;
 import org.hqu.lly.service.impl.ServerService;
-import org.hqu.lly.utils.MsgUtil;
 
 import java.net.BindException;
 
@@ -101,9 +100,7 @@ public class WebSocketServer extends ConnectedServer {
     @Override
     public void sendMessage(String msg, Channel channel) {
         channel.writeAndFlush(new TextWebSocketFrame(msg));
-        String formatSendMsg = MsgUtil.formatSendMsg(msg, channel.remoteAddress().toString());
-        serverService.updateMsgList(new MsgLabel(formatSendMsg));
-        log.info(formatSendMsg);
+        serverService.updateMsgList(new MsgLabel(MsgLabel.Type.SEND, channel.remoteAddress().toString(), msg));
     }
 
 }

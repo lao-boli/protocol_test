@@ -14,7 +14,6 @@ import org.hqu.lly.domain.base.BaseClient;
 import org.hqu.lly.domain.component.MsgLabel;
 import org.hqu.lly.protocol.udp.client.handler.UDPClientHandler;
 import org.hqu.lly.service.impl.ClientService;
-import org.hqu.lly.utils.MsgUtil;
 
 import java.net.InetSocketAddress;
 import java.net.URI;
@@ -85,7 +84,7 @@ public class UDPClient extends BaseClient {
     public void sendMessage(String message) {
         super.sendMessage(message);
         channel.writeAndFlush(new DatagramPacket(Unpooled.copiedBuffer(message, CharsetUtil.UTF_8), serverAddr));
-        clientService.updateMsgList(new MsgLabel(MsgUtil.formatSendMsg(message, serverAddr.toString())));
+        clientService.updateMsgList(new MsgLabel(MsgLabel.Type.SEND, serverAddr.toString(),message));
     }
 
     @Override

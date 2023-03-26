@@ -6,7 +6,6 @@ import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import lombok.extern.slf4j.Slf4j;
 import org.hqu.lly.domain.component.MsgLabel;
 import org.hqu.lly.service.impl.ConnectedServerService;
-import org.hqu.lly.utils.MsgUtil;
 
 /**
  * <p>
@@ -29,16 +28,11 @@ public class WebSocketServerMessageHandler extends SimpleChannelInboundHandler<T
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, TextWebSocketFrame msg) throws Exception {
         String clientAddr = ctx.channel().remoteAddress().toString();
-        String receiveText = msg.text();
-        String formatReceiveMsg = MsgUtil.formatReceiveMsg(receiveText, clientAddr);
-        serverService.updateMsgList(new MsgLabel(formatReceiveMsg));
-        log.info(formatReceiveMsg);
+        serverService.updateMsgList(new MsgLabel(MsgLabel.Type.RECEIVE, clientAddr, msg.text()));
 
         String responseText = "your message is " + msg.text();
         ctx.channel().writeAndFlush(new TextWebSocketFrame(responseText));
-        String formatSendMsg = MsgUtil.formatSendMsg(responseText, clientAddr);
-        serverService.updateMsgList(new MsgLabel(formatSendMsg));
-        log.info(formatSendMsg);
+        serverService.updateMsgList(new MsgLabel(MsgLabel.Type.SEND, clientAddr, responseText));
     }
 
 }
