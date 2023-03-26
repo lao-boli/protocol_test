@@ -104,6 +104,10 @@ public class MsgLabel extends TextFlow {
         this.hostText = new Text(sb.toString());
     }
 
+    public String getFullText() {
+        return timeText.getText() + hostText.getText() + lengthText.getText() + msgText.getText();
+    }
+
     private void initLengthText(String msg) {
         this.lengthText = new Text("[" + CommonUtil.getRealLength(msg) + "字节]");
     }

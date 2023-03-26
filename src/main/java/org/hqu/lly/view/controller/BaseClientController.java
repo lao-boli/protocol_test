@@ -25,7 +25,6 @@ import org.hqu.lly.service.ScheduledTaskService;
 import org.hqu.lly.service.impl.ClientService;
 import org.hqu.lly.service.impl.ScheduledSendService;
 import org.hqu.lly.utils.DataUtil;
-import org.hqu.lly.utils.UIUtil;
 
 import java.net.URI;
 import java.net.URL;
@@ -33,6 +32,8 @@ import java.util.ResourceBundle;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
+
+import static org.hqu.lly.utils.UIUtil.*;
 
 /**
  * <p>
@@ -247,8 +248,6 @@ public abstract class BaseClientController<T extends BaseClient> extends BaseCon
     @FXML
     void clearMsg(MouseEvent event) {
         // 移除消息列表中的所有消息
-        // msgList.getItems().forEach(item -> item.showTime(showTime));
-        // showTime = !showTime;
         msgList.getItems().remove(0, msgList.getItems().size());
         msgList.refresh();
     }
@@ -256,7 +255,7 @@ public abstract class BaseClientController<T extends BaseClient> extends BaseCon
     @FXML
     void handleSoftWrap(MouseEvent event) {
         softWrap = !softWrap;
-        double labelWidth = softWrap ? UIUtil.getFixMsgLabelWidth(msgList.getWidth()) : Region.USE_COMPUTED_SIZE;
+        double labelWidth = softWrap ? getFixMsgLabelWidth(msgList.getWidth()) : Region.USE_COMPUTED_SIZE;
         ObservableList<MsgLabel> msgItems = msgList.getItems();
         msgItems.forEach(msgLabel -> msgLabel.setPrefWidth(labelWidth));
         Platform.runLater(() -> msgList.setItems(msgItems));
@@ -347,7 +346,7 @@ public abstract class BaseClientController<T extends BaseClient> extends BaseCon
         initMsgSideBar();
 
         // 消息上下文菜单
-        // msgList.setContextMenu(UIUtil.getMsgListMenu(msgList));
+        msgList.setContextMenu(getMsgListMenu(msgList));
     }
 
     /**
@@ -402,9 +401,9 @@ public abstract class BaseClientController<T extends BaseClient> extends BaseCon
      * @date 2023-02-06 11:02:46 <br>
      */
     protected void initMsgSideBar() {
-        softWrapBtn.setTooltip(UIUtil.getTooltip("长文本换行"));
-        clearBtn.setTooltip(UIUtil.getTooltip("清空列表"));
-        sendSettingBtn.setTooltip(UIUtil.getTooltip("发送设置"));
+        softWrapBtn.setTooltip(getTooltip("长文本换行"));
+        clearBtn.setTooltip(getTooltip("清空列表"));
+        sendSettingBtn.setTooltip(getTooltip("发送设置"));
 
     }
 
@@ -439,7 +438,6 @@ public abstract class BaseClientController<T extends BaseClient> extends BaseCon
         public void updateMsgList(MsgLabel msg) {
             Platform.runLater(() -> msgList.getItems().add(msg));
         }
-
     }
 
 }

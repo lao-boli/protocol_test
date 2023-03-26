@@ -25,7 +25,6 @@ import org.hqu.lly.protocol.tcp.server.TCPServer;
 import org.hqu.lly.protocol.udp.server.UDPServer;
 import org.hqu.lly.protocol.websocket.server.WebSocketServer;
 import org.hqu.lly.service.ScheduledTaskService;
-import org.hqu.lly.service.TaskService;
 import org.hqu.lly.service.impl.ScheduledSendService;
 import org.hqu.lly.service.impl.ServerService;
 import org.hqu.lly.utils.DataUtil;
@@ -276,9 +275,7 @@ public abstract class BaseServerController<T> extends BaseController implements 
                     }
                 } catch (UnSetBoundException e) {
                     log.warn(e.getMessage());
-                    Platform.runLater(() -> {
-                        errorMsgLabel.setText("未定义数据边界!");
-                    });
+                    Platform.runLater(() -> errorMsgLabel.setText("未定义数据边界!"));
                 }
             });
         }
@@ -344,7 +341,7 @@ public abstract class BaseServerController<T> extends BaseController implements 
         // 功能按钮悬浮tip提示
         initBtnTips();
         // 消息上下文菜单
-        // msgList.setContextMenu(UIUtil.getMsgListMenu(msgList));
+        msgList.setContextMenu(UIUtil.getMsgListMenu(msgList));
         clientListBox.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
     }
 
@@ -359,19 +356,16 @@ public abstract class BaseServerController<T> extends BaseController implements 
     protected void setClientBox() {
         setClientBoxCellFactory();
         // 点击时将当前的client设置为选中的client
-        clientListBox.getSelectionModel().getSelectedItems().addListener(new ListChangeListener<T>() {
-            @Override
-            public void onChanged(Change<? extends T> c) {
-                while (c.next()) {
-                    targetClientSet.removeAll(c.getRemoved());
-                    targetClientSet.addAll(c.getAddedSubList());
-                    if (targetClientSet.isEmpty()) {
-                        scheduleSendBtn.setDisable(true);
-                        sendMsgButton.setDisable(true);
-                    } else {
-                        scheduleSendBtn.setDisable(false);
-                        sendMsgButton.setDisable(false);
-                    }
+        clientListBox.getSelectionModel().getSelectedItems().addListener((ListChangeListener<T>) c -> {
+            while (c.next()) {
+                c.getRemoved().forEach(targetClientSet::remove);
+                targetClientSet.addAll(c.getAddedSubList());
+                if (targetClientSet.isEmpty()) {
+                    scheduleSendBtn.setDisable(true);
+                    sendMsgButton.setDisable(true);
+                } else {
+                    scheduleSendBtn.setDisable(false);
+                    sendMsgButton.setDisable(false);
                 }
             }
         });
@@ -400,26 +394,14 @@ public abstract class BaseServerController<T> extends BaseController implements 
                 scheduleSendBtn.setSelected(false);
             }
         };
-        sendSettingConfig.getScheduledSendConfig().setTaskFactory(new SendTaskFactory(new TaskService() {
-            @Override
-            public void fireTask() {
-                sendMsg();
-            }
-        }));
+        sendSettingConfig.getScheduledSendConfig().setTaskFactory(new SendTaskFactory(this::sendMsg));
 
-        sendSettingConfig.setOnModeChange(new TaskService() {
-            @Override
-            public void fireTask() {
-                if (sendSettingConfig.isTextMode()) {
-                    Platform.runLater(() -> {
-                        msgInput.setDisable(false);
-                    });
-                }
-                if (sendSettingConfig.isCustomMode()) {
-                    Platform.runLater(() -> {
-                        msgInput.setDisable(true);
-                    });
-                }
+        sendSettingConfig.setOnModeChange(() -> {
+            if (sendSettingConfig.isTextMode()) {
+                Platform.runLater(() -> msgInput.setDisable(false));
+            }
+            if (sendSettingConfig.isCustomMode()) {
+                Platform.runLater(() -> msgInput.setDisable(true));
             }
         });
 
