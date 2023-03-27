@@ -24,7 +24,6 @@ import org.hqu.lly.protocol.tcp.codec.MessageDecoderSelector;
 import org.hqu.lly.protocol.tcp.codec.MessageEncoderSelector;
 import org.hqu.lly.protocol.tcp.group.AppChannelGroup;
 import org.hqu.lly.service.impl.ClientService;
-import org.hqu.lly.utils.MsgUtil;
 
 import java.net.ConnectException;
 import java.net.URI;
@@ -55,9 +54,7 @@ public class TCPClient extends BaseClient {
     public void sendMessage(String message) {
         super.sendMessage(message);
         channel.writeAndFlush(message);
-        String formattedText = MsgUtil.formatSendMsg(message, channel.remoteAddress().toString());
-        log.info(formattedText);
-        clientService.updateMsgList(new MsgLabel(formattedText));
+        clientService.updateMsgList(new MsgLabel(MsgLabel.Type.SEND, channel.remoteAddress().toString(),message));
     }
 
 
