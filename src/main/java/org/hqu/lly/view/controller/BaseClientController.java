@@ -5,6 +5,7 @@ import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Side;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
@@ -47,7 +48,7 @@ import static org.hqu.lly.utils.UIUtil.*;
 @Slf4j
 public abstract class BaseClientController<T extends BaseClient> extends BaseController implements Initializable {
 
-    private boolean showTime = true;
+    private boolean showDisplaySetting = false;
     protected Executor executor = Executors.newSingleThreadExecutor();
 
     /**
@@ -114,9 +115,11 @@ public abstract class BaseClientController<T extends BaseClient> extends BaseCon
     private ToggleButton softWrapBtn;
     @FXML
     private Button clearBtn;
+
+    @FXML
+    private Button displaySettingBtn;
     @FXML
     private Button sendSettingBtn;
-    private double contentWidth;
 
     public BaseClientController() {
         setProtocol();
@@ -235,13 +238,10 @@ public abstract class BaseClientController<T extends BaseClient> extends BaseCon
                 CustomDataConfig customDataConfig = sendSettingConfig.getCustomDataConfig();
                 String msg = DataUtil.createMsg(customDataConfig.getCustomDataPattern(), customDataConfig.getBoundList());
                 client.sendMessage(msg);
-
             }
         } catch (UnSetBoundException e) {
             log.warn(e.getMessage());
-            Platform.runLater(() -> {
-                errorMsgLabel.setText("未定义数据边界!");
-            });
+            Platform.runLater(() -> errorMsgLabel.setText("未定义数据边界!"));
         }
     }
 
@@ -344,6 +344,7 @@ public abstract class BaseClientController<T extends BaseClient> extends BaseCon
 
         // 功能按钮悬浮tip提示
         initMsgSideBar();
+        setupDisplaySetting();
 
         // 消息上下文菜单
         msgList.setContextMenu(getMsgListMenu(msgList));
@@ -390,6 +391,35 @@ public abstract class BaseClientController<T extends BaseClient> extends BaseCon
     }
 
     /**
+     * 设置消息显示设置按钮 {@link #displaySettingBtn} 的contextMenu.
+     * 包括时间、主机、消息长度、消息内容的显示和隐藏.
+     *  @date 2023-03-27 19:25
+     */
+    private void setupDisplaySetting() {
+        RadioMenuItem time = new RadioMenuItem("时间");
+        time.setSelected(true);
+        time.setOnAction(event -> msgList.getItems().forEach(item -> item.showTime(time.isSelected())));
+
+        RadioMenuItem host = new RadioMenuItem("主机");
+        host.setSelected(true);
+        host.setOnAction(event -> msgList.getItems().forEach(item -> item.showHost(host.isSelected())));
+
+        RadioMenuItem length = new RadioMenuItem("消息长度");
+        length.setSelected(true);
+        length.setOnAction(event -> msgList.getItems().forEach(item -> item.showLength(length.isSelected())));
+
+        RadioMenuItem msg = new RadioMenuItem("消息内容");
+        msg.setSelected(true);
+        msg.setOnAction(event -> msgList.getItems().forEach(item -> item.showMsg(msg.isSelected())));
+
+        ContextMenu contextMenu = new ContextMenu(time,host,length,msg);
+        displaySettingBtn.setContextMenu(contextMenu);
+        displaySettingBtn.addEventHandler(MouseEvent.MOUSE_CLICKED , e -> {
+            contextMenu.show(displaySettingBtn, Side.BOTTOM, 0, 0);
+        });
+    }
+
+    /**
      * <p>
      * 为消息框的侧边栏按钮添加提示文字 {@link Tooltip}。<br>
      * 包括：<br>
@@ -404,7 +434,7 @@ public abstract class BaseClientController<T extends BaseClient> extends BaseCon
         softWrapBtn.setTooltip(getTooltip("长文本换行"));
         clearBtn.setTooltip(getTooltip("清空列表"));
         sendSettingBtn.setTooltip(getTooltip("发送设置"));
-
+        displaySettingBtn.setTooltip(getTooltip("显示设置"));
     }
 
     private class BaseClientService extends ClientService {

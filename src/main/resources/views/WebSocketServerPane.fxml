@@ -96,6 +96,18 @@
                                 <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
                             </padding>
                         </Button>
+                        <Button fx:id="displaySettingBtn" mnemonicParsing="false" prefHeight="20.0" prefWidth="20.0" styleClass="icon-button">
+                            <padding>
+                                <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
+                            </padding>
+                            <graphic>
+                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true" styleClass="clear-button">
+                                    <image>
+                                        <Image url="@../icon/display_setting.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </Button>
                     </children>
                     <padding>
                         <Insets top="-1.0" />

@@ -87,7 +87,7 @@ public class MsgLabel extends TextFlow {
     }
 
     private void initTimeText() {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
         String time = LocalDateTime.now().format(formatter) + " ";
         this.timeText = new Text(time);
     }
@@ -109,10 +109,7 @@ public class MsgLabel extends TextFlow {
     }
 
     private void initLengthText(String msg) {
-        this.lengthText = new Text("[" + CommonUtil.getRealLength(msg) + "字节]");
-    }
-    public void setDisplayOpt(){
-
+        this.lengthText = new Text("[" + CommonUtil.getRealLength(msg) + "字节] ");
     }
 
     public void showTime(boolean showTime) {

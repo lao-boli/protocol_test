@@ -7,6 +7,7 @@ import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Side;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
@@ -74,6 +75,10 @@ public abstract class BaseServerController<T> extends BaseController implements 
     protected ToggleButton softWrapBtn;
     @FXML
     protected Button clearBtn;
+
+    @FXML
+    private Button displaySettingBtn;
+
     @FXML
     protected Button sendSettingBtn;
 
@@ -141,6 +146,7 @@ public abstract class BaseServerController<T> extends BaseController implements 
      * 显示在 {@link #clientListBox} 中的客户端列表
      */
     ObservableList<T> clientList = FXCollections.observableArrayList();
+
 
     public BaseServerController() {
         setServer();
@@ -332,6 +338,35 @@ public abstract class BaseServerController<T> extends BaseController implements 
         destroyed = true;
     }
 
+    /**
+     * 设置消息显示设置按钮 {@link #displaySettingBtn} 的contextMenu.
+     * 包括时间、主机、消息长度、消息内容的显示和隐藏.
+     *  @date 2023-03-27 19:25
+     */
+    private void setupDisplaySetting() {
+        RadioMenuItem time = new RadioMenuItem("时间");
+        time.setSelected(true);
+        time.setOnAction(event -> msgList.getItems().forEach(item -> item.showTime(time.isSelected())));
+
+        RadioMenuItem host = new RadioMenuItem("主机");
+        host.setSelected(true);
+        host.setOnAction(event -> msgList.getItems().forEach(item -> item.showHost(host.isSelected())));
+
+        RadioMenuItem length = new RadioMenuItem("消息长度");
+        length.setSelected(true);
+        length.setOnAction(event -> msgList.getItems().forEach(item -> item.showLength(length.isSelected())));
+
+        RadioMenuItem msg = new RadioMenuItem("消息内容");
+        msg.setSelected(true);
+        msg.setOnAction(event -> msgList.getItems().forEach(item -> item.showMsg(msg.isSelected())));
+
+        ContextMenu contextMenu = new ContextMenu(time,host,length,msg);
+        displaySettingBtn.setContextMenu(contextMenu);
+        displaySettingBtn.addEventHandler(MouseEvent.MOUSE_CLICKED , e -> {
+            contextMenu.show(displaySettingBtn, Side.BOTTOM, 0, 0);
+        });
+    }
+
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -343,6 +378,7 @@ public abstract class BaseServerController<T> extends BaseController implements 
         // 消息上下文菜单
         msgList.setContextMenu(UIUtil.getMsgListMenu(msgList));
         clientListBox.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        setupDisplaySetting();
     }
 
     /**
