@@ -2,6 +2,7 @@ package org.hqu.lly.view.controller;
 
 import io.netty.channel.Channel;
 import javafx.application.Platform;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -48,7 +49,6 @@ import static org.hqu.lly.utils.UIUtil.*;
 @Slf4j
 public abstract class BaseClientController<T extends BaseClient> extends BaseController implements Initializable {
 
-    private boolean showDisplaySetting = false;
     protected Executor executor = Executors.newSingleThreadExecutor();
 
     /**
@@ -416,6 +416,19 @@ public abstract class BaseClientController<T extends BaseClient> extends BaseCon
         displaySettingBtn.setContextMenu(contextMenu);
         displaySettingBtn.addEventHandler(MouseEvent.MOUSE_CLICKED , e -> {
             contextMenu.show(displaySettingBtn, Side.BOTTOM, 0, 0);
+        });
+
+        msgList.getItems().addListener((ListChangeListener<MsgLabel>) c -> {
+            while (c.next()){
+                if (c.wasAdded()){
+                    c.getAddedSubList().forEach(label -> {
+                        label.showTime(time.isSelected());
+                        label.showHost(host.isSelected());
+                        label.showLength(length.isSelected());
+                        label.showMsg(msg.isSelected());
+                    });
+                }
+            }
         });
     }
 

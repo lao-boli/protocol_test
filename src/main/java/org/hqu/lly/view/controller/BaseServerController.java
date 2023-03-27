@@ -365,6 +365,19 @@ public abstract class BaseServerController<T> extends BaseController implements 
         displaySettingBtn.addEventHandler(MouseEvent.MOUSE_CLICKED , e -> {
             contextMenu.show(displaySettingBtn, Side.BOTTOM, 0, 0);
         });
+
+        msgList.getItems().addListener((ListChangeListener<MsgLabel>) c -> {
+            while (c.next()){
+                if (c.wasAdded()){
+                    c.getAddedSubList().forEach(label -> {
+                        label.showTime(time.isSelected());
+                        label.showHost(host.isSelected());
+                        label.showLength(length.isSelected());
+                        label.showMsg(msg.isSelected());
+                    });
+                }
+            }
+        });
     }
 
 
