@@ -1,12 +1,10 @@
 package org.hqu.lly.view.controller;
 
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import lombok.extern.slf4j.Slf4j;
@@ -16,14 +14,12 @@ import org.hqu.lly.domain.config.TabPaneConfig;
 import org.hqu.lly.domain.config.TopConfig;
 import org.hqu.lly.domain.vo.ServiceItem;
 import org.hqu.lly.factory.CustomAlertFactory;
-import org.hqu.lly.service.TaskService;
 import org.hqu.lly.service.impl.TabPaneManager;
 import org.hqu.lly.view.group.ControllerGroup;
 
 import java.io.FileNotFoundException;
 import java.net.URL;
 import java.util.*;
-import java.util.concurrent.Callable;
 
 /**
  * <p>
@@ -59,38 +55,27 @@ public class MainController implements Initializable {
 
         titleBarController.init("协议测试工具",true);
 
-        titleBarController.setOnBeforeClose(new Callable<Boolean>() {
-            @Override
-            public Boolean call() throws Exception {
-                CustomAlert alert = CustomAlertFactory.create("save config", "是否保存配置到本地？");
-                assert alert != null;
-                alert.setForceResume(true);
-                alert.setOnConfirm(new TaskService() {
-                    @Override
-                    public void fireTask() {
-                        // 通知各级控制器保存配置
-                        for (TabPaneController controller : ControllerGroup.tabPaneControllerSet) {
-                            TabPaneConfig tabPaneConfig = controller.saveAndGetConfig();
-                            if (tabPaneConfig != null) {
-                                TopConfig.getInstance().addTabPaneConfig(tabPaneConfig);
-                            }
-                        }
-                        // 写入文件
-                        TopConfig.getInstance().save();
+        titleBarController.setOnBeforeClose(() -> {
+            CustomAlert alert = CustomAlertFactory.create("save config", "是否保存配置到本地？");
+            assert alert != null;
+            alert.setForceResume(true);
+            alert.setOnConfirm(() -> {
+                // 通知各级控制器保存配置
+                for (TabPaneController controller : ControllerGroup.tabPaneControllerSet) {
+                    TabPaneConfig tabPaneConfig = controller.saveAndGetConfig();
+                    if (tabPaneConfig != null) {
+                        TopConfig.getInstance().addTabPaneConfig(tabPaneConfig);
                     }
-                });
-                // 显示是否保存配置的弹窗
-                Optional<ButtonType> buttonType = alert.showAndWait();
-                return buttonType.get().equals(ButtonType.OK);
-            }
+                }
+                // 写入文件
+                TopConfig.getInstance().save();
+            });
+            // 显示是否保存配置的弹窗
+            Optional<ButtonType> buttonType = alert.showAndWait();
+            return buttonType.get().equals(ButtonType.OK);
         });
 
-        titleBarController.setOnClose(new TaskService() {
-            @Override
-            public void fireTask() {
-                System.exit(0);
-            }
-        });
+        titleBarController.setOnClose(() -> System.exit(0));
 
         initSideBar();
         try {
@@ -171,13 +156,10 @@ public class MainController implements Initializable {
 
         menuTree.setRoot(root);
         // 设置切换回调
-        menuTree.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent mouseEvent) {
-                Object selectedItem = menuTree.getSelectionModel().getSelectedItem();
-                if (selectedItem instanceof ServiceItem) {
-                    ((ServiceItem<?>) selectedItem).switchPane();
-                }
+        menuTree.setOnMouseClicked(mouseEvent -> {
+            Object selectedItem = menuTree.getSelectionModel().getSelectedItem();
+            if (selectedItem instanceof ServiceItem) {
+                ((ServiceItem<?>) selectedItem).switchPane();
             }
         });
         // 隐藏根节点

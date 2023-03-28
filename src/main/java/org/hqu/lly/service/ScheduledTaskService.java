@@ -16,9 +16,7 @@ public interface ScheduledTaskService {
      * 任务开始的回调
      * </p>
      *
-     * @return void
      * @date 2022-09-29 15:10:01 <br>
-     * @author hqully <br>
      */
     void onTaskStart();
 
@@ -27,9 +25,7 @@ public interface ScheduledTaskService {
      * 所有任务都完成后的回调
      * </p>
      *
-     * @return void
      * @date 2022-09-29 10:35:53 <br>
-     * @author hqully <br>
      */
     void onAllTasksCompleted();
 
