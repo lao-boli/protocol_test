@@ -7,7 +7,6 @@ import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.geometry.Side;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
@@ -49,7 +48,7 @@ import java.util.concurrent.FutureTask;
  * @date 2022/10/3 10:45
  */
 @Slf4j
-public abstract class BaseServerController<T> extends BaseController implements Initializable {
+public abstract class BaseServerController<T> extends CommonUIContorller implements Initializable {
 
     protected Executor executor = Executors.newSingleThreadExecutor();
 
@@ -60,31 +59,11 @@ public abstract class BaseServerController<T> extends BaseController implements 
     @FXML
     protected Label errorMsgLabel;
     @FXML
-    protected TextArea msgInput;
-    @FXML
-    protected Button sendMsgButton;
-    @FXML
-    protected ToggleButton scheduleSendBtn;
-    @FXML
     protected Button closeServerButton;
-    @FXML
-    protected ListView<MsgLabel> msgList;
     @FXML
     protected ListView<T> clientListBox;
     @FXML
-    protected ToggleButton softWrapBtn;
-    @FXML
-    protected Button clearBtn;
-
-    @FXML
-    private Button displaySettingBtn;
-
-    @FXML
-    protected Button sendSettingBtn;
-
-    @FXML
     protected Button selectAllBtn;
-
     @FXML
     protected Button removeClientBtn;
 
@@ -206,9 +185,7 @@ public abstract class BaseServerController<T> extends BaseController implements 
 
         FutureTask<Channel> serverTask = new FutureTask<>(server);
         executor.execute(serverTask);
-        Platform.runLater(() -> {
-            errorMsgLabel.setText("服务开启中...");
-        });
+        Platform.runLater(() -> errorMsgLabel.setText("服务开启中..."));
     }
 
     @FXML
@@ -338,48 +315,6 @@ public abstract class BaseServerController<T> extends BaseController implements 
         destroyed = true;
     }
 
-    /**
-     * 设置消息显示设置按钮 {@link #displaySettingBtn} 的contextMenu.
-     * 包括时间、主机、消息长度、消息内容的显示和隐藏.
-     *  @date 2023-03-27 19:25
-     */
-    private void setupDisplaySetting() {
-        RadioMenuItem time = new RadioMenuItem("时间");
-        time.setSelected(true);
-        time.setOnAction(event -> msgList.getItems().forEach(item -> item.showTime(time.isSelected())));
-
-        RadioMenuItem host = new RadioMenuItem("主机");
-        host.setSelected(true);
-        host.setOnAction(event -> msgList.getItems().forEach(item -> item.showHost(host.isSelected())));
-
-        RadioMenuItem length = new RadioMenuItem("消息长度");
-        length.setSelected(true);
-        length.setOnAction(event -> msgList.getItems().forEach(item -> item.showLength(length.isSelected())));
-
-        RadioMenuItem msg = new RadioMenuItem("消息内容");
-        msg.setSelected(true);
-        msg.setOnAction(event -> msgList.getItems().forEach(item -> item.showMsg(msg.isSelected())));
-
-        ContextMenu contextMenu = new ContextMenu(time,host,length,msg);
-        displaySettingBtn.setContextMenu(contextMenu);
-        displaySettingBtn.addEventHandler(MouseEvent.MOUSE_CLICKED , e -> {
-            contextMenu.show(displaySettingBtn, Side.BOTTOM, 0, 0);
-        });
-
-        msgList.getItems().addListener((ListChangeListener<MsgLabel>) c -> {
-            while (c.next()){
-                if (c.wasAdded()){
-                    c.getAddedSubList().forEach(label -> {
-                        label.showTime(time.isSelected());
-                        label.showHost(host.isSelected());
-                        label.showLength(length.isSelected());
-                        label.showMsg(msg.isSelected());
-                    });
-                }
-            }
-        });
-    }
-
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -499,7 +434,6 @@ public abstract class BaseServerController<T> extends BaseController implements 
         softWrapBtn.setTooltip(UIUtil.getTooltip("长文本换行"));
         clearBtn.setTooltip(UIUtil.getTooltip("清空列表"));
         sendSettingBtn.setTooltip(UIUtil.getTooltip("发送设置"));
-
 
         selectAllBtn.setTooltip(UIUtil.getTooltip("全选/取消全选"));
         removeClientBtn.setTooltip(UIUtil.getTooltip("删除客户端"));

@@ -2,12 +2,13 @@ package org.hqu.lly.view.controller;
 
 import io.netty.channel.Channel;
 import javafx.application.Platform;
-import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.geometry.Side;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
 import javafx.stage.Stage;
@@ -47,7 +48,7 @@ import static org.hqu.lly.utils.UIUtil.*;
  * @date 2022/10/2 20:20
  */
 @Slf4j
-public abstract class BaseClientController<T extends BaseClient> extends BaseController implements Initializable {
+public abstract class BaseClientController<T extends BaseClient> extends CommonUIContorller implements Initializable {
 
     protected Executor executor = Executors.newSingleThreadExecutor();
 
@@ -103,23 +104,6 @@ public abstract class BaseClientController<T extends BaseClient> extends BaseCon
     private Button disconnectButton;
     @FXML
     private Label errorMsgLabel;
-    @FXML
-    private ListView<MsgLabel> msgList;
-    @FXML
-    private TextArea msgInput;
-    @FXML
-    private Button sendMsgButton;
-    @FXML
-    private ToggleButton scheduleSendBtn;
-    @FXML
-    private ToggleButton softWrapBtn;
-    @FXML
-    private Button clearBtn;
-
-    @FXML
-    private Button displaySettingBtn;
-    @FXML
-    private Button sendSettingBtn;
 
     public BaseClientController() {
         setProtocol();
@@ -390,47 +374,6 @@ public abstract class BaseClientController<T extends BaseClient> extends BaseCon
         sendSettingPane = SendSettingPaneFactory.create(sendSettingConfig);
     }
 
-    /**
-     * 设置消息显示设置按钮 {@link #displaySettingBtn} 的contextMenu.
-     * 包括时间、主机、消息长度、消息内容的显示和隐藏.
-     *  @date 2023-03-27 19:25
-     */
-    private void setupDisplaySetting() {
-        RadioMenuItem time = new RadioMenuItem("时间");
-        time.setSelected(true);
-        time.setOnAction(event -> msgList.getItems().forEach(item -> item.showTime(time.isSelected())));
-
-        RadioMenuItem host = new RadioMenuItem("主机");
-        host.setSelected(true);
-        host.setOnAction(event -> msgList.getItems().forEach(item -> item.showHost(host.isSelected())));
-
-        RadioMenuItem length = new RadioMenuItem("消息长度");
-        length.setSelected(true);
-        length.setOnAction(event -> msgList.getItems().forEach(item -> item.showLength(length.isSelected())));
-
-        RadioMenuItem msg = new RadioMenuItem("消息内容");
-        msg.setSelected(true);
-        msg.setOnAction(event -> msgList.getItems().forEach(item -> item.showMsg(msg.isSelected())));
-
-        ContextMenu contextMenu = new ContextMenu(time,host,length,msg);
-        displaySettingBtn.setContextMenu(contextMenu);
-        displaySettingBtn.addEventHandler(MouseEvent.MOUSE_CLICKED , e -> {
-            contextMenu.show(displaySettingBtn, Side.BOTTOM, 0, 0);
-        });
-
-        msgList.getItems().addListener((ListChangeListener<MsgLabel>) c -> {
-            while (c.next()){
-                if (c.wasAdded()){
-                    c.getAddedSubList().forEach(label -> {
-                        label.showTime(time.isSelected());
-                        label.showHost(host.isSelected());
-                        label.showLength(length.isSelected());
-                        label.showMsg(msg.isSelected());
-                    });
-                }
-            }
-        });
-    }
 
     /**
      * <p>
