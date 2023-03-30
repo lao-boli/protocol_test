@@ -1,12 +1,17 @@
 package org.hqu.lly.view.controller;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.SplitPane;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
 import org.hqu.lly.constant.ContentPaneConsts;
 import org.hqu.lly.domain.component.CustomAlert;
@@ -15,6 +20,7 @@ import org.hqu.lly.domain.config.TopConfig;
 import org.hqu.lly.domain.vo.ServiceItem;
 import org.hqu.lly.factory.CustomAlertFactory;
 import org.hqu.lly.service.impl.TabPaneManager;
+import org.hqu.lly.utils.UIUtil;
 import org.hqu.lly.view.group.ControllerGroup;
 
 import java.io.FileNotFoundException;
@@ -33,6 +39,8 @@ import java.util.*;
 @Slf4j
 public class MainController implements Initializable {
 
+    @FXML
+    private SplitPane mainSplitPane;
     /**
      * 侧边栏菜单树
      */
@@ -50,10 +58,15 @@ public class MainController implements Initializable {
 
     private final Map<String, TabPaneManager> managerMap = new HashMap<>(6);
 
+    /**
+     * 侧边栏菜单宽度
+     */
+    private double menuWidth;
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
-        titleBarController.init("协议测试工具",true);
+        titleBarController.init("协议测试工具", true);
 
         titleBarController.setOnBeforeClose(() -> {
             CustomAlert alert = CustomAlertFactory.create("save config", "是否保存配置到本地？");
@@ -78,6 +91,9 @@ public class MainController implements Initializable {
         titleBarController.setOnClose(() -> System.exit(0));
 
         initSideBar();
+
+        setupSpiltPane();
+
         try {
             TopConfig.load();
             initByConfig();
@@ -87,12 +103,36 @@ public class MainController implements Initializable {
     }
 
     /**
+     * 设置 {@link #mainSplitPane} ,让分割线在窗口的大小改变时保持原来的位置
+     *
+     * @date 2023-03-30 21:12
+     */
+    private void setupSpiltPane() {
+        // 当FXML文件中的节点被加载时，它们的Skin尚未完全初始化。
+        // 解决这个问题的一种方法是将对Skin的操作延迟到稍后的时间点。
+        Platform.runLater(() -> {
+            // 初始化设置
+            menuWidth = menuTree.getWidth();
+            // 获取分割线节点
+            Node divider = mainSplitPane.lookup(".split-pane > .split-pane-divider");
+            // 在拖拽时记录宽度
+            divider.addEventFilter(MouseEvent.MOUSE_DRAGGED, (e) -> menuWidth = menuTree.getWidth());
+
+            // stage窗口改变时保持分割线位置不变
+            Stage stage = UIUtil.getPrimaryStage();
+            stage.widthProperty().addListener((observable, oldValue, newValue) -> {
+                mainSplitPane.setDividerPosition(0, menuWidth / newValue.doubleValue());
+            });
+        });
+
+    }
+
+    /**
      * <p>
      * 从本地存档配置文件加载面板
      * </p>
      *
      * @date 2023-02-04 18:35:07 <br>
-     * @author hqully <br>
      */
     private void initByConfig() {
         for (TabPaneConfig tabPaneConfig : TopConfig.getInstance().getTabPaneConfigs()) {
@@ -147,9 +187,7 @@ public class MainController implements Initializable {
         firstMenuItems.add(webSocket);
 
         // 默认展开
-        firstMenuItems.forEach(item -> {
-            item.setExpanded(true);
-        });
+        firstMenuItems.forEach(item -> item.setExpanded(true));
 
         root.getChildren().addAll(firstMenuItems);
         root.setExpanded(true);
@@ -171,7 +209,7 @@ public class MainController implements Initializable {
      * 获取{@link ServiceItem}
      * </p>
      *
-     * @param paneName 标签面板名称,应为 {@link ContentPaneConsts}中的值。
+     * @param paneName    标签面板名称,应为 {@link ContentPaneConsts}中的值。
      * @param subPaneName 标签页名称
      * @return {@link ServiceItem}
      * @date 2023-02-06 16:08:05 <br>
