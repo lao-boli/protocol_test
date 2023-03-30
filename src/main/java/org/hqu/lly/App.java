@@ -16,6 +16,7 @@ public class App extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+        UIUtil.setPrimaryStage(primaryStage);
         FXMLLoader fxmlLoader = new FXMLLoader();
         fxmlLoader.setLocation(ResLoc.MAIN_PANE);
         Parent root = fxmlLoader.load();
@@ -27,7 +28,6 @@ public class App extends Application {
         primaryStage.initStyle(StageStyle.TRANSPARENT);
         primaryStage.setScene(scene);
         DragUtil.setDrag(primaryStage,scene.getRoot());
-        UIUtil.setPrimaryStage(primaryStage);
         primaryStage.show();
     }
 
