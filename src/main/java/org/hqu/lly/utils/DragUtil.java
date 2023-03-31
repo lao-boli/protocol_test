@@ -49,6 +49,11 @@ public class DragUtil {
     }
     public static void setDrag(Stage stage , BorderPane root){
         root.addEventFilter(MouseEvent.MOUSE_MOVED, event -> {
+            // 窗口最大化时不触发缩放事件
+            if (((Stage) root.getScene().getWindow()).isMaximized()){
+                return;
+            }
+
             cursorType = Cursor.DEFAULT;
             double x = event.getSceneX();
             double y = event.getSceneY();
