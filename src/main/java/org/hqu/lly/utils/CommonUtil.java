@@ -52,7 +52,7 @@ public class CommonUtil {
      *     获取字符串的半角字符长度(英文、数字1个字符，汉字2个字符)
      * </p>
      * @param str 字符串
-     * @return 字符串真实长度
+     * @return 字符串真实长度,若字符串为null则返回0.
      * @date 2023-02-26 13:52:24 <br>
      * @author hqully <br>
      */
@@ -60,7 +60,7 @@ public class CommonUtil {
     public static int getRealLength(String str) {
         // 若编码为unicode,则汉字将占3字节，不符合要求。
         // 故指定编码为gbk。
-        return  str.getBytes("gbk").length;
+        return  str == null ? 0 : str.getBytes("gbk").length;
     }
 
 }

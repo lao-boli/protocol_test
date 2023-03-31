@@ -3,11 +3,10 @@ package org.hqu.lly.view.controller;
 import io.netty.channel.Channel;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
-import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.input.MouseEvent;
+import org.hqu.lly.domain.component.MsgLabel;
 import org.hqu.lly.service.impl.ConnectedServerService;
-import org.hqu.lly.utils.UIUtil;
 
 /**
  * <p>
@@ -80,11 +79,8 @@ public abstract class ConnectedServerController extends BaseServerController<Cha
             }
 
             @Override
-            public void updateMsgList(String msg) {
-                Label msgLabel = UIUtil.getMsgLabel(msg, msgList.getWidth() - 20, softWrap);
-                Platform.runLater(() -> {
-                    msgList.getItems().add(msgLabel);
-                });
+            public void updateMsgList(MsgLabel msgLabel) {
+                Platform.runLater(() -> msgList.getItems().add(msgLabel));
             }
         };
     }

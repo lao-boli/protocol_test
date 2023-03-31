@@ -1,10 +1,9 @@
 package org.hqu.lly.view.controller;
 
 import javafx.application.Platform;
-import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
+import org.hqu.lly.domain.component.MsgLabel;
 import org.hqu.lly.service.impl.ConnectionlessServerService;
-import org.hqu.lly.utils.UIUtil;
 
 import java.net.InetSocketAddress;
 
@@ -69,10 +68,10 @@ public abstract class ConnectionlessServerController extends BaseServerControlle
             }
 
             @Override
-            public void updateMsgList(String msg) {
+            public void updateMsgList(MsgLabel msg) {
                 Platform.runLater(() -> {
-                    Label msgLabel = UIUtil.getMsgLabel(msg, msgList.getWidth() - 20, softWrap);
-                    msgList.getItems().add(msgLabel);
+                    // Label msgLabel = UIUtil.getMsgLabel((String) msg, msgList.getWidth() - 20, softWrap);
+                    msgList.getItems().add(msg);
                 });
             }
         };

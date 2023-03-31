@@ -4,8 +4,8 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import lombok.extern.slf4j.Slf4j;
+import org.hqu.lly.domain.component.MsgLabel;
 import org.hqu.lly.service.impl.ClientService;
-import org.hqu.lly.utils.MsgUtil;
 
 /**
  * <p>
@@ -28,10 +28,7 @@ public class WebSocketClientMessageHandler extends SimpleChannelInboundHandler<T
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, TextWebSocketFrame msg) throws Exception {
         String serverAddr = ctx.channel().remoteAddress().toString();
-        String receiveText = msg.text();
-        String formattedReceiveText = MsgUtil.formatReceiveMsg(receiveText, serverAddr);
-        clientService.updateMsgList(formattedReceiveText);
-        log.info(formattedReceiveText);
+        clientService.updateMsgList(new MsgLabel(MsgLabel.Type.RECEIVE, serverAddr, msg.text()));
     }
 
 }

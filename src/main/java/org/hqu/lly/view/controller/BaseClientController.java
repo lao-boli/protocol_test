@@ -5,7 +5,10 @@ import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
 import javafx.stage.Stage;
@@ -14,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.hqu.lly.domain.base.BaseClient;
 import org.hqu.lly.domain.bean.CustomDataConfig;
 import org.hqu.lly.domain.bean.SendSettingConfig;
+import org.hqu.lly.domain.component.MsgLabel;
 import org.hqu.lly.domain.config.ClientConfig;
 import org.hqu.lly.domain.config.TabConfig;
 import org.hqu.lly.domain.config.TopConfig;
@@ -21,11 +25,9 @@ import org.hqu.lly.exception.UnSetBoundException;
 import org.hqu.lly.factory.SendSettingPaneFactory;
 import org.hqu.lly.factory.SendTaskFactory;
 import org.hqu.lly.service.ScheduledTaskService;
-import org.hqu.lly.service.TaskService;
 import org.hqu.lly.service.impl.ClientService;
 import org.hqu.lly.service.impl.ScheduledSendService;
 import org.hqu.lly.utils.DataUtil;
-import org.hqu.lly.utils.UIUtil;
 
 import java.net.URI;
 import java.net.URL;
@@ -33,6 +35,8 @@ import java.util.ResourceBundle;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
+
+import static org.hqu.lly.utils.UIUtil.*;
 
 /**
  * <p>
@@ -44,7 +48,7 @@ import java.util.concurrent.FutureTask;
  * @date 2022/10/2 20:20
  */
 @Slf4j
-public abstract class BaseClientController<T extends BaseClient> extends BaseController implements Initializable {
+public abstract class BaseClientController<T extends BaseClient> extends CommonUIContorller implements Initializable {
 
     protected Executor executor = Executors.newSingleThreadExecutor();
 
@@ -100,20 +104,6 @@ public abstract class BaseClientController<T extends BaseClient> extends BaseCon
     private Button disconnectButton;
     @FXML
     private Label errorMsgLabel;
-    @FXML
-    private ListView<Label> msgList;
-    @FXML
-    private TextArea msgInput;
-    @FXML
-    private Button sendMsgButton;
-    @FXML
-    private ToggleButton scheduleSendBtn;
-    @FXML
-    private ToggleButton softWrapBtn;
-    @FXML
-    private Button clearBtn;
-    @FXML
-    private Button sendSettingBtn;
 
     public BaseClientController() {
         setProtocol();
@@ -183,42 +173,7 @@ public abstract class BaseClientController<T extends BaseClient> extends BaseCon
     void confirmAddr(MouseEvent event) {
         URI uri = URI.create(protocol + remoteAddressInput.getText());
         client.setURI(uri);
-        client.setService(new ClientService() {
-            @Override
-            public void onStart() {
-                if (!errorMsgLabel.getText().isEmpty()) {
-                    Platform.runLater(() -> {
-                        errorMsgLabel.setText("");
-                    });
-                }
-                setActiveUI();
-            }
-
-            @Override
-            public void onError(Throwable e, String errorMessage) {
-                Platform.runLater(() -> {
-                    if (errorMessage != null) {
-                        errorMsgLabel.setText(errorMessage);
-                    } else {
-                        errorMsgLabel.setText(e.getMessage());
-                    }
-                });
-            }
-
-            @Override
-            public void onClose() {
-                client.destroy();
-                setInactiveUI();
-            }
-
-            @Override
-            public void updateMsgList(String msg) {
-                Label msgLabel = UIUtil.getMsgLabel(msg, UIUtil.getFixMsgLabelWidth(msgList.getWidth()), softWrap);
-                Platform.runLater(() -> {
-                    msgList.getItems().add(msgLabel);
-                });
-            }
-        });
+        client.setService(new BaseClientService());
 
         FutureTask<Channel> channel = new FutureTask<>(client);
         executor.execute(channel);
@@ -267,13 +222,10 @@ public abstract class BaseClientController<T extends BaseClient> extends BaseCon
                 CustomDataConfig customDataConfig = sendSettingConfig.getCustomDataConfig();
                 String msg = DataUtil.createMsg(customDataConfig.getCustomDataPattern(), customDataConfig.getBoundList());
                 client.sendMessage(msg);
-
             }
         } catch (UnSetBoundException e) {
             log.warn(e.getMessage());
-            Platform.runLater(() -> {
-                errorMsgLabel.setText("未定义数据边界!");
-            });
+            Platform.runLater(() -> errorMsgLabel.setText("未定义数据边界!"));
         }
     }
 
@@ -287,14 +239,10 @@ public abstract class BaseClientController<T extends BaseClient> extends BaseCon
     @FXML
     void handleSoftWrap(MouseEvent event) {
         softWrap = !softWrap;
-        double labelWidth = softWrap ? UIUtil.getFixMsgLabelWidth(msgList.getWidth()) : Region.USE_COMPUTED_SIZE;
-        ObservableList<Label> msgItems = msgList.getItems();
-        msgItems.forEach(msg -> {
-            UIUtil.changeMsgLabel(msg, labelWidth, softWrap);
-        });
-        Platform.runLater(() -> {
-            msgList.setItems(msgItems);
-        });
+        double labelWidth = softWrap ? getFixMsgLabelWidth(msgList.getWidth()) : Region.USE_COMPUTED_SIZE;
+        ObservableList<MsgLabel> msgItems = msgList.getItems();
+        msgItems.forEach(msgLabel -> msgLabel.setPrefWidth(labelWidth));
+        Platform.runLater(() -> msgList.setItems(msgItems));
     }
 
     @FXML
@@ -380,9 +328,10 @@ public abstract class BaseClientController<T extends BaseClient> extends BaseCon
 
         // 功能按钮悬浮tip提示
         initMsgSideBar();
+        setupDisplaySetting();
 
         // 消息上下文菜单
-        msgList.setContextMenu(UIUtil.getMsgListMenu(msgList));
+        msgList.setContextMenu(getMsgListMenu(msgList));
     }
 
     /**
@@ -409,33 +358,22 @@ public abstract class BaseClientController<T extends BaseClient> extends BaseCon
                 scheduleSendBtn.setSelected(false);
             }
         };
-        sendSettingConfig.getScheduledSendConfig().setTaskFactory(new SendTaskFactory(new TaskService() {
-            @Override
-            public void fireTask() {
-                sendMsg();
-            }
-        }));
+        sendSettingConfig.getScheduledSendConfig().setTaskFactory(new SendTaskFactory(this::sendMsg));
 
         // 发送模式改变时的回调
-        sendSettingConfig.setOnModeChange(new TaskService() {
-            @Override
-            public void fireTask() {
-                if (sendSettingConfig.isTextMode()) {
-                    Platform.runLater(() -> {
-                        msgInput.setDisable(false);
-                    });
-                }
-                if (sendSettingConfig.isCustomMode()) {
-                    Platform.runLater(() -> {
-                        msgInput.setDisable(true);
-                    });
-                }
+        sendSettingConfig.setOnModeChange(() -> {
+            if (sendSettingConfig.isTextMode()) {
+                Platform.runLater(() -> msgInput.setDisable(false));
+            }
+            if (sendSettingConfig.isCustomMode()) {
+                Platform.runLater(() -> msgInput.setDisable(true));
             }
         });
 
         // 创建发送设置面板
         sendSettingPane = SendSettingPaneFactory.create(sendSettingConfig);
     }
+
 
     /**
      * <p>
@@ -449,10 +387,43 @@ public abstract class BaseClientController<T extends BaseClient> extends BaseCon
      * @date 2023-02-06 11:02:46 <br>
      */
     protected void initMsgSideBar() {
-        softWrapBtn.setTooltip(UIUtil.getTooltip("长文本换行"));
-        clearBtn.setTooltip(UIUtil.getTooltip("清空列表"));
-        sendSettingBtn.setTooltip(UIUtil.getTooltip("发送设置"));
+        softWrapBtn.setTooltip(getTooltip("长文本换行"));
+        clearBtn.setTooltip(getTooltip("清空列表"));
+        sendSettingBtn.setTooltip(getTooltip("发送设置"));
+        displaySettingBtn.setTooltip(getTooltip("显示设置"));
+    }
 
+    private class BaseClientService extends ClientService {
+
+        @Override
+        public void onStart() {
+            if (!errorMsgLabel.getText().isEmpty()) {
+                Platform.runLater(() -> errorMsgLabel.setText(""));
+            }
+            setActiveUI();
+        }
+
+        @Override
+        public void onError(Throwable e, String errorMessage) {
+            Platform.runLater(() -> {
+                if (errorMessage != null) {
+                    errorMsgLabel.setText(errorMessage);
+                } else {
+                    errorMsgLabel.setText(e.getMessage());
+                }
+            });
+        }
+
+        @Override
+        public void onClose() {
+            client.destroy();
+            setInactiveUI();
+        }
+
+        @Override
+        public void updateMsgList(MsgLabel msg) {
+            Platform.runLater(() -> msgList.getItems().add(msg));
+        }
     }
 
 }

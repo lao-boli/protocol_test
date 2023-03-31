@@ -20,25 +20,18 @@ public interface NetworkService {
      */
     void onStart();
     /**
-     * <p>
      * 网络连接发生异常时的回调
-     * </p>
      *
      * @param e            发生的异常
      * @param errorMessage 自定义的异常信息
      * @date 2022-09-05 14:47:09 <br>
-     * @author liulingyu <br>
      */
     void onError(Throwable e, String errorMessage);
 
     /**
-     * <p>
      * 网络连接关闭时的回调
-     * </p>
      *
-     * @return void
      * @date 2022-09-05 14:48:26 <br>
-     * @author liulingyu <br>
      */
     void onClose();
 }

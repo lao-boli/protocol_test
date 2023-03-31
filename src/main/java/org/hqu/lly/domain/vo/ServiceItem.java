@@ -14,7 +14,7 @@ import org.hqu.lly.service.SwitchPaneService;
  * @date 2022/9/4 20:31
  */
 @Data
-public class ServiceItem<T> extends TreeItem {
+public class ServiceItem<T> extends TreeItem<T> {
 
     private SwitchPaneService switchPaneService;
 

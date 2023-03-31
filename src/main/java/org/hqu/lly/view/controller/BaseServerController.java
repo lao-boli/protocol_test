@@ -16,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.hqu.lly.domain.base.BaseServer;
 import org.hqu.lly.domain.bean.CustomDataConfig;
 import org.hqu.lly.domain.bean.SendSettingConfig;
+import org.hqu.lly.domain.component.MsgLabel;
 import org.hqu.lly.domain.config.ServerConfig;
 import org.hqu.lly.exception.UnSetBoundException;
 import org.hqu.lly.factory.SendSettingPaneFactory;
@@ -24,7 +25,6 @@ import org.hqu.lly.protocol.tcp.server.TCPServer;
 import org.hqu.lly.protocol.udp.server.UDPServer;
 import org.hqu.lly.protocol.websocket.server.WebSocketServer;
 import org.hqu.lly.service.ScheduledTaskService;
-import org.hqu.lly.service.TaskService;
 import org.hqu.lly.service.impl.ScheduledSendService;
 import org.hqu.lly.service.impl.ServerService;
 import org.hqu.lly.utils.DataUtil;
@@ -48,7 +48,7 @@ import java.util.concurrent.FutureTask;
  * @date 2022/10/3 10:45
  */
 @Slf4j
-public abstract class BaseServerController<T> extends BaseController implements Initializable {
+public abstract class BaseServerController<T> extends CommonUIContorller implements Initializable {
 
     protected Executor executor = Executors.newSingleThreadExecutor();
 
@@ -59,27 +59,11 @@ public abstract class BaseServerController<T> extends BaseController implements 
     @FXML
     protected Label errorMsgLabel;
     @FXML
-    protected TextArea msgInput;
-    @FXML
-    protected Button sendMsgButton;
-    @FXML
-    protected ToggleButton scheduleSendBtn;
-    @FXML
     protected Button closeServerButton;
-    @FXML
-    protected ListView<Label> msgList;
     @FXML
     protected ListView<T> clientListBox;
     @FXML
-    protected ToggleButton softWrapBtn;
-    @FXML
-    protected Button clearBtn;
-    @FXML
-    protected Button sendSettingBtn;
-
-    @FXML
     protected Button selectAllBtn;
-
     @FXML
     protected Button removeClientBtn;
 
@@ -142,6 +126,7 @@ public abstract class BaseServerController<T> extends BaseController implements 
      */
     ObservableList<T> clientList = FXCollections.observableArrayList();
 
+
     public BaseServerController() {
         setServer();
         setServerService();
@@ -200,9 +185,7 @@ public abstract class BaseServerController<T> extends BaseController implements 
 
         FutureTask<Channel> serverTask = new FutureTask<>(server);
         executor.execute(serverTask);
-        Platform.runLater(() -> {
-            errorMsgLabel.setText("服务开启中...");
-        });
+        Platform.runLater(() -> errorMsgLabel.setText("服务开启中..."));
     }
 
     @FXML
@@ -275,9 +258,7 @@ public abstract class BaseServerController<T> extends BaseController implements 
                     }
                 } catch (UnSetBoundException e) {
                     log.warn(e.getMessage());
-                    Platform.runLater(() -> {
-                        errorMsgLabel.setText("未定义数据边界!");
-                    });
+                    Platform.runLater(() -> errorMsgLabel.setText("未定义数据边界!"));
                 }
             });
         }
@@ -311,13 +292,9 @@ public abstract class BaseServerController<T> extends BaseController implements 
     void handleSoftWrap(MouseEvent event) {
         softWrap = !softWrap;
         double labelWidth = softWrap ? msgList.getWidth() - 20 : Region.USE_COMPUTED_SIZE;
-        ObservableList<Label> msgItems = msgList.getItems();
-        msgItems.forEach(msg -> {
-            UIUtil.changeMsgLabel(msg, labelWidth, softWrap);
-        });
-        Platform.runLater(() -> {
-            msgList.setItems(msgItems);
-        });
+        ObservableList<MsgLabel> msgItems = msgList.getItems();
+        msgItems.forEach(msgLabel -> msgLabel.setPrefWidth(labelWidth));
+        Platform.runLater(() -> msgList.setItems(msgItems));
     }
 
     /**
@@ -349,6 +326,7 @@ public abstract class BaseServerController<T> extends BaseController implements 
         // 消息上下文菜单
         msgList.setContextMenu(UIUtil.getMsgListMenu(msgList));
         clientListBox.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        setupDisplaySetting();
     }
 
     /**
@@ -362,19 +340,16 @@ public abstract class BaseServerController<T> extends BaseController implements 
     protected void setClientBox() {
         setClientBoxCellFactory();
         // 点击时将当前的client设置为选中的client
-        clientListBox.getSelectionModel().getSelectedItems().addListener(new ListChangeListener<T>() {
-            @Override
-            public void onChanged(Change<? extends T> c) {
-                while (c.next()) {
-                    targetClientSet.removeAll(c.getRemoved());
-                    targetClientSet.addAll(c.getAddedSubList());
-                    if (targetClientSet.isEmpty()) {
-                        scheduleSendBtn.setDisable(true);
-                        sendMsgButton.setDisable(true);
-                    } else {
-                        scheduleSendBtn.setDisable(false);
-                        sendMsgButton.setDisable(false);
-                    }
+        clientListBox.getSelectionModel().getSelectedItems().addListener((ListChangeListener<T>) c -> {
+            while (c.next()) {
+                c.getRemoved().forEach(targetClientSet::remove);
+                targetClientSet.addAll(c.getAddedSubList());
+                if (targetClientSet.isEmpty()) {
+                    scheduleSendBtn.setDisable(true);
+                    sendMsgButton.setDisable(true);
+                } else {
+                    scheduleSendBtn.setDisable(false);
+                    sendMsgButton.setDisable(false);
                 }
             }
         });
@@ -403,26 +378,14 @@ public abstract class BaseServerController<T> extends BaseController implements 
                 scheduleSendBtn.setSelected(false);
             }
         };
-        sendSettingConfig.getScheduledSendConfig().setTaskFactory(new SendTaskFactory(new TaskService() {
-            @Override
-            public void fireTask() {
-                sendMsg();
-            }
-        }));
+        sendSettingConfig.getScheduledSendConfig().setTaskFactory(new SendTaskFactory(this::sendMsg));
 
-        sendSettingConfig.setOnModeChange(new TaskService() {
-            @Override
-            public void fireTask() {
-                if (sendSettingConfig.isTextMode()) {
-                    Platform.runLater(() -> {
-                        msgInput.setDisable(false);
-                    });
-                }
-                if (sendSettingConfig.isCustomMode()) {
-                    Platform.runLater(() -> {
-                        msgInput.setDisable(true);
-                    });
-                }
+        sendSettingConfig.setOnModeChange(() -> {
+            if (sendSettingConfig.isTextMode()) {
+                Platform.runLater(() -> msgInput.setDisable(false));
+            }
+            if (sendSettingConfig.isCustomMode()) {
+                Platform.runLater(() -> msgInput.setDisable(true));
             }
         });
 
@@ -471,7 +434,6 @@ public abstract class BaseServerController<T> extends BaseController implements 
         softWrapBtn.setTooltip(UIUtil.getTooltip("长文本换行"));
         clearBtn.setTooltip(UIUtil.getTooltip("清空列表"));
         sendSettingBtn.setTooltip(UIUtil.getTooltip("发送设置"));
-
 
         selectAllBtn.setTooltip(UIUtil.getTooltip("全选/取消全选"));
         removeClientBtn.setTooltip(UIUtil.getTooltip("删除客户端"));

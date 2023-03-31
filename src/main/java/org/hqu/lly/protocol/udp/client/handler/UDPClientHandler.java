@@ -4,8 +4,8 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.socket.DatagramPacket;
 import io.netty.util.CharsetUtil;
+import org.hqu.lly.domain.component.MsgLabel;
 import org.hqu.lly.service.impl.ClientService;
-import org.hqu.lly.utils.MsgUtil;
 
 /**
  * <p>
@@ -28,8 +28,7 @@ public class UDPClientHandler extends SimpleChannelInboundHandler<DatagramPacket
     protected void channelRead0(ChannelHandlerContext channelHandlerContext, DatagramPacket datagramPacket) throws Exception {
         String receiveText = datagramPacket.content().toString(CharsetUtil.UTF_8);
         String serverAddr = datagramPacket.sender().toString();
-        String formatReceiveMsg = MsgUtil.formatReceiveMsg(receiveText, serverAddr);
-        clientService.updateMsgList(formatReceiveMsg);
+        clientService.updateMsgList(new MsgLabel(MsgLabel.Type.RECEIVE, serverAddr, receiveText));
     }
 
 }

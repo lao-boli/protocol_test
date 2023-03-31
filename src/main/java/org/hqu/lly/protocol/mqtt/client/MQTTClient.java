@@ -15,6 +15,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
 import org.hqu.lly.domain.base.BaseClient;
+import org.hqu.lly.domain.component.MsgLabel;
 import org.hqu.lly.protocol.BaseHandler.BaseClientConnectHandler;
 import org.hqu.lly.protocol.mqtt.client.handler.MQTTClientExceptionHandler;
 import org.hqu.lly.protocol.mqtt.client.handler.MQTTClientMessageHandler;
@@ -56,7 +57,7 @@ public class MQTTClient extends BaseClient {
         channel.writeAndFlush(message);
         String formattedText = MsgUtil.formatSendMsg(message, channel.remoteAddress().toString());
         log.info(formattedText);
-        clientService.updateMsgList(formattedText);
+        clientService.updateMsgList(new MsgLabel(formattedText));
     }
 
 

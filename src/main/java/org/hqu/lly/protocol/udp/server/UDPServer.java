@@ -11,6 +11,7 @@ import io.netty.channel.socket.nio.NioDatagramChannel;
 import io.netty.util.CharsetUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.hqu.lly.domain.bean.ConnectionlessServer;
+import org.hqu.lly.domain.component.MsgLabel;
 import org.hqu.lly.protocol.udp.server.handler.UDPServerHandler;
 import org.hqu.lly.service.impl.ConnectionlessServerService;
 import org.hqu.lly.service.impl.ServerService;
@@ -92,9 +93,8 @@ public class UDPServer extends ConnectionlessServer {
     @Override
     public void sendMessage(String message, InetSocketAddress dstAddr) {
         channel.writeAndFlush(new DatagramPacket(Unpooled.copiedBuffer(message, CharsetUtil.UTF_8), dstAddr));
-        String formatSendMsg = MsgUtil.formatSendMsg(message, dstAddr.toString());
-        serverService.updateMsgList(formatSendMsg);
-        log.info(formatSendMsg);
+        serverService.updateMsgList(new MsgLabel(MsgLabel.Type.SEND, dstAddr.toString(),message));
+        log.info(MsgUtil.formatSendMsg(message, dstAddr.toString()));
     }
 
 }

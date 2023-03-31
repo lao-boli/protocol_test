@@ -7,6 +7,7 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.mqtt.*;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.hqu.lly.domain.component.MsgLabel;
 import org.hqu.lly.protocol.mqtt.server.group.MQTTChannelGroup;
 import org.hqu.lly.protocol.mqtt.server.util.MqttMsgBack;
 import org.hqu.lly.service.impl.ConnectedServerService;
@@ -41,7 +42,7 @@ public class MQTTServerConnectHandler extends SimpleChannelInboundHandler<MqttMe
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         Channel channel = ctx.channel();
         log.info("server: {} connect with client: {}", channel.localAddress(), channel.remoteAddress());
-        serverService.updateMsgList("连接成功,客户端地址为: " + channel.remoteAddress().toString());
+        serverService.updateMsgList(new MsgLabel("连接成功,客户端地址为: " + channel.remoteAddress().toString()));
         serverService.addChannel(channel);
         MQTTChannelGroup.clientChannelGroup.put(channel.id().toString(), channel);
     }
@@ -113,7 +114,7 @@ public class MQTTServerConnectHandler extends SimpleChannelInboundHandler<MqttMe
         Channel channel = ctx.channel();
         MQTTChannelGroup.clientChannelGroup.remove(channel.id().toString());
         log.info("server: {} disconnect form client: {}", channel.localAddress(), channel.remoteAddress());
-        serverService.updateMsgList("与客户端断开连接, 客户端地址: " + channel.remoteAddress().toString());
+        serverService.updateMsgList(new MsgLabel("与客户端断开连接, 客户端地址: " + channel.remoteAddress().toString()));
         serverService.removeChannel(channel);
     }
 

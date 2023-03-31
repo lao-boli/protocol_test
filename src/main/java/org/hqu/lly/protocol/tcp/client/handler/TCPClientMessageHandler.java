@@ -3,8 +3,8 @@ package org.hqu.lly.protocol.tcp.client.handler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import lombok.extern.slf4j.Slf4j;
+import org.hqu.lly.domain.component.MsgLabel;
 import org.hqu.lly.service.impl.ClientService;
-import org.hqu.lly.utils.MsgUtil;
 
 /**
  * <p>
@@ -27,10 +27,7 @@ public class TCPClientMessageHandler extends SimpleChannelInboundHandler<String>
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, String msg) {
         String serverAddr = ctx.channel().remoteAddress().toString();
-        String receiveText = msg;
-        String formattedReceiveText = MsgUtil.formatReceiveMsg(receiveText, serverAddr);
-        clientService.updateMsgList(formattedReceiveText);
-        log.info(formattedReceiveText);
+        clientService.updateMsgList(new MsgLabel(MsgLabel.Type.RECEIVE, serverAddr, msg));
     }
 
 }

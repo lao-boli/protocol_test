@@ -1,11 +1,15 @@
 package org.hqu.lly.view.controller;
 
+import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.input.MouseEvent;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.hqu.lly.constant.ContentPaneConsts;
 import org.hqu.lly.domain.config.Config;
 import org.hqu.lly.domain.config.TabConfig;
@@ -26,6 +30,7 @@ import java.util.ResourceBundle;
  * @version 1.0
  * @date 2022/8/8 9:51
  */
+@Slf4j
 public class TabPaneController extends BaseController implements Initializable {
 
     /**
@@ -113,7 +118,7 @@ public class TabPaneController extends BaseController implements Initializable {
         // XXX 当前方式会导致当tab页关闭时controller不能及时移除，
         //  只是标记已移除，保证在保存时能够跳过.待优化实现。
         for (BaseController controller : controllers) {
-            if (controller.isDestroyed()){
+            if (controller.isDestroyed()) {
                 continue;
             }
             Config subTabConfig = controller.saveAndGetConfig();
@@ -125,6 +130,20 @@ public class TabPaneController extends BaseController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        // 阻止"+"标签页的拖拽事件
+        createTab.getGraphic().addEventHandler(MouseEvent.MOUSE_DRAGGED, Event::consume);
+        ObservableList<Tab> tabs = mainTabPane.getTabs();
+        tabs.addListener((ListChangeListener<Tab>) c -> {
+            while (c.next()) {
+                if (c.wasPermutated()) {
+                    // 若最后一个标签页不是"+",则替换为"+"
+                    if (!tabs.get(tabs.size() - 1).equals(createTab)) {
+                        tabs.remove(createTab);
+                        tabs.add(createTab);
+                    }
+                }
+            }
+        });
     }
 
 }

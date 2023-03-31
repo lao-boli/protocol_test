@@ -15,11 +15,11 @@ import io.netty.handler.codec.http.websocketx.WebSocketVersion;
 import io.netty.handler.stream.ChunkedWriteHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.hqu.lly.domain.base.BaseClient;
+import org.hqu.lly.domain.component.MsgLabel;
 import org.hqu.lly.protocol.websocket.client.handler.WebSocketClientConnectHandler;
 import org.hqu.lly.protocol.websocket.client.handler.WebSocketClientExceptionHandler;
 import org.hqu.lly.protocol.websocket.client.handler.WebSocketClientMessageHandler;
 import org.hqu.lly.service.impl.ClientService;
-import org.hqu.lly.utils.MsgUtil;
 
 import java.net.ConnectException;
 import java.net.URI;
@@ -110,10 +110,10 @@ public class WebSocketClient extends BaseClient {
     }
 
     @Override
-    public void sendMessage(String message) {
-        super.sendMessage(message);
-        channel.writeAndFlush(new TextWebSocketFrame(message));
-        clientService.updateMsgList(MsgUtil.formatSendMsg(message, channel.remoteAddress().toString()));
+    public void sendMessage(String msg) {
+        super.sendMessage(msg);
+        channel.writeAndFlush(new TextWebSocketFrame(msg));
+        clientService.updateMsgList(new MsgLabel(MsgLabel.Type.SEND, channel.remoteAddress().toString(), msg));
     }
 
     @Override

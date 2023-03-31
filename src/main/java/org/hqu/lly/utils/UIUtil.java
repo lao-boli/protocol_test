@@ -15,6 +15,7 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import lombok.extern.slf4j.Slf4j;
+import org.hqu.lly.domain.component.MsgLabel;
 
 /**
  * <p>
@@ -55,15 +56,15 @@ public class UIUtil {
      * 获取有阴影的窗口{@link Scene}
      * </p>
      *
-     * @param pane 要显示的面板节点
-     * @param width 窗口宽度
+     * @param pane   要显示的面板节点
+     * @param width  窗口宽度
      * @param height 窗口高度
      * @return {@link Scene} 有阴影的窗口
      * @date 2023-02-07 14:49:07 <br>
      */
     public static Scene getShadowScene(Parent pane, double width, double height) {
         BorderPane borderPane = new BorderPane(pane);
-        pane.setEffect(new DropShadow(BlurType.GAUSSIAN, Color.BLACK,5,0.1,0,0));
+        pane.setEffect(new DropShadow(BlurType.GAUSSIAN, Color.BLACK, 5, 0.1, 0, 0));
         borderPane.setPadding(new Insets(5, 5, 5, 5));
 
         // 以css的方式设置背景为透明，防止被其他css覆盖
@@ -142,29 +143,26 @@ public class UIUtil {
     }
 
     /**
-     * <p>
-     * 消息列表菜单
-     * </p>
+     * 获取消息列表菜单
      *
      * @param msgList 要设置菜单的消息列表本身
      * @return {@link ContextMenu} 菜单
-     * @date 2022-09-24 14:50:53 <br>
+     * @date 2023-03-26 20:10
      */
-    public static ContextMenu getMsgListMenu(ListView<Label> msgList) {
+    public static ContextMenu getMsgListMenu(ListView<MsgLabel> msgList) {
         ContextMenu menu = new ContextMenu();
 
         // 复制整条消息
         MenuItem copyItem = new MenuItem("copy");
         copyItem.setOnAction((ActionEvent e) -> {
-            copyToClipboard(msgList.getSelectionModel().getSelectedItem().getText());
+            MsgLabel msgLabel = msgList.getSelectionModel().getSelectedItem();
+            copyToClipboard(msgLabel.getFullText());
         });
 
         // 只复制消息内容
         MenuItem copyContentItem = new MenuItem("copy content");
         copyContentItem.setOnAction((ActionEvent e) -> {
-            // 正则匹配消息头
-            String pattern = "[\\s\\S]+?\\]\\s";
-            String contentText = msgList.getSelectionModel().getSelectedItem().getText().replaceFirst(pattern, "");
+            String contentText = msgList.getSelectionModel().getSelectedItem().getMsgText().getText();
             copyToClipboard(contentText);
         });
 
@@ -184,21 +182,6 @@ public class UIUtil {
         ClipboardContent content = new ClipboardContent();
         content.putString(text);
         clipboard.setContent(content);
-    }
-
-    /**
-     * <p>
-     * 改变消息label的状态(超长文本是否换行)
-     * </p>
-     *
-     * @param msgLabel 消息label
-     * @param fixWidth label宽度,用于指定在何地换行
-     * @param softWrap 长消息是否换行标识
-     * @date 2022-09-24 09:17:06 <br>
-     */
-    public static void changeMsgLabel(Label msgLabel, double fixWidth, boolean softWrap) {
-        msgLabel.setPrefWidth(fixWidth);
-        msgLabel.setWrapText(softWrap);
     }
 
 }

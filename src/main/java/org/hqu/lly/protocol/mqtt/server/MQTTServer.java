@@ -15,6 +15,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
 import org.hqu.lly.domain.bean.ConnectedServer;
+import org.hqu.lly.domain.component.MsgLabel;
 import org.hqu.lly.protocol.mqtt.router.NodeType;
 import org.hqu.lly.protocol.mqtt.router.TopicNode;
 import org.hqu.lly.protocol.mqtt.server.group.MQTTChannelGroup;
@@ -127,7 +128,7 @@ public class MQTTServer extends ConnectedServer {
     public void sendMessage(String msg, Channel channel) {
         channel.writeAndFlush(msg);
         String formatSendMsg = MsgUtil.formatSendMsg(msg, channel.remoteAddress().toString());
-        serverService.updateMsgList(formatSendMsg);
+        serverService.updateMsgList(new MsgLabel(formatSendMsg));
         log.info(formatSendMsg);
     }
 
@@ -150,17 +151,17 @@ public class MQTTServer extends ConnectedServer {
         mqttServer.setPort(8888);
         mqttServer.setService(new ConnectedServerService() {
             @Override
+            public void updateMsgList(MsgLabel msg) {
+
+            }
+
+            @Override
             public void addChannel(Channel channel) {
 
             }
 
             @Override
             public void removeChannel(Channel channel) {
-
-            }
-
-            @Override
-            public void updateMsgList(String msg) {
 
             }
 

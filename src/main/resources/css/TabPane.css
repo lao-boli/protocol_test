@@ -50,3 +50,6 @@
     -fx-background-insets: 0;
     -fx-background-radius: 3px, 3px;
 }
+.tab-pane > .tab-header-area > .headers-region > .tab:top > .tab-container > .tab-label{
+    -fx-content-display: graphic-only;
+}
