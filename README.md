@@ -83,7 +83,7 @@ javaw -jar protocol_test-0.1.0-beta.jar
 退出程序时将会弹出保存对话框，点击确认后即可保存配置(收发的历史消息将不会被保存)。  
 下次启动程序时将会自动加载配置。
 #### 工作流预览
-![workflow](https://github.com/lao-boli/protocol_test/blob/master/assets/master/workflow.gif)  
+![workflow](https://github.com/lao-boli/protocol_test/blob/master/assets/image/workflow.gif)  
 ## 预计开发功能
 * 对json(格式化)，hex，base64等数据传输格式支持(目前仅支持字符串)
 * 自定义的数据随机规则
