@@ -32,6 +32,8 @@ public abstract class CommonUIContorller extends BaseController {
      */
     protected DataType recvMsgType = PLAIN_TEXT;
 
+    protected DataType sendMsgType = PLAIN_TEXT;
+
     // region msg sidebar
 
     @FXML
@@ -118,7 +120,7 @@ public abstract class CommonUIContorller extends BaseController {
                             label.setPrefWidth(getFixMsgLabelWidth(msgList.getWidth()));
                         }
 
-                        label.changeFormat(PLAIN_TEXT, recvMsgType);
+                        label.convertTo(recvMsgType);
                     });
                 }
             }
@@ -140,7 +142,7 @@ public abstract class CommonUIContorller extends BaseController {
             }
             DataType from = (DataType) oldValue.getUserData();
             DataType to = (DataType) newValue.getUserData();
-            msgList.getItems().forEach(msgLabel -> msgLabel.changeFormat(from, to));
+            msgList.getItems().forEach(msgLabel -> msgLabel.convertTo(to));
             recvMsgType = to;
         });
         setupFormatBtn(toggleGroup, recvFormatBtn);
@@ -158,14 +160,18 @@ public abstract class CommonUIContorller extends BaseController {
             if (oldValue == null || newValue == null) {
                 return;
             }
+            DataType from = (DataType) oldValue.getUserData();
+            DataType to = (DataType) newValue.getUserData();
             String converted;
             try {
-                converted = MsgUtil.convertText((DataType) oldValue.getUserData(), (DataType) newValue.getUserData(), msgInput.getText());
+                converted = MsgUtil.convertText(from, to, msgInput.getText());
+                sendMsgType = to;
             } catch (Exception e) {
                 log.warn(e.toString());
                 // json格式转换出错时,保存原本的选项
                 converted = msgInput.getText();
                 toggleGroup.selectToggle(oldValue);
+                sendMsgType = from;
             }
             msgInput.setText(converted);
         });

@@ -27,6 +27,7 @@ import org.hqu.lly.service.ScheduledTaskService;
 import org.hqu.lly.service.impl.ClientService;
 import org.hqu.lly.service.impl.ScheduledSendService;
 import org.hqu.lly.utils.DataUtil;
+import org.hqu.lly.utils.MsgUtil;
 
 import java.net.URI;
 import java.net.URL;
@@ -35,6 +36,8 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
 
+import static org.hqu.lly.enums.DataType.HEX;
+import static org.hqu.lly.enums.DataType.PLAIN_TEXT;
 import static org.hqu.lly.utils.UIUtil.getMsgListMenu;
 import static org.hqu.lly.utils.UIUtil.getTooltip;
 
@@ -208,7 +211,11 @@ public abstract class BaseClientController<T extends BaseClient> extends CommonU
         // 普通文本模式
         String text = msgInput.getText();
         if (sendSettingConfig.isTextMode()) {
-            client.sendMessage(text);
+            if (sendMsgType == HEX) {
+                client.sendMessage(MsgUtil.convertText(HEX, PLAIN_TEXT, text));
+            } else {
+                client.sendMessage(text);
+            }
         }
 
         // 自定义格式模式

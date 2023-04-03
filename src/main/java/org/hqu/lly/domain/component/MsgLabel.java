@@ -1,5 +1,6 @@
 package org.hqu.lly.domain.component;
 
+import io.netty.util.CharsetUtil;
 import javafx.beans.property.BooleanProperty;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
@@ -12,9 +13,6 @@ import org.hqu.lly.utils.MsgUtil;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-
-import static org.hqu.lly.enums.DataType.JSON;
-import static org.hqu.lly.enums.DataType.PLAIN_TEXT;
 
 /**
  * <p>
@@ -33,7 +31,7 @@ public class MsgLabel extends TextFlow {
     /**
      * 消息类型枚举
      */
- public enum Type {
+    public enum Type {
         /**
          * 接收消息类型
          */
@@ -61,9 +59,9 @@ public class MsgLabel extends TextFlow {
     private Type type;
 
     /**
-     * 原始消息
+     * 原始消息字节数组
      */
-    private String rawMsg;
+    private byte[] msgBytes;
 
     /**
      * 普通消息构造器
@@ -82,9 +80,10 @@ public class MsgLabel extends TextFlow {
 
     /**
      * 网络消息构造器
+     *
      * @param type 消息类型 应为 {@link Type}中的值
      * @param host 消息收发地址
-     * @param msg 消息内容
+     * @param msg  消息内容
      */
     public MsgLabel(Type type, String host, String msg) {
         super();
@@ -116,7 +115,7 @@ public class MsgLabel extends TextFlow {
 
     private void initMsgText(String msg) {
         this.msgText = new Text(msg);
-        rawMsg = msg;
+        msgBytes = msg.getBytes(CharsetUtil.UTF_8);
     }
 
     public String getFullText() {
@@ -131,37 +130,32 @@ public class MsgLabel extends TextFlow {
         timeText.setVisible(showTime);
         timeText.setManaged(showTime);
     }
+
     public void showLength(boolean showLength) {
         lengthText.setVisible(showLength);
         lengthText.setManaged(showLength);
     }
+
     public void showHost(boolean showHost) {
         hostText.setVisible(showHost);
         hostText.setManaged(showHost);
     }
+
     public void showMsg(boolean showMsg) {
         msgText.setVisible(showMsg);
         msgText.setManaged(showMsg);
     }
 
-    public void changeFormat(DataType from, DataType to){
-        if (PLAIN_TEXT.equals(to)){
-            msgText.setText(rawMsg);
-            return;
-        }
-        String converted;
-        if (JSON.equals(from)){
-            converted = MsgUtil.convertText(from,to,rawMsg);
-        }else {
-            try {
-                converted = MsgUtil.convertText(from,to,msgText.getText());
-            } catch (Exception e) {
-                log.warn("msgLabel: {}",e.toString());
-                converted = msgText.getText();
-            }
-        }
-        msgText.setText(converted);
-
+    /**
+     * 将消息字节数组转换成 {@link DataType}中的各种格式.
+     *
+     * @param to 格式类型
+     * @date 2023-04-03 21:20
+     * @since 0.2.0
+     */
+    public void convertTo(DataType to) {
+        String result = MsgUtil.convertText(to, msgBytes);
+        msgText.setText(result);
     }
 
 }
