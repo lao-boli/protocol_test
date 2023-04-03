@@ -26,6 +26,7 @@ import org.hqu.lly.service.ScheduledTaskService;
 import org.hqu.lly.service.impl.ScheduledSendService;
 import org.hqu.lly.service.impl.ServerService;
 import org.hqu.lly.utils.DataUtil;
+import org.hqu.lly.utils.MsgUtil;
 import org.hqu.lly.utils.UIUtil;
 
 import java.net.URL;
@@ -35,6 +36,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
+
+import static org.hqu.lly.enums.DataType.HEX;
+import static org.hqu.lly.enums.DataType.PLAIN_TEXT;
 
 /**
  * <p>
@@ -241,7 +245,11 @@ public abstract class BaseServerController<T> extends CommonUIContorller impleme
             targetClientSet.forEach((client) -> {
                 String text = msgInput.getText();
                 if (sendSettingConfig.isTextMode()) {
-                    server.sendMessage(text, client);
+                    if (sendMsgType == HEX) {
+                        server.sendMessage(MsgUtil.convertText(HEX, PLAIN_TEXT, text), client);
+                    } else {
+                        server.sendMessage(text,client);
+                    }
                 }
 
                 try {
@@ -308,6 +316,9 @@ public abstract class BaseServerController<T> extends CommonUIContorller impleme
         setClientBox();
         // 功能按钮悬浮tip提示
         initBtnTips();
+        // 多格式设置
+        setupSendFormatBtn();
+        setupRecvFormatBtn();
         // 消息上下文菜单
         msgList.setContextMenu(UIUtil.getMsgListMenu(msgList));
         clientListBox.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);

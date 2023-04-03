@@ -22,7 +22,6 @@ import org.hqu.lly.domain.config.TopConfig;
 import org.hqu.lly.exception.UnSetBoundException;
 import org.hqu.lly.factory.SendSettingPaneFactory;
 import org.hqu.lly.factory.SendTaskFactory;
-import org.hqu.lly.protocol.udp.client.UDPClient;
 import org.hqu.lly.service.ScheduledTaskService;
 import org.hqu.lly.service.impl.ClientService;
 import org.hqu.lly.service.impl.ScheduledSendService;
@@ -275,8 +274,9 @@ public abstract class BaseClientController<T extends BaseClient> extends CommonU
 
     /**
      * <p>
-     *     销毁任务,断开连接、关闭tab页时调用
+     * 销毁任务,断开连接、关闭tab页时调用
      * </p>
+     *
      * @date 2023-02-24 20:22:37 <br>
      */
     public void destroyTask() {
@@ -323,10 +323,9 @@ public abstract class BaseClientController<T extends BaseClient> extends CommonU
         // 功能按钮悬浮tip提示
         initMsgSideBar();
         setupDisplaySetting();
-        if (client instanceof UDPClient) {
-            setupSendFormatBtn();
-            setupRecvFormatBtn();
-        }
+        // 多格式设置
+        setupSendFormatBtn();
+        setupRecvFormatBtn();
 
         // 消息上下文菜单
         msgList.setContextMenu(getMsgListMenu(msgList));
@@ -422,6 +421,7 @@ public abstract class BaseClientController<T extends BaseClient> extends CommonU
         public void updateMsgList(MsgLabel msg) {
             Platform.runLater(() -> msgList.getItems().add(msg));
         }
+
     }
 
 }
