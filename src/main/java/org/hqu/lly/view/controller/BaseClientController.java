@@ -2,7 +2,6 @@ package org.hqu.lly.view.controller;
 
 import io.netty.channel.Channel;
 import javafx.application.Platform;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -10,7 +9,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -24,6 +22,7 @@ import org.hqu.lly.domain.config.TopConfig;
 import org.hqu.lly.exception.UnSetBoundException;
 import org.hqu.lly.factory.SendSettingPaneFactory;
 import org.hqu.lly.factory.SendTaskFactory;
+import org.hqu.lly.protocol.udp.client.UDPClient;
 import org.hqu.lly.service.ScheduledTaskService;
 import org.hqu.lly.service.impl.ClientService;
 import org.hqu.lly.service.impl.ScheduledSendService;
@@ -36,7 +35,8 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
 
-import static org.hqu.lly.utils.UIUtil.*;
+import static org.hqu.lly.utils.UIUtil.getMsgListMenu;
+import static org.hqu.lly.utils.UIUtil.getTooltip;
 
 /**
  * <p>
@@ -51,11 +51,6 @@ import static org.hqu.lly.utils.UIUtil.*;
 public abstract class BaseClientController<T extends BaseClient> extends CommonUIContorller implements Initializable {
 
     protected Executor executor = Executors.newSingleThreadExecutor();
-
-    /**
-     * 长文本换行flag
-     */
-    protected boolean softWrap = false;
 
     /**
      * 发送设置面板
@@ -236,14 +231,6 @@ public abstract class BaseClientController<T extends BaseClient> extends CommonU
         msgList.refresh();
     }
 
-    @FXML
-    void handleSoftWrap(MouseEvent event) {
-        softWrap = !softWrap;
-        double labelWidth = softWrap ? getFixMsgLabelWidth(msgList.getWidth()) : Region.USE_COMPUTED_SIZE;
-        ObservableList<MsgLabel> msgItems = msgList.getItems();
-        msgItems.forEach(msgLabel -> msgLabel.setPrefWidth(labelWidth));
-        Platform.runLater(() -> msgList.setItems(msgItems));
-    }
 
     @FXML
     void scheduleSend(MouseEvent event) {
@@ -329,6 +316,10 @@ public abstract class BaseClientController<T extends BaseClient> extends CommonU
         // 功能按钮悬浮tip提示
         initMsgSideBar();
         setupDisplaySetting();
+        if (client instanceof UDPClient) {
+            setupSendFormatBtn();
+            setupRecvFormatBtn();
+        }
 
         // 消息上下文菜单
         msgList.setContextMenu(getMsgListMenu(msgList));

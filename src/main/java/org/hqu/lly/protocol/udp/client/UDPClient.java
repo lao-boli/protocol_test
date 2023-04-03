@@ -12,6 +12,7 @@ import io.netty.util.CharsetUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.hqu.lly.domain.base.BaseClient;
 import org.hqu.lly.domain.component.MsgLabel;
+import org.hqu.lly.enums.DataType;
 import org.hqu.lly.protocol.udp.client.handler.UDPClientHandler;
 import org.hqu.lly.service.impl.ClientService;
 
@@ -78,6 +79,12 @@ public class UDPClient extends BaseClient {
     @Override
     public void setService(ClientService clientService) {
         this.clientService = clientService;
+    }
+
+    @Override
+    public void sendMessage(String message, DataType type) {
+        super.sendMessage(message, type);
+        byte[] bytes = message.getBytes(CharsetUtil.UTF_8);
     }
 
     @Override

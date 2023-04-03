@@ -6,10 +6,15 @@ import javafx.scene.text.TextFlow;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
+import org.hqu.lly.enums.DataType;
 import org.hqu.lly.utils.CommonUtil;
+import org.hqu.lly.utils.MsgUtil;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+
+import static org.hqu.lly.enums.DataType.JSON;
+import static org.hqu.lly.enums.DataType.PLAIN_TEXT;
 
 /**
  * <p>
@@ -56,6 +61,11 @@ public class MsgLabel extends TextFlow {
     private Type type;
 
     /**
+     * 原始消息
+     */
+    private String rawMsg;
+
+    /**
      * 普通消息构造器
      *
      * @param msg 消息
@@ -66,7 +76,7 @@ public class MsgLabel extends TextFlow {
         initTimeText();
         this.hostText = new Text();
         this.lengthText = new Text();
-        this.msgText = new Text(msg);
+        initMsgText(msg);
         this.getChildren().addAll(this.timeText, this.hostText, this.lengthText, this.msgText);
     }
 
@@ -82,7 +92,7 @@ public class MsgLabel extends TextFlow {
         initTimeText();
         initHostText(host);
         initLengthText(msg);
-        this.msgText = new Text(msg);
+        initMsgText(msg);
         this.getChildren().addAll(this.timeText, this.hostText, this.lengthText, this.msgText);
     }
 
@@ -102,6 +112,11 @@ public class MsgLabel extends TextFlow {
         }
         sb.append(host).append(" :");
         this.hostText = new Text(sb.toString());
+    }
+
+    private void initMsgText(String msg) {
+        this.msgText = new Text(msg);
+        rawMsg = msg;
     }
 
     public String getFullText() {
@@ -127,6 +142,26 @@ public class MsgLabel extends TextFlow {
     public void showMsg(boolean showMsg) {
         msgText.setVisible(showMsg);
         msgText.setManaged(showMsg);
+    }
+
+    public void changeFormat(DataType from, DataType to){
+        if (PLAIN_TEXT.equals(to)){
+            msgText.setText(rawMsg);
+            return;
+        }
+        String converted;
+        if (JSON.equals(from)){
+            converted = MsgUtil.convertText(from,to,rawMsg);
+        }else {
+            try {
+                converted = MsgUtil.convertText(from,to,msgText.getText());
+            } catch (Exception e) {
+                log.warn("msgLabel: {}",e.toString());
+                converted = msgText.getText();
+            }
+        }
+        msgText.setText(converted);
+
     }
 
 }
