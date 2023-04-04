@@ -32,6 +32,7 @@ public class ResLoc {
 
     public static final URL MAX_ICON = realPath("icon/max.png");
     public static final URL RESTORE_ICON = realPath("icon/restore.png");
+    public static final URL WARN_ICON = realPath("icon/warn.png");
 
     /**
      * <p>

@@ -2,17 +2,25 @@ package org.hqu.lly.domain.component;
 
 import io.netty.util.CharsetUtil;
 import javafx.beans.property.BooleanProperty;
+import javafx.scene.control.ContentDisplay;
+import javafx.scene.control.Label;
+import javafx.scene.control.Tooltip;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
+import org.hqu.lly.constant.ResLoc;
 import org.hqu.lly.enums.DataType;
 import org.hqu.lly.utils.CommonUtil;
-import org.hqu.lly.utils.MsgUtil;
+import org.hqu.lly.utils.UIUtil;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+
+import static org.hqu.lly.utils.MsgUtil.*;
 
 /**
  * <p>
@@ -62,6 +70,10 @@ public class MsgLabel extends TextFlow {
      * 原始消息字节数组
      */
     private byte[] msgBytes;
+
+    private Label warn;
+
+    private Tooltip warnTip = new Tooltip("");
 
     /**
      * 普通消息构造器
@@ -146,6 +158,15 @@ public class MsgLabel extends TextFlow {
         msgText.setManaged(showMsg);
     }
 
+    public void showWarn(boolean show) {
+        if (warn == null) {
+            initWarn();
+            this.getChildren().add(0, warn);
+        }
+        warn.setVisible(show);
+        warn.setManaged(show);
+    }
+
     /**
      * 将消息字节数组转换成 {@link DataType}中的各种格式.
      *
@@ -154,8 +175,58 @@ public class MsgLabel extends TextFlow {
      * @since 0.2.0
      */
     public void convertTo(DataType to) {
-        String result = MsgUtil.convertText(to, msgBytes);
+        showWarn(false);
+
+        String result = new String(msgBytes, CharsetUtil.UTF_8);
+        result = switch (to) {
+            case PLAIN_TEXT -> result;
+            case HEX -> byteToHex(msgBytes);
+            case BASE64 -> {
+                try {
+                    yield decodeBase64(msgBytes);
+                } catch (IllegalArgumentException e) {
+                    // 非法base64字符就将其当做plainText返回
+                    log.warn(e.toString());
+                    warnTip.setText("转码Base64失败,\n数据将以普通文本显示");
+                    showWarn(true);
+                    yield result;
+                }
+            }
+            case JSON -> {
+                try {
+                    yield jsonFormat(result);
+                } catch (Exception e) {
+                    // 非法json字符就将其当做plainText返回
+                    log.warn(e.toString());
+                    showWarn(true);
+                    warnTip.setText("转码Json失败,\n数据将以普通文本显示");
+                    yield result;
+                }
+            }
+        };
         msgText.setText(result);
+    }
+
+    /**
+     * 初始化警告图标
+     *
+     * @date 2023-04-04 19:18
+     * @since 0.2.0
+     */
+    public void initWarn() {
+        warn = new Label();
+        warn.setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
+
+        ImageView warnIcon = new ImageView(new Image(ResLoc.WARN_ICON.toString()));
+        warnIcon.setFitHeight(15);
+        warnIcon.setFitWidth(15);
+        warnIcon.setPreserveRatio(true);
+        warnIcon.setPickOnBounds(true);
+
+        warn.setGraphic(warnIcon);
+
+        UIUtil.setTooltip(warn, warnTip);
+
     }
 
 }
