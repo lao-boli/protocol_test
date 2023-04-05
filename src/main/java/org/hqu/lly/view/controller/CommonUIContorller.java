@@ -12,6 +12,7 @@ import org.hqu.lly.domain.component.MessagePopup;
 import org.hqu.lly.domain.component.MsgLabel;
 import org.hqu.lly.enums.DataType;
 import org.hqu.lly.utils.MsgUtil;
+import org.hqu.lly.utils.UIUtil;
 
 import static org.hqu.lly.enums.DataType.*;
 import static org.hqu.lly.utils.UIUtil.getFixMsgLabelWidth;
@@ -211,6 +212,8 @@ public abstract class CommonUIContorller extends BaseController {
         formatBtn.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
             contextMenu.show(formatBtn, Side.RIGHT, 0, 0);
         });
+
+        formatBtn.setTooltip(UIUtil.getTooltip("编码设置"));
     }
 
     @FXML
