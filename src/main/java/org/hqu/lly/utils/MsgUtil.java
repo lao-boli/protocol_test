@@ -242,6 +242,7 @@ public class MsgUtil {
     /**
      * 转换文本格式(plainText,hex,base64,json) <br>
      * 注:普通文本转换为json后将无法转换回来.
+     * Base64编码若转换失败,会以plainText的形式返回.
      *
      * @param form 文本原格式
      * @param to   要转换的格式
