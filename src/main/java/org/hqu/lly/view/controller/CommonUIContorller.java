@@ -8,6 +8,7 @@ import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
 import lombok.extern.slf4j.Slf4j;
+import org.hqu.lly.domain.component.MessagePopup;
 import org.hqu.lly.domain.component.MsgLabel;
 import org.hqu.lly.enums.DataType;
 import org.hqu.lly.utils.MsgUtil;
@@ -172,6 +173,8 @@ public abstract class CommonUIContorller extends BaseController {
                 converted = msgInput.getText();
                 toggleGroup.selectToggle(oldValue);
                 sendMsgType = from;
+
+                new MessagePopup(e.toString()).showPopup();
             }
             msgInput.setText(converted);
         });

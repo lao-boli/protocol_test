@@ -233,7 +233,7 @@ public class UIUtil {
      * @param text 要复制的文本
      * @date 2022-09-24 10:35:43 <br>
      */
-    private static void copyToClipboard(String text) {
+    public static void copyToClipboard(String text) {
         ClipboardContent content = new ClipboardContent();
         content.putString(text);
         clipboard.setContent(content);
