@@ -256,6 +256,11 @@ public abstract class BaseServerController<T> extends CommonUIContorller impleme
                     if (sendSettingConfig.isCustomMode()) {
                         CustomDataConfig customDataConfig = sendSettingConfig.getCustomDataConfig();
                         String msg = DataUtil.createMsg(customDataConfig.getCustomDataPattern(), customDataConfig.getBoundList());
+                        if (sendMsgType == HEX) {
+                            server.sendMessage(MsgUtil.convertText(HEX, PLAIN_TEXT, text), client);
+                        } else {
+                            server.sendMessage(text,client);
+                        }
                         server.sendMessage(msg, client);
                     }
                 } catch (UnSetBoundException e) {

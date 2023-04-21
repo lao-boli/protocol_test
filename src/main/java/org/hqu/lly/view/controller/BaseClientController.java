@@ -222,7 +222,11 @@ public abstract class BaseClientController<T extends BaseClient> extends CommonU
             if (sendSettingConfig.isCustomMode()) {
                 CustomDataConfig customDataConfig = sendSettingConfig.getCustomDataConfig();
                 String msg = DataUtil.createMsg(customDataConfig.getCustomDataPattern(), customDataConfig.getBoundList());
-                client.sendMessage(msg);
+                if (sendMsgType == HEX) {
+                    client.sendMessage(MsgUtil.convertText(HEX, PLAIN_TEXT, msg));
+                } else {
+                    client.sendMessage(msg);
+                }
             }
         } catch (UnSetBoundException e) {
             log.warn(e.getMessage());
