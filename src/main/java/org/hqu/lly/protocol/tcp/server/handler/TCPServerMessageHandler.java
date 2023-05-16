@@ -29,10 +29,9 @@ public class TCPServerMessageHandler extends SimpleChannelInboundHandler<String>
         String clientAddr = ctx.channel().remoteAddress().toString();
         serverService.updateMsgList(new MsgLabel(MsgLabel.Type.RECEIVE, clientAddr, msg));
 
-        String responseText = "your message is " + msg;
-        serverService.updateMsgList(new MsgLabel(MsgLabel.Type.SEND, clientAddr, responseText));
+        serverService.updateMsgList(new MsgLabel(MsgLabel.Type.SEND, clientAddr, msg));
 
-        ctx.channel().writeAndFlush(responseText);
+        ctx.channel().writeAndFlush(msg);
     }
 
 }

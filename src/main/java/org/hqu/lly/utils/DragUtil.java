@@ -49,6 +49,11 @@ public class DragUtil {
     }
     public static void setDrag(Stage stage , BorderPane root){
         root.addEventFilter(MouseEvent.MOUSE_MOVED, event -> {
+            // 窗口最大化时不触发缩放事件
+            if (((Stage) root.getScene().getWindow()).isMaximized()){
+                return;
+            }
+
             cursorType = Cursor.DEFAULT;
             double x = event.getSceneX();
             double y = event.getSceneY();
@@ -99,8 +104,6 @@ public class DragUtil {
         root.addEventFilter(MouseEvent.MOUSE_DRAGGED, event -> {
             double x = event.getSceneX();
             double y = event.getSceneY();
-            // System.out.printf("x: %f, y: %f,sx: %f, sy: %f, width: %f, height: %f%n", x, y, stageX, stage.getY(), width, height);
-            // System.out.printf("scrx: %f%n", event.getScreenX() - dragOffsetX);
             if (cursorType.equals(N_RESIZE)){
                 stage.setHeight(heightPos - event.getScreenY());
                 stage.setY(event.getScreenY() - dragOffsetY);
@@ -112,8 +115,6 @@ public class DragUtil {
                 // 从左边resize时，采用记录右侧边位置减去光标x坐标的方式计算宽度
                 stage.setWidth(widthPos - event.getScreenX());
                 stage.setX(event.getScreenX() - dragOffsetX);
-                // System.out.printf("wp: %f, scrx: %f, dis: %f%n",widthPos,event.getScreenX(), event.getScreenX() - dragOffsetX);
-                // System.out.printf("scrx: %f, off: %f, dis: %f%n",event.getScreenX(),dragOffsetX, event.getScreenX() - dragOffsetX);
             }
             if (cursorType.equals(E_RESIZE)){
                 stage.setWidth(x);
@@ -133,32 +134,14 @@ public class DragUtil {
                 stage.setHeight(heightPos - event.getScreenY());
                 stage.setY(event.getScreenY() - dragOffsetY);
             }
-            // stage.setX(stage.getX() + internal(x,width));
-            // stage.setHeight(y);
         });
     }
 
     private static void smoothResize(MouseEvent event, Stage stage) {
         // TODO 等待优化平滑算法
-/*
-        double width = stage.getWidth();
-        double maxWidth = widthPos - event.getScreenX();
-        double offset = (maxWidth - width)/100;
-        double stageX = stage.getX();
-        double posOffset = (event.getScreenX()- stageX)/100;
-        System.out.printf("offset: %f%n",offset);
-        for (int i = 0; i < 100; i++) {
-            System.out.println(offset + " " + i);
-            stage.setWidth(width + offset * (i+1));
-            stage.setX(stageX + posOffset * (i+1) - (dragOffsetX/100) *(i +1));
-            System.out.printf("x: %f%n",stage.getX());
-        }
-        System.out.printf("exp x: %f,real x: %f, exp: %f,real: %f%n",event.getScreenX() - dragOffsetX,stage.getX(),maxWidth,stage.getWidth());
-        System.out.printf("exp wp: %f, real: %f%n",widthPos,stage.getX() + stage.getWidth());
-*/
-
-        // stage.setWidth(maxWidth);
-        // stage.setX(stageX + (event.getScreenX() - stageX)/10 - dragOffsetX);
+        // 对不起,做不到。✋🙁
+        // VS Code 从左边resize的时候都会抖。
+        // 我怎能让它不抖？。。怎有力量让它不抖了？
     }
 
     private static double internal(double a, double b){

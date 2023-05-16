@@ -1,6 +1,8 @@
 package org.hqu.lly.utils;
 
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -9,6 +11,7 @@ import javafx.scene.effect.BlurType;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
@@ -75,6 +78,7 @@ public class UIUtil {
         return scene;
 
     }
+
     public static void noShadowScene(Parent pane) {
         BorderPane borderPane = new BorderPane(pane);
         pane.setEffect(null);
@@ -107,6 +111,57 @@ public class UIUtil {
      */
     public static Tooltip getTooltip(String content) {
         return getTooltip(content, 300);
+    }
+
+    /**
+     * 为控件设置鼠标移入控件时显示,移出控件时隐藏的tooltip
+     *
+     * @param control 控件
+     * @param tooltip 为控件添加的tooltip
+     * @date 2023-04-04 19:15
+     * @since 0.2.0
+     */
+    public static void setTooltip(Control control, Tooltip tooltip) {
+        setTooltip(control, tooltip, event -> {
+            // 设置提示显示位置
+            Bounds bounds = control.localToScreen(control.getBoundsInLocal());
+            tooltip.show(control, bounds.getMinX(), bounds.getMinY() - 30);
+        });
+    }
+
+    /**
+     *
+     * 为控件设置鼠标移出控件时隐藏的tooltip
+     *
+     * @param control 控件
+     * @param tooltip 为控件添加的tooltip
+     * @param onEnter 鼠标移入控件时回调
+     * @date 2023-04-04 19:15
+     * @since 0.2.0
+     */
+    public static void setTooltip(Control control, Tooltip tooltip, EventHandler<? super MouseEvent> onEnter) {
+        // 移动出标题框就隐藏提示框
+        setTooltip(control, tooltip, onEnter, event -> tooltip.hide());
+    }
+
+    /**
+     *
+     * 为控件设置tooltip
+     *
+     * @param control 控件
+     * @param tooltip 为控件添加的tooltip
+     * @param onEnter 鼠标移入控件时回调
+     * @param onExited 鼠标移出控件时回调
+     * @date 2023-04-04 19:15
+     * @since 0.2.0
+     */
+    public static void setTooltip(Control control, Tooltip tooltip, EventHandler<? super MouseEvent> onEnter, EventHandler<MouseEvent> onExited) {
+        // 生成提示框，出现时间设为极大，
+        // 不让其自动出现，而是通过函数手动控制。
+        tooltip.setShowDelay(new Duration(Integer.MAX_VALUE));
+        control.addEventFilter(MouseEvent.MOUSE_ENTERED, onEnter);
+        control.addEventFilter(MouseEvent.MOUSE_EXITED, onExited);
+        control.setTooltip(tooltip);
     }
 
     /**
@@ -178,7 +233,7 @@ public class UIUtil {
      * @param text 要复制的文本
      * @date 2022-09-24 10:35:43 <br>
      */
-    private static void copyToClipboard(String text) {
+    public static void copyToClipboard(String text) {
         ClipboardContent content = new ClipboardContent();
         content.putString(text);
         clipboard.setContent(content);

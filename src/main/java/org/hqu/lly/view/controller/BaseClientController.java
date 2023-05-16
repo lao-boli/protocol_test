@@ -2,7 +2,6 @@ package org.hqu.lly.view.controller;
 
 import io.netty.channel.Channel;
 import javafx.application.Platform;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -10,7 +9,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -28,6 +26,7 @@ import org.hqu.lly.service.ScheduledTaskService;
 import org.hqu.lly.service.impl.ClientService;
 import org.hqu.lly.service.impl.ScheduledSendService;
 import org.hqu.lly.utils.DataUtil;
+import org.hqu.lly.utils.MsgUtil;
 
 import java.net.URI;
 import java.net.URL;
@@ -36,7 +35,10 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
 
-import static org.hqu.lly.utils.UIUtil.*;
+import static org.hqu.lly.enums.DataType.HEX;
+import static org.hqu.lly.enums.DataType.PLAIN_TEXT;
+import static org.hqu.lly.utils.UIUtil.getMsgListMenu;
+import static org.hqu.lly.utils.UIUtil.getTooltip;
 
 /**
  * <p>
@@ -51,11 +53,6 @@ import static org.hqu.lly.utils.UIUtil.*;
 public abstract class BaseClientController<T extends BaseClient> extends CommonUIContorller implements Initializable {
 
     protected Executor executor = Executors.newSingleThreadExecutor();
-
-    /**
-     * 长文本换行flag
-     */
-    protected boolean softWrap = false;
 
     /**
      * 发送设置面板
@@ -213,7 +210,11 @@ public abstract class BaseClientController<T extends BaseClient> extends CommonU
         // 普通文本模式
         String text = msgInput.getText();
         if (sendSettingConfig.isTextMode()) {
-            client.sendMessage(text);
+            if (sendMsgType == HEX) {
+                client.sendMessage(MsgUtil.convertText(HEX, PLAIN_TEXT, text));
+            } else {
+                client.sendMessage(text);
+            }
         }
 
         // 自定义格式模式
@@ -221,7 +222,11 @@ public abstract class BaseClientController<T extends BaseClient> extends CommonU
             if (sendSettingConfig.isCustomMode()) {
                 CustomDataConfig customDataConfig = sendSettingConfig.getCustomDataConfig();
                 String msg = DataUtil.createMsg(customDataConfig.getCustomDataPattern(), customDataConfig.getBoundList());
-                client.sendMessage(msg);
+                if (sendMsgType == HEX) {
+                    client.sendMessage(MsgUtil.convertText(HEX, PLAIN_TEXT, msg));
+                } else {
+                    client.sendMessage(msg);
+                }
             }
         } catch (UnSetBoundException e) {
             log.warn(e.getMessage());
@@ -236,14 +241,6 @@ public abstract class BaseClientController<T extends BaseClient> extends CommonU
         msgList.refresh();
     }
 
-    @FXML
-    void handleSoftWrap(MouseEvent event) {
-        softWrap = !softWrap;
-        double labelWidth = softWrap ? getFixMsgLabelWidth(msgList.getWidth()) : Region.USE_COMPUTED_SIZE;
-        ObservableList<MsgLabel> msgItems = msgList.getItems();
-        msgItems.forEach(msgLabel -> msgLabel.setPrefWidth(labelWidth));
-        Platform.runLater(() -> msgList.setItems(msgItems));
-    }
 
     @FXML
     void scheduleSend(MouseEvent event) {
@@ -281,8 +278,9 @@ public abstract class BaseClientController<T extends BaseClient> extends CommonU
 
     /**
      * <p>
-     *     销毁任务,断开连接、关闭tab页时调用
+     * 销毁任务,断开连接、关闭tab页时调用
      * </p>
+     *
      * @date 2023-02-24 20:22:37 <br>
      */
     public void destroyTask() {
@@ -329,6 +327,9 @@ public abstract class BaseClientController<T extends BaseClient> extends CommonU
         // 功能按钮悬浮tip提示
         initMsgSideBar();
         setupDisplaySetting();
+        // 多格式设置
+        setupSendFormatBtn();
+        setupRecvFormatBtn();
 
         // 消息上下文菜单
         msgList.setContextMenu(getMsgListMenu(msgList));
@@ -424,6 +425,7 @@ public abstract class BaseClientController<T extends BaseClient> extends CommonU
         public void updateMsgList(MsgLabel msg) {
             Platform.runLater(() -> msgList.getItems().add(msg));
         }
+
     }
 
 }

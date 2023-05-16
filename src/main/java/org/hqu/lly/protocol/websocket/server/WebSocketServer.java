@@ -16,6 +16,7 @@ import org.hqu.lly.domain.component.MsgLabel;
 import org.hqu.lly.protocol.websocket.server.initalizer.WebSocketServerChannelInitializer;
 import org.hqu.lly.service.impl.ConnectedServerService;
 import org.hqu.lly.service.impl.ServerService;
+import org.hqu.lly.utils.CommonUtil;
 
 import java.net.BindException;
 
@@ -61,6 +62,7 @@ public class WebSocketServer extends ConnectedServer {
                 }
             });
             log.info("websocket start successful at {}", channel.localAddress());
+            showAddrs();
             serverService.onStart();
         } catch (Exception e) {
             workerGroup.shutdownGracefully();
@@ -73,6 +75,15 @@ public class WebSocketServer extends ConnectedServer {
                 log.error("websocket start fail, cause: {}", e.toString());
             }
         }
+    }
+
+    /**
+     * 显示当前服务的可访问IP地址
+     */
+    private void showAddrs() {
+        CommonUtil.getLocalAddrs().stream()
+                .map(address -> new MsgLabel("NetWork: " + address + ":" + port))
+                .forEach(serverService::updateMsgList);
     }
 
     @Override

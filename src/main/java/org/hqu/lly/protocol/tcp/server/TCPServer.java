@@ -23,6 +23,7 @@ import org.hqu.lly.protocol.tcp.server.handler.TCPServerExceptionHandler;
 import org.hqu.lly.protocol.tcp.server.handler.TCPServerMessageHandler;
 import org.hqu.lly.service.impl.ConnectedServerService;
 import org.hqu.lly.service.impl.ServerService;
+import org.hqu.lly.utils.CommonUtil;
 import org.hqu.lly.utils.MsgUtil;
 
 import java.net.BindException;
@@ -84,7 +85,10 @@ public class TCPServer extends ConnectedServer {
                 log.info("tcp server closed");
             });
             log.info("tcp server start successful at " + channel.localAddress());
+
             serverService.onStart();
+            showAddrs();
+
         } catch (Exception e) {
             bossGroup.shutdownGracefully();
             workerGroup.shutdownGracefully();
@@ -95,6 +99,15 @@ public class TCPServer extends ConnectedServer {
                 log.error("tcp server error", e);
             }
         }
+    }
+
+    /**
+     * 显示当前服务的可访问IP地址
+     */
+    private void showAddrs() {
+        CommonUtil.getLocalAddrs().stream()
+                .map(address -> new MsgLabel("NetWork: " + address + ":" + port))
+                .forEach(serverService::updateMsgList);
     }
 
 

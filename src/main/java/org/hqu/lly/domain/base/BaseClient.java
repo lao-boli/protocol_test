@@ -1,6 +1,7 @@
 package org.hqu.lly.domain.base;
 
 import io.netty.channel.Channel;
+import org.hqu.lly.enums.DataType;
 import org.hqu.lly.exception.ChannelInactiveException;
 import org.hqu.lly.service.impl.ClientService;
 
@@ -28,6 +29,12 @@ public abstract class BaseClient implements Callable<Channel> {
     public abstract void setService(ClientService clientService);
 
     public void sendMessage(String message){
+        if (!channel.isActive()){
+            throw new ChannelInactiveException();
+        }
+    }
+
+    public void sendMessage(String message, DataType type){
         if (!channel.isActive()){
             throw new ChannelInactiveException();
         }

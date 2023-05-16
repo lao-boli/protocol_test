@@ -157,6 +157,15 @@ public class TitleBarController implements Initializable {
         if (firstMoveIn) {
             getStage();
             setWindowDrag(stage);
+
+            // 在窗口最大化的时候点击任务栏隐藏窗口,
+            // 再次点击任务栏图标显示窗口的时候会遮挡任务栏,占满整个屏幕
+            // 因此在这种情况下要重新修正窗口大小
+            stage.heightProperty().addListener((observable, oldValue, newValue) -> {
+                if (stage.isMaximized()){
+                    correctSize(stage);
+                }
+            });
             firstMoveIn = false;
         }
     }

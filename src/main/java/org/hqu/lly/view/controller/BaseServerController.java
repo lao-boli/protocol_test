@@ -9,14 +9,12 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.hqu.lly.domain.base.BaseServer;
 import org.hqu.lly.domain.bean.CustomDataConfig;
 import org.hqu.lly.domain.bean.SendSettingConfig;
-import org.hqu.lly.domain.component.MsgLabel;
 import org.hqu.lly.domain.config.ServerConfig;
 import org.hqu.lly.exception.UnSetBoundException;
 import org.hqu.lly.factory.SendSettingPaneFactory;
@@ -28,6 +26,7 @@ import org.hqu.lly.service.ScheduledTaskService;
 import org.hqu.lly.service.impl.ScheduledSendService;
 import org.hqu.lly.service.impl.ServerService;
 import org.hqu.lly.utils.DataUtil;
+import org.hqu.lly.utils.MsgUtil;
 import org.hqu.lly.utils.UIUtil;
 
 import java.net.URL;
@@ -37,6 +36,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
+
+import static org.hqu.lly.enums.DataType.HEX;
+import static org.hqu.lly.enums.DataType.PLAIN_TEXT;
 
 /**
  * <p>
@@ -87,10 +89,6 @@ public abstract class BaseServerController<T> extends CommonUIContorller impleme
      * 要向其发送消息的客户端集合
      */
     protected Set<T> targetClientSet = ConcurrentHashMap.newKeySet();
-    /**
-     * 长文本是否换行flag
-     */
-    protected boolean softWrap = false;
     /**
      * 是否全选客户端flag
      */
@@ -247,13 +245,22 @@ public abstract class BaseServerController<T> extends CommonUIContorller impleme
             targetClientSet.forEach((client) -> {
                 String text = msgInput.getText();
                 if (sendSettingConfig.isTextMode()) {
-                    server.sendMessage(text, client);
+                    if (sendMsgType == HEX) {
+                        server.sendMessage(MsgUtil.convertText(HEX, PLAIN_TEXT, text), client);
+                    } else {
+                        server.sendMessage(text,client);
+                    }
                 }
 
                 try {
                     if (sendSettingConfig.isCustomMode()) {
                         CustomDataConfig customDataConfig = sendSettingConfig.getCustomDataConfig();
                         String msg = DataUtil.createMsg(customDataConfig.getCustomDataPattern(), customDataConfig.getBoundList());
+                        if (sendMsgType == HEX) {
+                            server.sendMessage(MsgUtil.convertText(HEX, PLAIN_TEXT, text), client);
+                        } else {
+                            server.sendMessage(text,client);
+                        }
                         server.sendMessage(msg, client);
                     }
                 } catch (UnSetBoundException e) {
@@ -288,15 +295,6 @@ public abstract class BaseServerController<T> extends CommonUIContorller impleme
 
     }
 
-    @FXML
-    void handleSoftWrap(MouseEvent event) {
-        softWrap = !softWrap;
-        double labelWidth = softWrap ? msgList.getWidth() - 20 : Region.USE_COMPUTED_SIZE;
-        ObservableList<MsgLabel> msgItems = msgList.getItems();
-        msgItems.forEach(msgLabel -> msgLabel.setPrefWidth(labelWidth));
-        Platform.runLater(() -> msgList.setItems(msgItems));
-    }
-
     /**
      * <p>
      * 标签页关闭前的回调函数。<br>
@@ -323,6 +321,9 @@ public abstract class BaseServerController<T> extends CommonUIContorller impleme
         setClientBox();
         // 功能按钮悬浮tip提示
         initBtnTips();
+        // 多格式设置
+        setupSendFormatBtn();
+        setupRecvFormatBtn();
         // 消息上下文菜单
         msgList.setContextMenu(UIUtil.getMsgListMenu(msgList));
         clientListBox.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);

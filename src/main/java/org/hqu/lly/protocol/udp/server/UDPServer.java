@@ -15,6 +15,7 @@ import org.hqu.lly.domain.component.MsgLabel;
 import org.hqu.lly.protocol.udp.server.handler.UDPServerHandler;
 import org.hqu.lly.service.impl.ConnectionlessServerService;
 import org.hqu.lly.service.impl.ServerService;
+import org.hqu.lly.utils.CommonUtil;
 import org.hqu.lly.utils.MsgUtil;
 
 import java.net.BindException;
@@ -54,6 +55,7 @@ public class UDPServer extends ConnectionlessServer {
             channel.closeFuture().addListener(promise -> bossGroup.shutdownGracefully());
             log.info("udp server start successful at " + channel.localAddress());
             serverService.onStart();
+            showAddrs();
         } catch (Exception e) {
             if (e instanceof BindException) {
                 serverService.onError(e, "该端口已被占用");
@@ -62,6 +64,15 @@ public class UDPServer extends ConnectionlessServer {
                 log.error("udp server error", e);
             }
         }
+    }
+
+    /**
+     * 显示当前服务的可访问IP地址
+     */
+    private void showAddrs() {
+        CommonUtil.getLocalAddrs().stream()
+                .map(address -> new MsgLabel("NetWork: " + address + ":" + port))
+                .forEach(serverService::updateMsgList);
     }
 
     @Override

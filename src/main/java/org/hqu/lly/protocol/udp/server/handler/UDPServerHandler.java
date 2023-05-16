@@ -37,9 +37,8 @@ public class UDPServerHandler extends SimpleChannelInboundHandler<DatagramPacket
         String receiveText = dpk.content().toString(CharsetUtil.UTF_8);
         serverService.updateMsgList(new MsgLabel(MsgLabel.Type.RECEIVE, sender.toString(), receiveText));
 
-        String responseText = "your message is " + receiveText;
-        ctx.channel().writeAndFlush(new DatagramPacket(Unpooled.copiedBuffer(responseText, CharsetUtil.UTF_8), sender));
-        serverService.updateMsgList(new MsgLabel(MsgLabel.Type.SEND, sender.toString(), responseText));
+        ctx.channel().writeAndFlush(new DatagramPacket(Unpooled.copiedBuffer(receiveText, CharsetUtil.UTF_8), sender));
+        serverService.updateMsgList(new MsgLabel(MsgLabel.Type.SEND, sender.toString(), receiveText));
 
         serverService.addInetSocketAddress(sender);
     }

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.*?>
@@ -33,7 +32,7 @@
                         </Button>
                     </children>
                 </HBox>
-                <Label fx:id="errorMsgLabel" text="" textFill="#c65551" >
+                <Label fx:id="errorMsgLabel" text="" textFill="#c65551">
                     <VBox.margin>
                         <Insets left="30.0" top="10.0" />
                     </VBox.margin>
@@ -83,6 +82,18 @@
                             </ImageView>
                         </graphic>
                         </Button>
+                  <Button fx:id="recvFormatBtn" mnemonicParsing="false" prefHeight="20.0" prefWidth="20.0" styleClass="icon-button">
+                     <padding>
+                        <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
+                     </padding>
+                     <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../icon/data_format.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
                     </children>
                     <padding>
                         <Insets top="-1.0" />
@@ -93,18 +104,34 @@
         </HBox>
         <HBox spacing="5.0" VBox.vgrow="ALWAYS">
             <children>
-                <Button fx:id="sendSettingBtn" mnemonicParsing="false" onMouseClicked="#showSendSetting" prefHeight="20.0" prefWidth="20.0" styleClass="icon-button">
-                    <padding>
+            <VBox spacing="3.0">
+               <children>
+                      <Button fx:id="sendSettingBtn" mnemonicParsing="false" onMouseClicked="#showSendSetting" prefHeight="20.0" prefWidth="20.0" styleClass="icon-button">
+                          <padding>
+                              <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
+                          </padding>
+                          <graphic>
+                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                  <image>
+                                      <Image url="@../icon/setting.png" />
+                                  </image>
+                              </ImageView>
+                          </graphic>
+                      </Button>
+                  <Button fx:id="sendFormatBtn" mnemonicParsing="false" prefHeight="20.0" prefWidth="20.0" styleClass="icon-button">
+                     <padding>
                         <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
-                    </padding>
-                    <graphic>
+                     </padding>
+                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                            <image>
-                                <Image url="@../icon/setting.png" />
-                            </image>
+                           <image>
+                              <Image url="@../icon/data_format.png" />
+                           </image>
                         </ImageView>
-                    </graphic>
-                </Button>
+                     </graphic>
+                  </Button>
+               </children>
+            </VBox>
                 <TextArea fx:id="msgInput" disable="true" prefHeight="52.0" prefWidth="425.0" text="test text 123" wrapText="true" HBox.hgrow="ALWAYS" />
             </children>
         </HBox>

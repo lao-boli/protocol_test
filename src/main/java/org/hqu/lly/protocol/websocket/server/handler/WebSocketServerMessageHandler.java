@@ -30,9 +30,8 @@ public class WebSocketServerMessageHandler extends SimpleChannelInboundHandler<T
         String clientAddr = ctx.channel().remoteAddress().toString();
         serverService.updateMsgList(new MsgLabel(MsgLabel.Type.RECEIVE, clientAddr, msg.text()));
 
-        String responseText = "your message is " + msg.text();
-        ctx.channel().writeAndFlush(new TextWebSocketFrame(responseText));
-        serverService.updateMsgList(new MsgLabel(MsgLabel.Type.SEND, clientAddr, responseText));
+        ctx.channel().writeAndFlush(new TextWebSocketFrame(msg.text()));
+        serverService.updateMsgList(new MsgLabel(MsgLabel.Type.SEND, clientAddr, msg.text()));
     }
 
 }
