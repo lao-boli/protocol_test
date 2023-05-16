@@ -2,6 +2,12 @@ package org.hqu.lly.utils;
 
 import lombok.SneakyThrows;
 
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.List;
+
 /**
  * <p>
  * 通用工具类
@@ -15,10 +21,11 @@ public class CommonUtil {
 
     /**
      * <p>
-     *     将String转为Integer,
-     *     与{@link Integer#valueOf}的区别在于,
-     *     当string为null时,本方法也返回null而不是抛出{@link NumberFormatException}异常.
+     * 将String转为Integer,
+     * 与{@link Integer#valueOf}的区别在于,
+     * 当string为null时,本方法也返回null而不是抛出{@link NumberFormatException}异常.
      * </p>
+     *
      * @param s 要转换的字符串
      * @return {@link Integer}
      * @date 2023-02-04 17:01:17 <br>
@@ -32,10 +39,11 @@ public class CommonUtil {
 
     /**
      * <p>
-     *     将Integer转为String,
-     *     与{@link Integer#toString()}的区别在于,
-     *     当string为null时,本方法也返回null而不是抛出{@link NullPointerException}异常.
+     * 将Integer转为String,
+     * 与{@link Integer#toString()}的区别在于,
+     * 当string为null时,本方法也返回null而不是抛出{@link NullPointerException}异常.
      * </p>
+     *
      * @param i 要转换的整型数字
      * @return {@link Integer}
      * @date 2023-02-04 17:01:17 <br>
@@ -49,10 +57,11 @@ public class CommonUtil {
 
     /**
      * <p>
-     *     获取字符串的半角字符长度(英文、数字1个字符，汉字2个字符)
+     * 获取字符串的半角字符长度(英文、数字1个字符，汉字2个字符)
      * </p>
+     *
      * @param str 字符串
-     * @return 字符串真实长度,若字符串为null则返回0.
+     * @return 字符串真实长度, 若字符串为null则返回0.
      * @date 2023-02-26 13:52:24 <br>
      * @author hqully <br>
      */
@@ -60,7 +69,31 @@ public class CommonUtil {
     public static int getRealLength(String str) {
         // 若编码为unicode,则汉字将占3字节，不符合要求。
         // 故指定编码为gbk。
-        return  str == null ? 0 : str.getBytes("gbk").length;
+        return str == null ? 0 : str.getBytes("gbk").length;
+    }
+
+    /**
+     * 获取本地IP地址
+     *
+     * @return IP地址列表
+     * @date 2023-05-16 08:55
+     */
+    @SneakyThrows
+    public static List<String> getLocalAddrs() {
+        List<String> addrs = new ArrayList<>();
+        Enumeration<NetworkInterface> allNetInterfaces = NetworkInterface.getNetworkInterfaces();
+        while (allNetInterfaces.hasMoreElements()) {
+            NetworkInterface netInterface = allNetInterfaces.nextElement();
+            Enumeration<InetAddress> addresses = netInterface.getInetAddresses();
+            while (addresses.hasMoreElements()) {
+                InetAddress address = addresses.nextElement();
+                if (!address.isLinkLocalAddress() && !address.isLoopbackAddress()
+                        && !address.getHostAddress().contains(":")) {
+                    addrs.add(address.getHostAddress());
+                }
+            }
+        }
+        return addrs;
     }
 
 }
