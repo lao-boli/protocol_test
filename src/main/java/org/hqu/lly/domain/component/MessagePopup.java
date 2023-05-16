@@ -10,6 +10,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -103,7 +104,11 @@ public class MessagePopup extends Popup {
         menu.getItems().add(copyItem);
 
         content.addEventFilter(MouseEvent.MOUSE_CLICKED,e -> {
-            menu.show(content,e.getScreenX(),e.getScreenY());
+            if (e.getButton().equals(MouseButton.SECONDARY)){
+                menu.show(content,e.getScreenX(),e.getScreenY());
+            }else {
+                menu.hide();
+            }
         });
     }
 
