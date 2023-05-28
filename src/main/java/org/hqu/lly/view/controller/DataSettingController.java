@@ -38,9 +38,9 @@ public class DataSettingController implements Initializable {
     private CustomDataConfig dataConfig;
 
     @Setter
-    private List<DataItem> dataItemList = new ArrayList();
+    private List<DataItem> dataItemList = new ArrayList<>();
 
-    private List<Map<String, String>> boundList = new ArrayList();
+    private List<Map<String, String>> boundList = new ArrayList<>();
 
     @FXML
     void saveSetting(MouseEvent event) {
