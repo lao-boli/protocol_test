@@ -10,6 +10,8 @@ import javafx.stage.StageStyle;
 import lombok.extern.slf4j.Slf4j;
 import org.hqu.lly.constant.ResLoc;
 import org.hqu.lly.domain.bean.CustomDataConfig;
+import org.hqu.lly.utils.DragUtil;
+import org.hqu.lly.utils.UIUtil;
 import org.hqu.lly.view.controller.DataSettingController;
 
 import java.io.IOException;
@@ -36,11 +38,12 @@ public class DataSettingPaneFactory {
             controller.setDataConfig(dataConfig);
             controller.initFunction();
 
-            Scene scene = new Scene(contentPane, 400, 300);
+            Scene scene = UIUtil.getShadowScene(contentPane, 400, 300);
             DarculaFX.applyDarculaStyle(scene);
 
             dataSettingStage.setScene(scene);
             dataSettingStage.initStyle(StageStyle.TRANSPARENT);
+            DragUtil.setDrag(dataSettingStage, scene.getRoot());
             dataSettingStage.initModality(Modality.APPLICATION_MODAL);
             return dataSettingStage;
         } catch (IOException e) {
