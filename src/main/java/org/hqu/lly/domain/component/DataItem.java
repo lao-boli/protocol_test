@@ -4,6 +4,7 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import lombok.Data;
 
 import java.util.HashMap;
@@ -97,8 +98,10 @@ public class DataItem {
         upperBoundLabel = new Label("上界:");
         lowerBoundText = new TextField();
         lowerBoundText.setPrefWidth(66.0);
+        HBox.setHgrow(lowerBoundText, Priority.ALWAYS);
         upperBoundText = new TextField();
         upperBoundText.setPrefWidth(66.0);
+        HBox.setHgrow(upperBoundText, Priority.ALWAYS);
 
         itemPane = new HBox(dataLabel, dataName, lowerBoundLabel, lowerBoundText, upperBoundLabel, upperBoundText);
         itemPane.setSpacing(20.0);
