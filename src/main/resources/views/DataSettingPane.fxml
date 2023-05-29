@@ -13,7 +13,7 @@
          <children>
             <ScrollPane fx:id="scrollPane" hbarPolicy="NEVER" prefHeight="200.0" prefWidth="379.0" VBox.vgrow="ALWAYS">
                <content>
-                  <VBox prefWidth="${scrollPane.width}" fx:id="settingVBox" prefHeight="204.0" spacing="10.0">
+                  <VBox fx:id="settingVBox" prefHeight="204.0" prefWidth="${scrollPane.width}" spacing="10.0">
                      <padding>
                         <Insets left="5.0" right="15.0" />
                      </padding></VBox>
@@ -23,6 +23,9 @@
                <children>
                   <Button fx:id="saveSettingBtn" mnemonicParsing="false" onMouseClicked="#saveSetting" text="保存设置" />
                </children>
+               <padding>
+                  <Insets right="15.0" />
+               </padding>
             </HBox>
          </children>
          <padding>

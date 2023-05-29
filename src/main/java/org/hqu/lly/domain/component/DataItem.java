@@ -103,9 +103,15 @@ public class DataItem {
         upperBoundText.setPrefWidth(66.0);
         HBox.setHgrow(upperBoundText, Priority.ALWAYS);
 
-        itemPane = new HBox(dataLabel, dataName, lowerBoundLabel, lowerBoundText, upperBoundLabel, upperBoundText);
+        HBox labelBox = new HBox(dataLabel, dataName);
+        labelBox.setSpacing(5.0);
+        labelBox.setAlignment(Pos.CENTER);
+        labelBox.setPrefWidth(90);
+
+        itemPane = new HBox(labelBox, lowerBoundLabel, lowerBoundText, upperBoundLabel, upperBoundText);
         itemPane.setSpacing(20.0);
         itemPane.setAlignment(Pos.CENTER);
+
     }
 
     /**
