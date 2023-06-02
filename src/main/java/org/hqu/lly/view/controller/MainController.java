@@ -4,10 +4,7 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.SplitPane;
-import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeView;
+import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
@@ -15,6 +12,7 @@ import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
 import org.hqu.lly.constant.ContentPaneConsts;
 import org.hqu.lly.domain.component.CustomAlert;
+import org.hqu.lly.domain.component.MyAlert;
 import org.hqu.lly.domain.config.TabPaneConfig;
 import org.hqu.lly.domain.config.TopConfig;
 import org.hqu.lly.domain.vo.ServiceItem;
@@ -69,7 +67,11 @@ public class MainController implements Initializable {
         titleBarController.init("协议测试工具", true);
 
         titleBarController.setOnBeforeClose(() -> {
+            MyAlert myAlert = new MyAlert(Alert.AlertType.WARNING);
+            myAlert.initOwner(UIUtil.getPrimaryStage());
+            Optional<ButtonType> buttonType1 = myAlert.showAndWait();
             CustomAlert alert = CustomAlertFactory.create("save config", "是否保存配置到本地？");
+
             assert alert != null;
             alert.setForceResume(true);
             alert.setOnConfirm(() -> {

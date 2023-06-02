@@ -53,6 +53,7 @@ public class CustomAlert {
      */
     public Optional<ButtonType> showAndWait() {
         stage.showAndWait();
+
         return Optional.ofNullable(controller.getButtonType());
 
     }

@@ -27,8 +27,12 @@ public class ResLoc {
     public static final URL WEB_SOCKET_SERVER_PANE = realPath("views/WebSocketServerPane.fxml");
     public static final URL WEB_SOCKET_CLIENT_PANE = realPath("views/WebSocketClientPane.fxml");
 
+    public static final URL TITLE_BAR = realPath("views/titleBar.fxml");
+
     public static final URL TAB_TITLE = realPath("css/tabTitle.css");
     public static final URL COMMON_CSS = realPath("css/Common.css");
+
+    public static final URL MY_ALERT_CSS = realPath("css/MyAlert.css");
 
     public static final URL MESSAGE_POPUP_CSS = realPath("css/MessagePopup.css");
 
