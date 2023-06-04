@@ -12,7 +12,6 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.stage.Window;
-import lombok.SneakyThrows;
 import lombok.val;
 import org.hqu.lly.constant.ResLoc;
 import org.hqu.lly.utils.DragUtil;
@@ -57,29 +56,17 @@ public class MyAlert {
 
     void close() {
         if (getResult() == null) {
-            setResultAndClose(ButtonType.CLOSE, true);
+            setResultAndClose(ButtonType.CLOSE);
         }
         stage.close();
     }
 
-
-    @SneakyThrows
-    public MyAlert(Alert.AlertType alertType) {
-        titleBar = new TitleBar(this, "title");
-        pane.setTop(titleBar);
-        contentPane = new ContentPane(this);
-        pane.setCenter(contentPane);
-        pane.getStylesheets().add(ResLoc.MY_ALERT_CSS.toExternalForm());
-
-        val scene = UIUtil.getShadowScene(pane, 200, 200);
-        DragUtil.setDrag(stage, scene.getRoot());
-        DarculaFX.applyDarculaStyle(scene);
-        stage.setScene(scene);
-        stage.initStyle(StageStyle.TRANSPARENT);
-        stage.initModality(Modality.APPLICATION_MODAL);
-    }
-
-
+    /**
+     *
+     * @param alertType todo custom alert type
+     * @param title 弹窗标题
+     * @param contentText 弹窗内容文本
+     */
     public MyAlert(Alert.AlertType alertType, String title, String contentText) {
         titleBar = new TitleBar(this, title);
         pane.setTop(titleBar);
@@ -92,6 +79,7 @@ public class MyAlert {
         DarculaFX.applyDarculaStyle(scene);
         stage.setScene(scene);
         stage.initStyle(StageStyle.TRANSPARENT);
+        stage.initModality(Modality.APPLICATION_MODAL);
     }
 
     public Optional<ButtonType> showAndWait() {
@@ -103,7 +91,7 @@ public class MyAlert {
         stage.initOwner(owner);
     }
 
-    private void setResultAndClose(ButtonType cmd, boolean close) {
+    private void setResultAndClose(ButtonType cmd) {
         setResult(cmd);
         stage.close();
 
@@ -182,6 +170,13 @@ public class MyAlert {
             btnGroup.getChildren().addAll(okBtn, cancelBtn);
         }
 
+        /**
+         *
+         * @param buttonType 按钮类型
+         * @return button
+         *  @date 2023-06-04 21:38
+         * @see DialogPane#createButton(ButtonType)
+         */
         Node createButton(ButtonType buttonType) {
             final Button button = new Button(buttonType.getText());
             final ButtonBar.ButtonData buttonData = buttonType.getButtonData();
@@ -193,7 +188,7 @@ public class MyAlert {
                     return;
                 }
                 if (alert != null) {
-                    alert.setResultAndClose(buttonType, true);
+                    alert.setResultAndClose(buttonType);
                 }
             });
 
