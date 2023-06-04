@@ -1,17 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.VBox?>
-<AnchorPane prefHeight="300.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.hqu.lly.view.controller.DataSettingController">
-   <children>
-         <fx:include fx:id="titleBar" prefWidth="400.0" source="titleBar.fxml" />
-      <Button fx:id="saveSettingBtn" layoutX="296.0" layoutY="263.0" mnemonicParsing="false" onMouseClicked="#saveSetting" text="保存设置" />
-      <ScrollPane hbarPolicy="NEVER" layoutX="14.0" layoutY="50.0" prefHeight="200.0" prefWidth="379.0">
-         <content>
-            <VBox fx:id="settingVBox" prefHeight="204.0" prefWidth="367.0" spacing="10.0" />
-         </content>
-      </ScrollPane>
-   </children>
-</AnchorPane>
+<?import javafx.scene.layout.*?>
+<BorderPane fx:id="root" minWidth="1.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.hqu.lly.view.controller.DataSettingController">
+   <top>
+         <fx:include fx:id="titleBar" prefWidth="${root.width}" source="titleBar.fxml" />
+   </top>
+   <center>
+      <VBox spacing="5.0" style="-fx-background-color: #3c3f41;" BorderPane.alignment="CENTER">
+         <children>
+            <ScrollPane fx:id="scrollPane" hbarPolicy="NEVER" prefHeight="200.0" prefWidth="379.0" VBox.vgrow="ALWAYS">
+               <content>
+                  <VBox fx:id="settingVBox" prefHeight="204.0" prefWidth="${scrollPane.width}" spacing="10.0">
+                     <padding>
+                        <Insets left="5.0" right="15.0" />
+                     </padding></VBox>
+               </content>
+            </ScrollPane>
+            <HBox alignment="TOP_RIGHT">
+               <children>
+                  <Button fx:id="saveSettingBtn" mnemonicParsing="false" onMouseClicked="#saveSetting" text="保存设置" />
+               </children>
+               <padding>
+                  <Insets right="15.0" />
+               </padding>
+            </HBox>
+         </children>
+         <padding>
+            <Insets bottom="5.0" right="2.0" top="5.0" />
+         </padding>
+      </VBox>
+   </center>
+</BorderPane>

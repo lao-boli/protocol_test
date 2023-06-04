@@ -10,6 +10,8 @@ import javafx.stage.StageStyle;
 import org.hqu.lly.constant.ResLoc;
 import org.hqu.lly.domain.bean.SendSettingConfig;
 import org.hqu.lly.domain.config.TopConfig;
+import org.hqu.lly.utils.DragUtil;
+import org.hqu.lly.utils.UIUtil;
 import org.hqu.lly.view.controller.SendSettingController;
 
 import java.io.IOException;
@@ -51,11 +53,13 @@ public class SendSettingPaneFactory {
                 controller.loadConfig();
             }
 
-            Scene scene = new Scene(contentPane, 400, 300);
+            // Scene scene = new Scene(contentPane, 400, 300);
+            Scene scene = UIUtil.getShadowScene(contentPane, 400, 300);
             DarculaFX.applyDarculaStyle(scene);
 
             sendSettingStage.setScene(scene);
             sendSettingStage.initStyle(StageStyle.TRANSPARENT);
+            DragUtil.setDrag(sendSettingStage, scene.getRoot());
             sendSettingStage.initModality(Modality.APPLICATION_MODAL);
             return sendSettingStage;
         } catch (IOException e) {
