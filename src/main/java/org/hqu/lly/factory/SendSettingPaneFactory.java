@@ -61,6 +61,7 @@ public class SendSettingPaneFactory {
             sendSettingStage.initStyle(StageStyle.TRANSPARENT);
             DragUtil.setDrag(sendSettingStage, scene.getRoot());
             sendSettingStage.initModality(Modality.APPLICATION_MODAL);
+            sendSettingStage.initOwner(UIUtil.getPrimaryStage());
             return sendSettingStage;
         } catch (IOException e) {
             e.printStackTrace();
