@@ -11,12 +11,10 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
 import org.hqu.lly.constant.ContentPaneConsts;
-import org.hqu.lly.domain.component.CustomAlert;
 import org.hqu.lly.domain.component.MyAlert;
 import org.hqu.lly.domain.config.TabPaneConfig;
 import org.hqu.lly.domain.config.TopConfig;
 import org.hqu.lly.domain.vo.ServiceItem;
-import org.hqu.lly.factory.CustomAlertFactory;
 import org.hqu.lly.service.impl.TabPaneManager;
 import org.hqu.lly.utils.UIUtil;
 import org.hqu.lly.view.group.ControllerGroup;
@@ -67,14 +65,11 @@ public class MainController implements Initializable {
         titleBarController.init("协议测试工具", true);
 
         titleBarController.setOnBeforeClose(() -> {
-            MyAlert myAlert = new MyAlert(Alert.AlertType.WARNING);
+            MyAlert myAlert = new MyAlert(Alert.AlertType.CONFIRMATION, "保存配置", "是否保存配置到本地?");
             myAlert.initOwner(UIUtil.getPrimaryStage());
-            Optional<ButtonType> buttonType1 = myAlert.showAndWait();
-            CustomAlert alert = CustomAlertFactory.create("save config", "是否保存配置到本地？");
+            Optional<ButtonType> result = myAlert.showAndWait();
 
-            assert alert != null;
-            alert.setForceResume(true);
-            alert.setOnConfirm(() -> {
+            if(result.get().equals(ButtonType.OK)){
                 // 通知各级控制器保存配置
                 for (TabPaneController controller : ControllerGroup.tabPaneControllerSet) {
                     TabPaneConfig tabPaneConfig = controller.saveAndGetConfig();
@@ -84,10 +79,9 @@ public class MainController implements Initializable {
                 }
                 // 写入文件
                 TopConfig.getInstance().save();
-            });
-            // 显示是否保存配置的弹窗
-            Optional<ButtonType> buttonType = alert.showAndWait();
-            return buttonType.get().equals(ButtonType.OK);
+            }
+
+            return result.get().equals(ButtonType.OK) || result.get().equals(ButtonType.CANCEL);
         });
 
         titleBarController.setOnClose(() -> System.exit(0));

@@ -1,33 +1,37 @@
 package org.hqu.lly;
 
+import com.github.mouse0w0.darculafx.DarculaFX;
 import javafx.application.Application;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.stage.Stage;
-import org.hqu.lly.domain.component.MyAlert;
-
-import java.util.Optional;
+import javafx.stage.StageStyle;
+import org.hqu.lly.constant.ResLoc;
+import org.hqu.lly.utils.DragUtil;
+import org.hqu.lly.utils.UIUtil;
+import org.hqu.lly.view.controller.MainController;
 
 public class App extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        // UIUtil.setPrimaryStage(primaryStage);
-        // FXMLLoader fxmlLoader = new FXMLLoader();
-        // fxmlLoader.setLocation(ResLoc.MAIN_PANE);
-        // Parent root = fxmlLoader.load();
-        // MainController controller = fxmlLoader.getController();
-        //
-        // Scene scene = UIUtil.getShadowScene(root, 660, 400);
-        //
-        // DarculaFX.applyDarculaStyle(scene);
-        // primaryStage.initStyle(StageStyle.TRANSPARENT);
-        // primaryStage.setScene(scene);
-        // DragUtil.setDrag(primaryStage,scene.getRoot());
-        // primaryStage.show();
-        Optional<ButtonType> result = new MyAlert(Alert.AlertType.CONFIRMATION, "保存配置", "是否保存配置到本地?").showAndWait();
+        UIUtil.setPrimaryStage(primaryStage);
+        FXMLLoader fxmlLoader = new FXMLLoader();
+        fxmlLoader.setLocation(ResLoc.MAIN_PANE);
+        Parent root = fxmlLoader.load();
+        MainController controller = fxmlLoader.getController();
+
+        Scene scene = UIUtil.getShadowScene(root, 660, 400);
+
+        DarculaFX.applyDarculaStyle(scene);
+        primaryStage.initStyle(StageStyle.TRANSPARENT);
+        primaryStage.setScene(scene);
+        DragUtil.setDrag(primaryStage, scene.getRoot());
+        primaryStage.show();
+        // Optional<ButtonType> result = new MyAlert(Alert.AlertType.CONFIRMATION, "保存配置", "是否保存配置到本地?").showAndWait();
         // Optional<ButtonType> result = new Alert(Alert.AlertType.CONFIRMATION).showAndWait();
-        System.out.println(result);
+        // System.out.println(result);
 
     }
 
