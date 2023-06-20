@@ -1,9 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.image.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
 <VBox spacing="10.0" stylesheets="@../css/TabPane.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.hqu.lly.view.controller.UDPClientController">
     <children>
         <VBox VBox.vgrow="NEVER">
@@ -44,54 +52,45 @@
         </VBox>
         <HBox spacing="5.0" VBox.vgrow="ALWAYS">
             <children>
-                <VBox prefHeight="189.0" prefWidth="20.0" spacing="3.0" styleClass="sidebar">
+                <VBox prefHeight="189.0" prefWidth="26.0" spacing="3.0" styleClass="sidebar">
                     <children>
-                        <ToggleButton fx:id="softWrapBtn" contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" mnemonicParsing="false" onMouseClicked="#handleSoftWrap" prefHeight="20.0" prefWidth="20.0">
+                        <ToggleButton fx:id="softWrapBtn" contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" maxHeight="-Infinity" maxWidth="-Infinity" mnemonicParsing="false" onMouseClicked="#handleSoftWrap" prefHeight="26.0" prefWidth="26.0">
                             <padding>
-                                <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
+                                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                             </padding>
-                            <graphic>
-                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                    <image>
-                                        <Image url="@../icon/wrap.png" />
-                                    </image>
-                                </ImageView>
-                            </graphic>
+                     <graphic>
+                        <Region prefHeight="20.0" prefWidth="20.0" styleClass="icon-wrap" />
+                     </graphic>
                         </ToggleButton>
-                        <Button fx:id="clearBtn" mnemonicParsing="false" onMouseClicked="#clearMsg" prefHeight="20.0" prefWidth="20.0" styleClass="icon-button">
+                        <Button fx:id="clearBtn" mnemonicParsing="false" onMouseClicked="#clearMsg" prefHeight="26.0" prefWidth="26.0" styleClass="icon-button">
                             <padding>
                                 <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
                             </padding>
-                            <graphic>
-                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true" styleClass="clear-button">
-                                    <image>
-                                        <Image url="@../icon/clear.png" />
-                                    </image>
-                                </ImageView>
-                            </graphic>
+                     <graphic>
+                        <Region prefHeight="200.0" prefWidth="200.0" styleClass="icon-clear" />
+                     </graphic>
                         </Button>
-                        <Button fx:id="displaySettingBtn" mnemonicParsing="false" prefHeight="20.0" prefWidth="20.0" styleClass="icon-button">
+                        <Button fx:id="displaySettingBtn" mnemonicParsing="false" prefHeight="26.0" prefWidth="26.0" styleClass="icon-button">
                         <padding>
                             <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
                         </padding>
-                        <graphic>
-                            <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true" styleClass="clear-button">
-                                <image>
-                                    <Image url="@../icon/display_setting.png" />
-                                </image>
-                            </ImageView>
-                        </graphic>
+                     <graphic>
+                        <Region prefHeight="200.0" prefWidth="200.0" styleClass="icon-display-setting" />
+                     </graphic>
                         </Button>
-                  <Button fx:id="recvFormatBtn" mnemonicParsing="false" prefHeight="20.0" prefWidth="20.0" styleClass="icon-button">
+                  <Button fx:id="recvFormatBtn" mnemonicParsing="false" prefHeight="26.0" prefWidth="26.0" styleClass="icon-button">
                      <padding>
                         <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
                      </padding>
                      <graphic>
-                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../icon/data_format.png" />
-                           </image>
-                        </ImageView>
+                        <StackPane>
+                           <children>
+                              <Region prefHeight="200.0" prefWidth="200.0" styleClass="icon-encode-setting" />
+                           </children>
+                           <padding>
+                              <Insets left="2.0" />
+                           </padding>
+                        </StackPane>
                      </graphic>
                   </Button>
                     </children>
@@ -106,28 +105,27 @@
             <children>
             <VBox spacing="3.0">
                <children>
-                      <Button fx:id="sendSettingBtn" mnemonicParsing="false" onMouseClicked="#showSendSetting" prefHeight="20.0" prefWidth="20.0" styleClass="icon-button">
+                      <Button fx:id="sendSettingBtn" mnemonicParsing="false" onMouseClicked="#showSendSetting" prefHeight="26.0" prefWidth="26.0" styleClass="icon-button" VBox.vgrow="NEVER">
                           <padding>
                               <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
                           </padding>
-                          <graphic>
-                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                  <image>
-                                      <Image url="@../icon/setting.png" />
-                                  </image>
-                              </ImageView>
-                          </graphic>
+                     <graphic>
+                        <Region prefHeight="200.0" prefWidth="200.0" styleClass="icon-send-setting" />
+                     </graphic>
                       </Button>
-                  <Button fx:id="sendFormatBtn" mnemonicParsing="false" prefHeight="20.0" prefWidth="20.0" styleClass="icon-button">
+                  <Button fx:id="sendFormatBtn" mnemonicParsing="false" prefHeight="26.0" prefWidth="26.0" styleClass="icon-button" VBox.vgrow="NEVER">
                      <padding>
                         <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
                      </padding>
                      <graphic>
-                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../icon/data_format.png" />
-                           </image>
-                        </ImageView>
+                        <StackPane>
+                           <children>
+                              <Region prefHeight="200.0" prefWidth="200.0" styleClass="icon-encode-setting" />
+                           </children>
+                           <padding>
+                              <Insets left="2.0" />
+                           </padding>
+                        </StackPane>
                      </graphic>
                   </Button>
                </children>
