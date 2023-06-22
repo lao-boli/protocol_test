@@ -58,6 +58,10 @@
     -fx-background-color: #a9a9a9;
 }
 .sidebar .toggle-button, .icon-button {
+    -fx-pref-width: 26;
+    -fx-max-width: 26;
+    -fx-pref-height: 26;
+    -fx-max-height: 26;
     -fx-background-color: #3c3f41;
     -fx-background-insets: 0;
     -fx-background-radius: 3px, 3px;
