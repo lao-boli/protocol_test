@@ -81,7 +81,7 @@
         </HBox>
         <HBox VBox.vgrow="ALWAYS">
             <children>
-                <VBox alignment="TOP_CENTER" prefHeight="159.0" prefWidth="24.0" spacing="3.0" styleClass="sidebar">
+                <VBox alignment="TOP_CENTER" prefHeight="159.0" prefWidth="26.0" spacing="3.0" styleClass="sidebar">
                     <children>
                         <ToggleButton fx:id="softWrapBtn" contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0"
                                       maxHeight="20.0" maxWidth="20.0" mnemonicParsing="false"
