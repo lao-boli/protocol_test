@@ -19,7 +19,6 @@ public class ResLoc {
     public static final URL MAIN_PANE = realPath("views/MainPane.fxml");
     public static final URL SEND_SETTING_PANE = realPath("views/SendSettingPane.fxml");
     public static final URL DATA_SETTING_PANE = realPath("views/DataSettingPane.fxml");
-    public static final URL CUSTOM_ALERT = realPath("components/CustomAlert.fxml");
     public static final URL TCP_CLIENT_PANE =realPath("views/TCPClientPane.fxml");
     public static final URL TCP_SERVER_PANE =realPath("views/TCPServerPane.fxml");
     public static final URL UDP_CLIENT_PANE =realPath("views/UDPClientPane.fxml");
@@ -38,10 +37,7 @@ public class ResLoc {
 
     public static final URL MESSAGE_POPUP_CSS = realPath("css/MessagePopup.css");
 
-    public static final URL ICON = realPath("css/icon.css");
-    public static final URL MAX_ICON = realPath("icon/max.png");
-    public static final URL RESTORE_ICON = realPath("icon/restore.png");
-    public static final URL WARN_ICON = realPath("icon/warn.png");
+    public static final URL ICON = realPath("icon/icon.css");
 
     /**
      * <p>
