@@ -1,3 +1,6 @@
+.text-area > .scroll-pane {
+    -fx-padding: 0;
+}
 .tooltip {
     -fx-text-fill: #bbbbbb;
     -fx-background-color: #4b4d4d;
