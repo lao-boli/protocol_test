@@ -8,8 +8,6 @@ import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
@@ -18,6 +16,7 @@ import javafx.stage.Popup;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import org.hqu.lly.constant.ResLoc;
+import org.hqu.lly.icon.WarnIcon;
 import org.hqu.lly.utils.UIUtil;
 
 import static org.hqu.lly.utils.UIUtil.copyToClipboard;
@@ -178,14 +177,7 @@ public class MessagePopup extends Popup {
     private void setupIcon(){
         icon = new Label();
         icon.setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
-
-        ImageView warnIcon = new ImageView(new Image(ResLoc.WARN_ICON.toString()));
-        warnIcon.setFitHeight(15);
-        warnIcon.setFitWidth(15);
-        warnIcon.setPreserveRatio(true);
-        warnIcon.setPickOnBounds(true);
-
-        icon.setGraphic(warnIcon);
+        icon.setGraphic(new WarnIcon());
     }
 
 }
