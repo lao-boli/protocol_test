@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.hqu.lly.domain.config.SessionConfig;
 import org.hqu.lly.domain.config.TopConfig;
 
 import java.io.FileInputStream;
@@ -13,6 +14,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.HashMap;
 
 /**
  * <p>
@@ -38,6 +40,7 @@ public class ConfUtil {
      * 配置文件名称
      */
     private static final String name = "\\config.json";
+    private static final String name2 = "\\config2.json";
     ;
 
     static {
@@ -61,7 +64,7 @@ public class ConfUtil {
             }
             String s = mapper.writeValueAsString(o);
             log.debug(s);
-            Files.writeString(Path.of(path + name), s);
+            Files.writeString(Path.of(path + name2), s);
 
         } catch (JsonProcessingException e) {
             e.printStackTrace();
@@ -83,6 +86,24 @@ public class ConfUtil {
         try {
             FileInputStream fileInputStream = new FileInputStream(path + name);
             TopConfig config = mapper.readValue(fileInputStream, TopConfig.class);
+            return config;
+
+        } catch (FileNotFoundException e) {
+            throw e;
+        } catch (JsonParseException e) {
+            e.printStackTrace();
+        } catch (JsonMappingException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static HashMap<String, SessionConfig> load() throws FileNotFoundException {
+        try {
+            FileInputStream fileInputStream = new FileInputStream(path + name2);
+            HashMap config = mapper.readValue(fileInputStream, HashMap.class);
             return config;
 
         } catch (FileNotFoundException e) {
