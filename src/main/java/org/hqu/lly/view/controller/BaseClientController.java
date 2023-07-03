@@ -137,7 +137,6 @@ public abstract class BaseClientController<T extends BaseClient> extends CommonU
      * @return {@link TabConfig} 客户端标签页配置
      * @date 2023-02-06 10:50:53 <br>
      */
-    @Override
     public TabConfig saveAndGetConfig() {
         clientConfig = new ClientConfig();
         clientConfig.setMsgInput(msgInput.getText());
@@ -425,6 +424,11 @@ public abstract class BaseClientController<T extends BaseClient> extends CommonU
         public void updateMsgList(MsgLabel msg) {
             Platform.runLater(() -> msgList.getItems().add(msg));
         }
+
+    }
+
+    @Override
+    public void save() {
 
     }
 

@@ -15,7 +15,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.hqu.lly.domain.base.BaseServer;
 import org.hqu.lly.domain.bean.CustomDataConfig;
 import org.hqu.lly.domain.bean.SendSettingConfig;
+import org.hqu.lly.domain.config.NewTopConfig;
 import org.hqu.lly.domain.config.ServerConfig;
+import org.hqu.lly.domain.config.ServerSessionConfig;
+import org.hqu.lly.enums.ConfigType;
 import org.hqu.lly.exception.UnSetBoundException;
 import org.hqu.lly.factory.SendSettingPaneFactory;
 import org.hqu.lly.factory.SendTaskFactory;
@@ -98,6 +101,19 @@ public abstract class BaseServerController<T> extends CommonUIContorller impleme
      */
     protected ServerService serverService;
 
+    // region config
+
+    /**
+     * 客户端面板配置类
+     */
+    protected ServerSessionConfig serverConfig;
+    /**
+     * 发送设置配置类
+     */
+    protected SendSettingConfig sendSettingConfig;
+
+    // endregion
+
     /**
      * 发送设置面板
      */
@@ -106,19 +122,11 @@ public abstract class BaseServerController<T> extends CommonUIContorller impleme
      * 定时发送服务
      */
     protected ScheduledSendService scheduledService;
-    /**
-     * 发送设置配置类
-     */
-    protected SendSettingConfig sendSettingConfig = new SendSettingConfig();
 
     /**
      * 定时发送任务
      */
     protected ScheduledTaskService scheduledTaskService;
-    /**
-     * 客户端面板配置类
-     */
-    protected ServerConfig serverConfig;
     /**
      * 显示在 {@link #clientListBox} 中的客户端列表
      */
@@ -126,6 +134,9 @@ public abstract class BaseServerController<T> extends CommonUIContorller impleme
 
 
     public BaseServerController() {
+        NewTopConfig.controllers.add(this);
+        serverConfig = (ServerSessionConfig) NewTopConfig.createConfig(ConfigType.SERVER);
+        sendSettingConfig = serverConfig.getSendSettingConfig();
         setServer();
         setServerService();
     }
@@ -248,7 +259,7 @@ public abstract class BaseServerController<T> extends CommonUIContorller impleme
                     if (sendMsgType == HEX) {
                         server.sendMessage(MsgUtil.convertText(HEX, PLAIN_TEXT, text), client);
                     } else {
-                        server.sendMessage(text,client);
+                        server.sendMessage(text, client);
                     }
                 }
 
@@ -259,7 +270,7 @@ public abstract class BaseServerController<T> extends CommonUIContorller impleme
                         if (sendMsgType == HEX) {
                             server.sendMessage(MsgUtil.convertText(HEX, PLAIN_TEXT, text), client);
                         } else {
-                            server.sendMessage(text,client);
+                            server.sendMessage(text, client);
                         }
                         server.sendMessage(msg, client);
                     }
@@ -310,6 +321,8 @@ public abstract class BaseServerController<T> extends CommonUIContorller impleme
             scheduleSendBtn.setSelected(false);
         }
         server.destroy();
+        NewTopConfig.controllers.remove(this);
+        NewTopConfig.removeSessionConfig(serverConfig.getId());
         destroyed = true;
     }
 
@@ -403,17 +416,13 @@ public abstract class BaseServerController<T> extends CommonUIContorller impleme
      * 3.发送设置.
      * </p>
      *
-     * @return {@link ServerConfig} 服务端标签页配置
-     * @date 2023-02-06 11:26:53 <br>
+     * @date 2023-07-02 19:52
      */
     @Override
-    public ServerConfig saveAndGetConfig() {
-        serverConfig = new ServerConfig();
+    public void save() {
         serverConfig.setTabName(tabTitle.getText());
         serverConfig.setMsgInput(msgInput.getText());
         serverConfig.setPort(serverPort.getText());
-        serverConfig.setSendSettingConfig(sendSettingConfig);
-        return serverConfig;
     }
 
     /**

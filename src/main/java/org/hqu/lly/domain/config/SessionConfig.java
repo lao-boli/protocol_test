@@ -1,6 +1,11 @@
 package org.hqu.lly.domain.config;
 
+import lombok.Data;
 import org.hqu.lly.domain.bean.SendSettingConfig;
+import org.hqu.lly.enums.ConfigType;
+import org.hqu.lly.enums.PaneType;
+
+import java.util.UUID;
 
 /**
  * <p>
@@ -11,13 +16,16 @@ import org.hqu.lly.domain.bean.SendSettingConfig;
  * @version 1.0
  * @date 2023/6/28 20:31
  */
+@Data
 public class SessionConfig extends Config {
 
     String id;
 
-    String type;
+    ConfigType type;
 
     String protocol;
+
+    PaneType paneType;
 
     protected String tabName;
 
@@ -30,6 +38,7 @@ public class SessionConfig extends Config {
 
     public SessionConfig() {
         this.sendSettingConfig = new SendSettingConfig();
+        this.id = UUID.randomUUID().toString();
     }
 
     public SessionConfig(SendSettingConfig sendSettingConfig) {

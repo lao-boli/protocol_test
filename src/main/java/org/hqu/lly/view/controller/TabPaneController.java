@@ -11,14 +11,11 @@ import javafx.scene.input.MouseEvent;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.hqu.lly.constant.ContentPaneConsts;
-import org.hqu.lly.domain.config.Config;
 import org.hqu.lly.domain.config.TabConfig;
 import org.hqu.lly.domain.config.TabPaneConfig;
 import org.hqu.lly.factory.BaseTabFactory;
 
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.ResourceBundle;
 
 /**
@@ -33,11 +30,6 @@ import java.util.ResourceBundle;
 @Slf4j
 public class TabPaneController extends BaseController implements Initializable {
 
-    /**
-     * 本 {@link #mainTabPane}下的标签页 {@link Tab}的控制器列表 <br>
-     * 用于遍历来获取并保存每一个标签页的配置类。
-     */
-    private final List<BaseController> controllers;
     /**
      * fxml的tabPane节点
      */
@@ -59,7 +51,6 @@ public class TabPaneController extends BaseController implements Initializable {
     private TabPaneConfig tabPaneConfig;
 
     public TabPaneController() {
-        controllers = new ArrayList<>();
     }
 
     public void setTabFactory(BaseTabFactory tabFactory) {
@@ -86,7 +77,6 @@ public class TabPaneController extends BaseController implements Initializable {
     public void createNewTab() {
         tabFactory.setTabPane(mainTabPane);
         Tab tab = tabFactory.create();
-        controllers.add(tabFactory.getController());
 
         mainTabPane.getTabs().add(mainTabPane.getTabs().size() - 1, tab);
 
@@ -104,27 +94,11 @@ public class TabPaneController extends BaseController implements Initializable {
     public void createNewTab(TabConfig config) {
         tabFactory.setTabPane(mainTabPane);
         Tab tab = tabFactory.create(config);
-        controllers.add(tabFactory.getController());
 
         mainTabPane.getTabs().add(mainTabPane.getTabs().size() - 1, tab);
 
         // 切换到新添加的标签页
         mainTabPane.getSelectionModel().select(tab);
-    }
-
-    @Override
-    public TabPaneConfig saveAndGetConfig() {
-        TabPaneConfig tabPaneConfig = new TabPaneConfig(tabPaneName);
-        // XXX 当前方式会导致当tab页关闭时controller不能及时移除，
-        //  只是标记已移除，保证在保存时能够跳过.待优化实现。
-        for (BaseController controller : controllers) {
-            if (controller.isDestroyed()) {
-                continue;
-            }
-            Config subTabConfig = controller.saveAndGetConfig();
-            tabPaneConfig.addSubConfig((TabConfig) subTabConfig);
-        }
-        return tabPaneConfig;
     }
 
 
@@ -144,6 +118,12 @@ public class TabPaneController extends BaseController implements Initializable {
                 }
             }
         });
+    }
+
+
+    @Override
+    public void save() {
+
     }
 
 }

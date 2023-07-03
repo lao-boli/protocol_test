@@ -12,12 +12,12 @@ import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
 import org.hqu.lly.constant.ContentPaneConsts;
 import org.hqu.lly.domain.component.MyAlert;
+import org.hqu.lly.domain.config.NewTopConfig;
 import org.hqu.lly.domain.config.TabPaneConfig;
 import org.hqu.lly.domain.config.TopConfig;
 import org.hqu.lly.domain.vo.ServiceItem;
 import org.hqu.lly.service.impl.TabPaneManager;
 import org.hqu.lly.utils.UIUtil;
-import org.hqu.lly.view.group.ControllerGroup;
 
 import java.io.FileNotFoundException;
 import java.net.URL;
@@ -70,15 +70,7 @@ public class MainController implements Initializable {
             Optional<ButtonType> result = myAlert.showAndWait();
 
             if(result.get().equals(ButtonType.OK)){
-                // 通知各级控制器保存配置
-                for (TabPaneController controller : ControllerGroup.tabPaneControllerSet) {
-                    TabPaneConfig tabPaneConfig = controller.saveAndGetConfig();
-                    if (tabPaneConfig != null) {
-                        TopConfig.getInstance().addTabPaneConfig(tabPaneConfig);
-                    }
-                }
-                // 写入文件
-                TopConfig.getInstance().save();
+                NewTopConfig.save();
             }
 
             return result.get().equals(ButtonType.OK) || result.get().equals(ButtonType.CANCEL);
@@ -92,7 +84,7 @@ public class MainController implements Initializable {
 
         try {
             TopConfig.load();
-            initByConfig();
+            // initByConfig();
         } catch (FileNotFoundException e) {
             log.warn("miss match config file");
         }

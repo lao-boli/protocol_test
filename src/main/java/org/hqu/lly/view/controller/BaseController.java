@@ -1,7 +1,5 @@
 package org.hqu.lly.view.controller;
 
-import org.hqu.lly.domain.config.Config;
-
 /**
  * <p>
  * 服务端或客户端controller顶层父类
@@ -13,17 +11,10 @@ import org.hqu.lly.domain.config.Config;
  */
 public abstract class BaseController {
 
+
     protected boolean destroyed = false;
 
-    /**
-     * <p>
-     *     保存服务端或客户端controller配置
-     * </p>
-     * @return {@link Config} 服务端或客户端面板配置
-     * @date 2023-02-02 19:47:08 <br>
-     * @author hqully <br>
-     */
-    public abstract Config saveAndGetConfig();
+    public abstract void save();
 
     /**
      * <p>
