@@ -20,33 +20,13 @@ public interface TabFactory<T extends BaseController> {
      * 创建标签页
      * </p>
      *
-     * @return {@link Tab} 标签页
-     * @date 2022-08-07 14:51:48 <br>
-     */
-    Tab create();
-
-    /**
-     * <p>
-     * 创建标签页
-     * </p>
-     *
      * @param config 创建标签页所需配置类<br>
-     *               应为 {@link org.hqu.lly.domain.config.ClientConfig}<br>
-     *               或 {@link org.hqu.lly.domain.config.ServerConfig}
+     *               应为 {@link org.hqu.lly.domain.config.ClientSessionConfig}<br>
+     *               或 {@link org.hqu.lly.domain.config.ServerSessionConfig}<br>
+     *               或 null
      * @return {@link Tab} 标签页
-     * @date 2023-02-03 19:43:33 <br>
+     * @date 2023-07-04 20:11
      */
     Tab create(Config config);
-
-    /**
-     * <p>
-     * 获取标签页的controller
-     * </p>
-     *
-     * @return {@link T}
-     * @date 2023-02-02 20:07:11 <br>
-     * @author hqully <br>
-     */
-    T getController();
 
 }

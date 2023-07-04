@@ -79,7 +79,7 @@ public class MainController implements Initializable {
 
         initSideBar();
 
-        // setupSpiltPane();
+        setupSpiltPane();
 
         try {
             NewTopConfig.load();

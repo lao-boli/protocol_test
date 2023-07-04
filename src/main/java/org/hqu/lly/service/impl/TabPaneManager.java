@@ -13,7 +13,6 @@ import org.hqu.lly.enums.TabFactoryEnum;
 import org.hqu.lly.service.SwitchPaneService;
 import org.hqu.lly.view.controller.TabPaneController;
 import org.hqu.lly.view.group.ContentPaneGroup;
-import org.hqu.lly.view.group.ControllerGroup;
 
 /**
  * <p>
@@ -101,9 +100,6 @@ public class TabPaneManager implements SwitchPaneService {
         // 根据面板名称获取相应的标签页工厂
         controller.setTabFactory(TabFactoryEnum.getByPaneType(tabPaneName).getTabFactory());
         controller.setTabPaneName(tabPaneName);
-
-        // 添加到全局controller集合，便于在退出整个程序前保存配置
-        ControllerGroup.tabPaneControllerSet.add(controller);
 
         VBox.setVgrow(contentPane, Priority.ALWAYS);
         // 添加到全局contentPane集合，便于切换各个功能面板

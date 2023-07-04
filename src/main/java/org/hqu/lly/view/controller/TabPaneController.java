@@ -55,6 +55,7 @@ public class TabPaneController extends BaseController implements Initializable {
 
     public void setTabFactory(BaseTabFactory tabFactory) {
         this.tabFactory = tabFactory;
+        this.tabFactory.setTabPane(mainTabPane);
     }
 
 
@@ -75,7 +76,6 @@ public class TabPaneController extends BaseController implements Initializable {
      * @date 2023-02-05 20:09:11 <br>
      */
     public void createNewTab() {
-        tabFactory.setTabPane(mainTabPane);
         Tab tab = tabFactory.create(null);
 
         mainTabPane.getTabs().add(mainTabPane.getTabs().size() - 1, tab);
@@ -92,7 +92,6 @@ public class TabPaneController extends BaseController implements Initializable {
      * @date 2023-02-05 20:09:11 <br>
      */
     public void createNewTab(SessionConfig config) {
-        tabFactory.setTabPane(mainTabPane);
         Tab tab = tabFactory.create(config);
 
         mainTabPane.getTabs().add(mainTabPane.getTabs().size() - 1, tab);
