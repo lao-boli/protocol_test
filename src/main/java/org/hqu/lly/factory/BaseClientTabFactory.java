@@ -5,7 +5,7 @@ import javafx.scene.Parent;
 import javafx.scene.control.Tab;
 import org.hqu.lly.domain.component.TitleTab;
 import org.hqu.lly.domain.config.ClientConfig;
-import org.hqu.lly.domain.config.TabConfig;
+import org.hqu.lly.domain.config.Config;
 import org.hqu.lly.view.controller.BaseClientController;
 import org.hqu.lly.view.group.ControllerGroup;
 
@@ -62,7 +62,7 @@ public class BaseClientTabFactory<T extends BaseClientController<?>> extends Bas
      * @date 2023-02-05 17:32:00 <br>
      */
     @Override
-    public Tab create(TabConfig config) {
+    public Tab create(Config config) {
         Tab tab = create();
         controller.initByConfig((ClientConfig) config);
         return tab;

@@ -29,7 +29,7 @@ public class NewTopConfig {
     /**
      * 是否从文件加载的flag
      */
-    private static Boolean isLoad = false;
+    public static Boolean isLoad = false;
 
     @Getter
     private static Map<String,SessionConfig> sessionConfigs = new HashMap<>();

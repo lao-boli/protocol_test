@@ -1,7 +1,7 @@
 package org.hqu.lly.factory;
 
 import javafx.scene.control.Tab;
-import org.hqu.lly.domain.config.TabConfig;
+import org.hqu.lly.domain.config.Config;
 import org.hqu.lly.view.controller.BaseController;
 
 /**
@@ -36,7 +36,7 @@ public interface TabFactory<T extends BaseController> {
      * @return {@link Tab} 标签页
      * @date 2023-02-03 19:43:33 <br>
      */
-    Tab create(TabConfig config);
+    Tab create(Config config);
 
     /**
      * <p>

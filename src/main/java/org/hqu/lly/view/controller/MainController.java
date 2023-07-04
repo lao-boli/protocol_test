@@ -13,8 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.hqu.lly.constant.ContentPaneConsts;
 import org.hqu.lly.domain.component.MyAlert;
 import org.hqu.lly.domain.config.NewTopConfig;
-import org.hqu.lly.domain.config.TabPaneConfig;
-import org.hqu.lly.domain.config.TopConfig;
+import org.hqu.lly.domain.config.SessionConfig;
 import org.hqu.lly.domain.vo.ServiceItem;
 import org.hqu.lly.service.impl.TabPaneManager;
 import org.hqu.lly.utils.UIUtil;
@@ -80,11 +79,11 @@ public class MainController implements Initializable {
 
         initSideBar();
 
-        setupSpiltPane();
+        // setupSpiltPane();
 
         try {
-            TopConfig.load();
-            // initByConfig();
+            NewTopConfig.load();
+            initByConfig();
         } catch (FileNotFoundException e) {
             log.warn("miss match config file");
         }
@@ -123,10 +122,14 @@ public class MainController implements Initializable {
      * @date 2023-02-04 18:35:07 <br>
      */
     private void initByConfig() {
-        for (TabPaneConfig tabPaneConfig : TopConfig.getInstance().getTabPaneConfigs()) {
-            managerMap.get(tabPaneConfig.getName()).createContentPane(tabPaneConfig);
-        }
-        TopConfig.initComplete();
+        Map<String, SessionConfig> configs = NewTopConfig.getSessionConfigs();
+        configs.values().forEach(c -> {
+            switch (c.getPaneType()) {
+                case TCP_SERVER -> managerMap.get(ContentPaneConsts.TCP_SERVER_PANE).initAndCreateTab(c);
+                case TCP_CLIENT -> managerMap.get(ContentPaneConsts.TCP_CLIENT_PANE).initAndCreateTab(c);
+                case UDP_SERVER -> managerMap.get(ContentPaneConsts.UDP_SERVER_PANE).initAndCreateTab(c);
+            }
+        });
         log.info("init pane successful");
 
     }

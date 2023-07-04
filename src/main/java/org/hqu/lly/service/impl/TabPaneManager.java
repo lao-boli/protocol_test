@@ -8,8 +8,7 @@ import javafx.scene.layout.VBox;
 import lombok.SneakyThrows;
 import org.hqu.lly.constant.ContentPaneConsts;
 import org.hqu.lly.constant.ResLoc;
-import org.hqu.lly.domain.config.TabConfig;
-import org.hqu.lly.domain.config.TabPaneConfig;
+import org.hqu.lly.domain.config.SessionConfig;
 import org.hqu.lly.enums.TabFactoryEnum;
 import org.hqu.lly.service.SwitchPaneService;
 import org.hqu.lly.view.controller.TabPaneController;
@@ -74,24 +73,14 @@ public class TabPaneManager implements SwitchPaneService {
         }
     }
 
-    /**
-     * <p>
-     * 根据配置类创建标签面板
-     * </p>
-     *
-     * @param config 标签面板配置类
-     * @date 2023-02-06 15:37:45 <br>
-     */
-    @SneakyThrows
-    public void createContentPane(TabPaneConfig config) {
-        // 创建面板
-        createContentPane();
 
-        controller.setTabPaneConfig(config);
-        // 根据配置创建标签页
-        for (TabConfig subTabConfig : config.getSubTabConfigs()) {
-            controller.createNewTab(subTabConfig);
+    @SneakyThrows
+    public void initAndCreateTab(SessionConfig config) {
+        if (controller == null){
+            // 创建面板
+            createContentPane();
         }
+        controller.createNewTab(config);
     }
 
     /**

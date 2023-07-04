@@ -11,7 +11,7 @@ import javafx.scene.input.MouseEvent;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.hqu.lly.constant.ContentPaneConsts;
-import org.hqu.lly.domain.config.TabConfig;
+import org.hqu.lly.domain.config.SessionConfig;
 import org.hqu.lly.domain.config.TabPaneConfig;
 import org.hqu.lly.factory.BaseTabFactory;
 
@@ -76,7 +76,7 @@ public class TabPaneController extends BaseController implements Initializable {
      */
     public void createNewTab() {
         tabFactory.setTabPane(mainTabPane);
-        Tab tab = tabFactory.create();
+        Tab tab = tabFactory.create(null);
 
         mainTabPane.getTabs().add(mainTabPane.getTabs().size() - 1, tab);
 
@@ -91,7 +91,7 @@ public class TabPaneController extends BaseController implements Initializable {
      *
      * @date 2023-02-05 20:09:11 <br>
      */
-    public void createNewTab(TabConfig config) {
+    public void createNewTab(SessionConfig config) {
         tabFactory.setTabPane(mainTabPane);
         Tab tab = tabFactory.create(config);
 
