@@ -3,7 +3,6 @@ package org.hqu.lly.view.controller;
 import io.netty.channel.Channel;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -16,12 +15,14 @@ import org.hqu.lly.domain.base.BaseClient;
 import org.hqu.lly.domain.bean.CustomDataConfig;
 import org.hqu.lly.domain.bean.SendSettingConfig;
 import org.hqu.lly.domain.component.MsgLabel;
-import org.hqu.lly.domain.config.ClientConfig;
+import org.hqu.lly.domain.config.ClientSessionConfig;
+import org.hqu.lly.domain.config.NewTopConfig;
 import org.hqu.lly.domain.config.TabConfig;
-import org.hqu.lly.domain.config.TopConfig;
+import org.hqu.lly.enums.ConfigType;
 import org.hqu.lly.exception.UnSetBoundException;
 import org.hqu.lly.factory.SendSettingPaneFactory;
 import org.hqu.lly.factory.SendTaskFactory;
+import org.hqu.lly.service.MyInitialize;
 import org.hqu.lly.service.ScheduledTaskService;
 import org.hqu.lly.service.impl.ClientService;
 import org.hqu.lly.service.impl.ScheduledSendService;
@@ -29,8 +30,6 @@ import org.hqu.lly.utils.DataUtil;
 import org.hqu.lly.utils.MsgUtil;
 
 import java.net.URI;
-import java.net.URL;
-import java.util.ResourceBundle;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
@@ -50,7 +49,7 @@ import static org.hqu.lly.utils.UIUtil.getTooltip;
  * @date 2022/10/2 20:20
  */
 @Slf4j
-public abstract class BaseClientController<T extends BaseClient> extends CommonUIContorller implements Initializable {
+public abstract class BaseClientController<T extends BaseClient> extends CommonUIContorller implements MyInitialize<ClientSessionConfig> {
 
     protected Executor executor = Executors.newSingleThreadExecutor();
 
@@ -64,10 +63,17 @@ public abstract class BaseClientController<T extends BaseClient> extends CommonU
      */
     protected ScheduledSendService scheduledService;
 
+    // region config
+    /**
+     * 客户端面板配置类
+     */
+    protected ClientSessionConfig clientConfig;
     /**
      * 发送设置配置类
      */
-    protected SendSettingConfig sendSettingConfig = new SendSettingConfig();
+    protected SendSettingConfig sendSettingConfig;
+
+    // endregion
 
     /**
      * 定时任务服务
@@ -88,11 +94,6 @@ public abstract class BaseClientController<T extends BaseClient> extends CommonU
     @Setter
     protected TextField tabTitle;
 
-    /**
-     * 客户端面板配置类
-     */
-    protected ClientConfig clientConfig;
-
     @FXML
     private TextField remoteAddressInput;
     @FXML
@@ -103,48 +104,9 @@ public abstract class BaseClientController<T extends BaseClient> extends CommonU
     private Label errorMsgLabel;
 
     public BaseClientController() {
-        setProtocol();
-        setClient();
     }
 
-    /**
-     * <p>
-     * 通过本地配置文件初始化加载数据
-     * </p>
-     *
-     * @param config 客户端配置文件类
-     * @date 2023-02-05 15:18:25 <br>
-     * @author hqully <br>
-     */
-    public void initByConfig(ClientConfig config) {
-        tabTitle.setText(config.getTabName());
-        remoteAddressInput.setText(config.getServerAddr());
-        msgInput.setText(config.getMsgInput());
-        sendSettingConfig = config.getSendSettingConfig();
-        initSendSetting();
-    }
 
-    /**
-     * <p>
-     * 保存并返回当前标签页的客户端配置。
-     * 当前标签页的控制器应是 {@link BaseClientController}的子类。 <br>
-     * 保存的客户端配置包括：<br>
-     * 1.消息框中的文本;<br>
-     * 2.连接的服务端地址;<br>
-     * 3.发送设置.
-     * </p>
-     *
-     * @return {@link TabConfig} 客户端标签页配置
-     * @date 2023-02-06 10:50:53 <br>
-     */
-    public TabConfig saveAndGetConfig() {
-        clientConfig = new ClientConfig();
-        clientConfig.setMsgInput(msgInput.getText());
-        clientConfig.setTabName(tabTitle.getText());
-        clientConfig.setServerAddr(remoteAddressInput.getText());
-        clientConfig.setSendSettingConfig(sendSettingConfig);
-        return clientConfig;
-    }
 
     /**
      * <p>
@@ -272,6 +234,8 @@ public abstract class BaseClientController<T extends BaseClient> extends CommonU
      */
     public void destroy() {
         destroyTask();
+        NewTopConfig.removeSessionConfig(clientConfig.getId());
+        NewTopConfig.controllers.remove(this);
         destroyed = true;
     }
 
@@ -313,16 +277,8 @@ public abstract class BaseClientController<T extends BaseClient> extends CommonU
         });
     }
 
-    @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
-
-        // 若不是从配置文件中加载面板,
-        // 则在本面板初始化时就可以初始化发送设置.
-        if (!TopConfig.isLoad()) {
-            // 发送设置
-            initSendSetting();
-        }
-
+    @FXML
+    public void initialize() {
         // 功能按钮悬浮tip提示
         initMsgSideBar();
         setupDisplaySetting();
@@ -393,6 +349,27 @@ public abstract class BaseClientController<T extends BaseClient> extends CommonU
         displaySettingBtn.setTooltip(getTooltip("显示设置"));
     }
 
+    @Override
+    public void init() {
+
+    }
+    @Override
+    public void init(ClientSessionConfig config) {
+        NewTopConfig.controllers.add(this);
+        if (config == null) {
+            clientConfig = (ClientSessionConfig) NewTopConfig.createConfig(ConfigType.CLIENT);
+        }else {
+            clientConfig = config;
+            tabTitle.setText(config.getTabName());
+            remoteAddressInput.setText(config.getServerAddr());
+            msgInput.setText(config.getMsgInput());
+        }
+        setProtocol();
+        setClient();
+        sendSettingConfig = clientConfig.getSendSettingConfig();
+        initSendSetting();
+    }
+
     private class BaseClientService extends ClientService {
 
         @Override
@@ -427,9 +404,25 @@ public abstract class BaseClientController<T extends BaseClient> extends CommonU
 
     }
 
+    /**
+     * <p>
+     * 保存并返回当前标签页的客户端配置。
+     * 当前标签页的控制器应是 {@link BaseClientController}的子类。 <br>
+     * 保存的客户端配置包括：<br>
+     * 1.消息框中的文本;<br>
+     * 2.连接的服务端地址;<br>
+     * 3.发送设置.
+     * </p>
+     *
+     * @return {@link TabConfig} 客户端标签页配置
+     * @date 2023-02-06 10:50:53 <br>
+     */
     @Override
     public void save() {
-
+        clientConfig.setMsgInput(msgInput.getText());
+        clientConfig.setTabName(tabTitle.getText());
+        clientConfig.setServerAddr(remoteAddressInput.getText());
+        clientConfig.setSendSettingConfig(sendSettingConfig);
     }
 
 }

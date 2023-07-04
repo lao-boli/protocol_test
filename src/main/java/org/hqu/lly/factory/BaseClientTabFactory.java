@@ -5,6 +5,7 @@ import javafx.scene.Parent;
 import javafx.scene.control.Tab;
 import org.hqu.lly.domain.component.TitleTab;
 import org.hqu.lly.domain.config.ClientConfig;
+import org.hqu.lly.domain.config.ClientSessionConfig;
 import org.hqu.lly.domain.config.Config;
 import org.hqu.lly.view.controller.BaseClientController;
 import org.hqu.lly.view.group.ControllerGroup;
@@ -63,8 +64,28 @@ public class BaseClientTabFactory<T extends BaseClientController<?>> extends Bas
      */
     @Override
     public Tab create(Config config) {
-        Tab tab = create();
-        controller.initByConfig((ClientConfig) config);
+
+        TitleTab tab = new TitleTab(tabName,tabPane);
+
+        try {
+            FXMLLoader loader = new FXMLLoader(tabPanePath);
+            Parent contentPane = loader.load();
+            // 不能直接赋值给成员变量，
+            // 否则会导致标签页的关闭回调里的controller,
+            // 永远只有最新创建的tab页的controller
+            T controller = loader.getController();
+            controller.setTabTitle(tab.getTabTitleField());
+            ControllerGroup.clientControllerSet.add(controller);
+            controller.init((ClientSessionConfig) config);
+
+            tab.setContent(contentPane);
+            tab.setOnClosed(event -> (controller).destroy());
+
+            // 设置完回调以后再赋值给成员变量，方便调用者获取。
+            this.controller = controller;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         return tab;
     }
 

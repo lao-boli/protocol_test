@@ -53,7 +53,7 @@ public class NewTopConfig {
             addSessionConfig(config);
         }
         if (type == ConfigType.CLIENT){
-            config = new ServerSessionConfig();
+            config = new ClientSessionConfig();
             addSessionConfig(config);
         }
         return config;
