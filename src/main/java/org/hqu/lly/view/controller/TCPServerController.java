@@ -1,5 +1,6 @@
 package org.hqu.lly.view.controller;
 
+import org.hqu.lly.enums.PaneType;
 import org.hqu.lly.protocol.tcp.server.TCPServer;
 
 /**
@@ -17,6 +18,7 @@ public class TCPServerController extends ConnectedServerController{
     @Override
     protected void setServer() {
         server = new TCPServer();
+        serverConfig.setPaneType(PaneType.TCP_SERVER);
     }
 
 

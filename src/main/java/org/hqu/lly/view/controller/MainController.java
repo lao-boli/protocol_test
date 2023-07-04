@@ -129,6 +129,8 @@ public class MainController implements Initializable {
                 case TCP_CLIENT -> managerMap.get(ContentPaneConsts.TCP_CLIENT_PANE).initAndCreateTab(c);
                 case UDP_SERVER -> managerMap.get(ContentPaneConsts.UDP_SERVER_PANE).initAndCreateTab(c);
                 case UDP_CLIENT -> managerMap.get(ContentPaneConsts.UDP_CLIENT_PANE).initAndCreateTab(c);
+                case WS_SERVER -> managerMap.get(ContentPaneConsts.WEB_SOCKET_SERVER_PANE).initAndCreateTab(c);
+                case WS_CLIENT -> managerMap.get(ContentPaneConsts.WEB_SOCKET_CLIENT_PANE).initAndCreateTab(c);
             }
         });
         log.info("init pane successful");
