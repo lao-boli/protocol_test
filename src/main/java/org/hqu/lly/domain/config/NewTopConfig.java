@@ -1,5 +1,6 @@
 package org.hqu.lly.domain.config;
 
+import lombok.Getter;
 import org.hqu.lly.enums.ConfigType;
 import org.hqu.lly.utils.ConfUtil;
 import org.hqu.lly.view.controller.BaseController;
@@ -30,7 +31,8 @@ public class NewTopConfig {
      */
     private static Boolean isLoad = false;
 
-    private static final Map<String,SessionConfig> sessionConfigs = new HashMap<>();
+    @Getter
+    private static Map<String,SessionConfig> sessionConfigs = new HashMap<>();
 
     public static void addSessionConfig(SessionConfig config){
         sessionConfigs.put(config.id, config);
@@ -63,7 +65,8 @@ public class NewTopConfig {
     }
 
     public static void load() throws FileNotFoundException {
-        ConfUtil.load();
+        sessionConfigs = ConfUtil.load();
+        System.out.println(sessionConfigs);
         isLoad = true;
     }
 

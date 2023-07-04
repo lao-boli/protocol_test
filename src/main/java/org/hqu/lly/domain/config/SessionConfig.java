@@ -1,5 +1,8 @@
 package org.hqu.lly.domain.config;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.Data;
 import org.hqu.lly.domain.bean.SendSettingConfig;
 import org.hqu.lly.enums.ConfigType;
@@ -17,6 +20,15 @@ import java.util.UUID;
  * @date 2023/6/28 20:31
  */
 @Data
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME,
+        include = JsonTypeInfo.As.EXISTING_PROPERTY,
+        property = "type"
+)
+@JsonSubTypes({
+        @JsonSubTypes.Type(value = ClientSessionConfig.class,name = "CLIENT"),
+        @JsonSubTypes.Type(value = ServerSessionConfig.class,name = "SERVER")
+})
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class SessionConfig extends Config {
 
     String id;

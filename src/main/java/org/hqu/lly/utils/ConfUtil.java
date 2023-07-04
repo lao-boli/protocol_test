@@ -2,6 +2,7 @@ package org.hqu.lly.utils;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -103,7 +104,7 @@ public class ConfUtil {
     public static HashMap<String, SessionConfig> load() throws FileNotFoundException {
         try {
             FileInputStream fileInputStream = new FileInputStream(path + name2);
-            HashMap config = mapper.readValue(fileInputStream, HashMap.class);
+            HashMap<String, SessionConfig> config = mapper.readValue(fileInputStream, new TypeReference<HashMap<String, SessionConfig>>() {});
             return config;
 
         } catch (FileNotFoundException e) {
