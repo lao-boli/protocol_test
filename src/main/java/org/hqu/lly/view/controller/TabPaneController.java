@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.hqu.lly.constant.ContentPaneConsts;
 import org.hqu.lly.domain.config.SessionConfig;
 import org.hqu.lly.domain.config.TabPaneConfig;
+import org.hqu.lly.enums.PaneType;
 import org.hqu.lly.enums.TabFactoryEnum;
 import org.hqu.lly.factory.BaseTabFactory;
 
@@ -53,9 +54,8 @@ public class TabPaneController extends BaseController implements Initializable {
     public TabPaneController() {
     }
 
-    public void setTabFactory(String tabPaneName) {
-        this.tabPaneName = tabPaneName;
-        this.tabFactory = TabFactoryEnum.getByPaneType(tabPaneName).getTabFactory();
+    public void setTabFactory(PaneType paneType) {
+        this.tabFactory = TabFactoryEnum.getByPaneType(paneType).getTabFactory();
         this.tabFactory.setTabPane(mainTabPane);
     }
 

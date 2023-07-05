@@ -15,12 +15,15 @@ import org.hqu.lly.domain.component.MyAlert;
 import org.hqu.lly.domain.config.NewTopConfig;
 import org.hqu.lly.domain.config.SessionConfig;
 import org.hqu.lly.domain.vo.ServiceItem;
+import org.hqu.lly.enums.PaneType;
 import org.hqu.lly.service.impl.TabPaneManager;
 import org.hqu.lly.utils.UIUtil;
 
 import java.io.FileNotFoundException;
 import java.net.URL;
 import java.util.*;
+
+import static org.hqu.lly.enums.PaneType.*;
 
 /**
  * <p>
@@ -51,7 +54,7 @@ public class MainController implements Initializable {
     @FXML
     private VBox mainPane;
 
-    private final Map<String, TabPaneManager> managerMap = new HashMap<>(6);
+    private final Map<PaneType, TabPaneManager> managerMap = new HashMap<>(6);
 
     /**
      * 侧边栏菜单宽度
@@ -125,12 +128,12 @@ public class MainController implements Initializable {
         Map<String, SessionConfig> configs = NewTopConfig.getSessionConfigs();
         configs.values().forEach(c -> {
             switch (c.getPaneType()) {
-                case TCP_SERVER -> managerMap.get(ContentPaneConsts.TCP_SERVER_PANE).initAndCreateTab(c);
-                case TCP_CLIENT -> managerMap.get(ContentPaneConsts.TCP_CLIENT_PANE).initAndCreateTab(c);
-                case UDP_SERVER -> managerMap.get(ContentPaneConsts.UDP_SERVER_PANE).initAndCreateTab(c);
-                case UDP_CLIENT -> managerMap.get(ContentPaneConsts.UDP_CLIENT_PANE).initAndCreateTab(c);
-                case WS_SERVER -> managerMap.get(ContentPaneConsts.WEB_SOCKET_SERVER_PANE).initAndCreateTab(c);
-                case WS_CLIENT -> managerMap.get(ContentPaneConsts.WEB_SOCKET_CLIENT_PANE).initAndCreateTab(c);
+                case TCP_SERVER -> managerMap.get(TCP_SERVER).initAndCreateTab(c);
+                case TCP_CLIENT -> managerMap.get(TCP_CLIENT).initAndCreateTab(c);
+                case UDP_SERVER -> managerMap.get(UDP_SERVER).initAndCreateTab(c);
+                case UDP_CLIENT -> managerMap.get(UDP_CLIENT).initAndCreateTab(c);
+                case WS_SERVER -> managerMap.get(WS_SERVER).initAndCreateTab(c);
+                case WS_CLIENT -> managerMap.get(WS_CLIENT).initAndCreateTab(c);
             }
         });
         log.info("init pane successful");
@@ -150,8 +153,8 @@ public class MainController implements Initializable {
         // tcp
         TreeItem<String> tcp = new TreeItem<>("tcp");
 
-        ServiceItem<String> tcpServer = getServiceItem(ContentPaneConsts.TCP_SERVER_PANE, "server");
-        ServiceItem<String> tcpClient = getServiceItem(ContentPaneConsts.TCP_CLIENT_PANE, "client");
+        ServiceItem<String> tcpServer = getServiceItem(TCP_SERVER, "server");
+        ServiceItem<String> tcpClient = getServiceItem(TCP_CLIENT, "client");
 
         tcp.getChildren().add(tcpServer);
         tcp.getChildren().add(tcpClient);
@@ -159,8 +162,8 @@ public class MainController implements Initializable {
         // udp
         TreeItem<String> udp = new TreeItem<>("udp");
 
-        ServiceItem<String> udpServer = getServiceItem(ContentPaneConsts.UDP_SERVER_PANE, "server");
-        ServiceItem<String> udpClient = getServiceItem(ContentPaneConsts.UDP_CLIENT_PANE, "client");
+        ServiceItem<String> udpServer = getServiceItem(UDP_SERVER, "server");
+        ServiceItem<String> udpClient = getServiceItem(UDP_CLIENT, "client");
 
         udp.getChildren().add(udpServer);
         udp.getChildren().add(udpClient);
@@ -168,8 +171,8 @@ public class MainController implements Initializable {
         // websocket
         TreeItem<String> webSocket = new TreeItem<>("webSocket");
 
-        ServiceItem<String> server = getServiceItem(ContentPaneConsts.WEB_SOCKET_SERVER_PANE, "server");
-        ServiceItem<String> client = getServiceItem(ContentPaneConsts.WEB_SOCKET_CLIENT_PANE, "client");
+        ServiceItem<String> server = getServiceItem(WS_SERVER, "server");
+        ServiceItem<String> client = getServiceItem(WS_CLIENT, "client");
 
         webSocket.getChildren().add(server);
         webSocket.getChildren().add(client);
@@ -208,7 +211,7 @@ public class MainController implements Initializable {
      * @return {@link ServiceItem}
      * @date 2023-02-06 16:08:05 <br>
      */
-    private ServiceItem<String> getServiceItem(String paneName, String subPaneName) {
+    private ServiceItem<String> getServiceItem(PaneType paneName, String subPaneName) {
         TabPaneManager paneManager = new TabPaneManager(mainPane, paneName);
         managerMap.put(paneName, paneManager);
         return new ServiceItem<>(subPaneName, paneManager);
