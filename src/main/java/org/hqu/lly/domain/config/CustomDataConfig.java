@@ -1,4 +1,4 @@
-package org.hqu.lly.domain.bean;
+package org.hqu.lly.domain.config;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;

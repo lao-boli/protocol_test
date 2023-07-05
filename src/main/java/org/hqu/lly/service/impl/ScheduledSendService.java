@@ -6,7 +6,7 @@ import javafx.concurrent.WorkerStateEvent;
 import javafx.event.EventHandler;
 import javafx.util.Duration;
 import lombok.extern.slf4j.Slf4j;
-import org.hqu.lly.domain.bean.ScheduledSendConfig;
+import org.hqu.lly.domain.config.ScheduledSendConfig;
 import org.hqu.lly.service.ScheduledTaskService;
 
 import java.util.concurrent.ExecutorService;

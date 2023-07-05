@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.Data;
-import org.hqu.lly.domain.bean.SendSettingConfig;
 import org.hqu.lly.enums.ConfigType;
 import org.hqu.lly.enums.PaneType;
 

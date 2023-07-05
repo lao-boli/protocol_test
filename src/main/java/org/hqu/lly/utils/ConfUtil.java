@@ -7,8 +7,8 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.hqu.lly.domain.config.NewTopConfig;
 import org.hqu.lly.domain.config.SessionConfig;
-import org.hqu.lly.domain.config.TopConfig;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -75,36 +75,16 @@ public class ConfUtil {
     }
 
     /**
-     * <p>
      * 加载配置文件
-     * </p>
      *
-     * @return {@link TopConfig} 全局配置文件
+     * @return {@link NewTopConfig#sessionConfigs} 全局配置文件
      * @throws FileNotFoundException 未读取到本地配置文件
-     * @date 2023-02-08 13:47:11 <br>
      */
-    public static TopConfig loadTopConf() throws FileNotFoundException {
-        try {
-            FileInputStream fileInputStream = new FileInputStream(path + name);
-            TopConfig config = mapper.readValue(fileInputStream, TopConfig.class);
-            return config;
-
-        } catch (FileNotFoundException e) {
-            throw e;
-        } catch (JsonParseException e) {
-            e.printStackTrace();
-        } catch (JsonMappingException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
     public static HashMap<String, SessionConfig> load() throws FileNotFoundException {
         try {
             FileInputStream fileInputStream = new FileInputStream(path + name2);
-            HashMap<String, SessionConfig> config = mapper.readValue(fileInputStream, new TypeReference<HashMap<String, SessionConfig>>() {});
+            HashMap<String, SessionConfig> config = mapper.readValue(fileInputStream, new TypeReference<HashMap<String, SessionConfig>>() {
+            });
             return config;
 
         } catch (FileNotFoundException e) {

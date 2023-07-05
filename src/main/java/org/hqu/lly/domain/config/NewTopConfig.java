@@ -22,8 +22,6 @@ import java.util.Map;
  */
 public class NewTopConfig {
 
-
-
     public static final List<BaseController> controllers = new ArrayList<>();
 
     /**

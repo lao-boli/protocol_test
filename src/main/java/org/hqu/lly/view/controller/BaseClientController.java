@@ -12,12 +12,11 @@ import javafx.stage.Stage;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.hqu.lly.domain.base.BaseClient;
-import org.hqu.lly.domain.bean.CustomDataConfig;
-import org.hqu.lly.domain.bean.SendSettingConfig;
 import org.hqu.lly.domain.component.MsgLabel;
 import org.hqu.lly.domain.config.ClientSessionConfig;
+import org.hqu.lly.domain.config.CustomDataConfig;
 import org.hqu.lly.domain.config.NewTopConfig;
-import org.hqu.lly.domain.config.TabConfig;
+import org.hqu.lly.domain.config.SendSettingConfig;
 import org.hqu.lly.enums.ConfigType;
 import org.hqu.lly.exception.UnSetBoundException;
 import org.hqu.lly.factory.SendSettingPaneFactory;
@@ -414,8 +413,7 @@ public abstract class BaseClientController<T extends BaseClient> extends CommonU
      * 3.发送设置.
      * </p>
      *
-     * @return {@link TabConfig} 客户端标签页配置
-     * @date 2023-02-06 10:50:53 <br>
+     *  @date 2023-07-05 20:15
      */
     @Override
     public void save() {

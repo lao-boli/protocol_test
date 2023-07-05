@@ -11,9 +11,9 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.hqu.lly.domain.bean.CustomDataConfig;
-import org.hqu.lly.domain.bean.ScheduledSendConfig;
-import org.hqu.lly.domain.bean.SendSettingConfig;
+import org.hqu.lly.domain.config.CustomDataConfig;
+import org.hqu.lly.domain.config.ScheduledSendConfig;
+import org.hqu.lly.domain.config.SendSettingConfig;
 import org.hqu.lly.factory.DataSettingPaneFactory;
 
 import java.net.URL;

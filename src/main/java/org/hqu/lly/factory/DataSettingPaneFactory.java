@@ -9,7 +9,7 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import lombok.extern.slf4j.Slf4j;
 import org.hqu.lly.constant.ResLoc;
-import org.hqu.lly.domain.bean.CustomDataConfig;
+import org.hqu.lly.domain.config.CustomDataConfig;
 import org.hqu.lly.utils.DragUtil;
 import org.hqu.lly.utils.UIUtil;
 import org.hqu.lly.view.controller.DataSettingController;

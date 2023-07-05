@@ -8,11 +8,9 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.input.MouseEvent;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.hqu.lly.constant.ContentPaneConsts;
 import org.hqu.lly.domain.config.SessionConfig;
-import org.hqu.lly.domain.config.TabPaneConfig;
 import org.hqu.lly.enums.PaneType;
 import org.hqu.lly.enums.TabFactoryEnum;
 import org.hqu.lly.factory.BaseTabFactory;
@@ -45,11 +43,6 @@ public class TabPaneController extends BaseController implements Initializable {
      * 应为 {@link ContentPaneConsts}中的一种.
      */
     private String tabPaneName;
-    /**
-     * 本页面配置类
-     */
-    @Setter
-    private TabPaneConfig tabPaneConfig;
 
     public TabPaneController() {
     }
