@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.hqu.lly.constant.ContentPaneConsts;
 import org.hqu.lly.domain.config.SessionConfig;
 import org.hqu.lly.domain.config.TabPaneConfig;
+import org.hqu.lly.enums.TabFactoryEnum;
 import org.hqu.lly.factory.BaseTabFactory;
 
 import java.net.URL;
@@ -42,7 +43,6 @@ public class TabPaneController extends BaseController implements Initializable {
      * 标签页面板名称<br>
      * 应为 {@link ContentPaneConsts}中的一种.
      */
-    @Setter
     private String tabPaneName;
     /**
      * 本页面配置类
@@ -53,14 +53,20 @@ public class TabPaneController extends BaseController implements Initializable {
     public TabPaneController() {
     }
 
-    public void setTabFactory(BaseTabFactory tabFactory) {
-        this.tabFactory = tabFactory;
+    public void setTabFactory(String tabPaneName) {
+        this.tabPaneName = tabPaneName;
+        this.tabFactory = TabFactoryEnum.getByPaneType(tabPaneName).getTabFactory();
         this.tabFactory.setTabPane(mainTabPane);
     }
 
 
     @FXML
     void createNewTab(Event event) {
+        // 页面初始化时会触发一次tab selection change 事件，
+        // 此时本方法会触发,从配置文件加载时，生成一个无配置的new tab会导致异常，
+        // 原因为生成新tab会创建一个config并加入sessionconfig中，而在迭代中不能新增或删除元素。
+        // 所以这里需要忽略掉初始化时触发的tab selection change 事件
+        // tabFactory 也应在controller初始化完成后进行设置.
         if (tabFactory != null) {
             createNewTab();
         }

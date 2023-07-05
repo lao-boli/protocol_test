@@ -9,7 +9,6 @@ import lombok.SneakyThrows;
 import org.hqu.lly.constant.ContentPaneConsts;
 import org.hqu.lly.constant.ResLoc;
 import org.hqu.lly.domain.config.SessionConfig;
-import org.hqu.lly.enums.TabFactoryEnum;
 import org.hqu.lly.service.SwitchPaneService;
 import org.hqu.lly.view.controller.TabPaneController;
 import org.hqu.lly.view.group.ContentPaneGroup;
@@ -98,8 +97,7 @@ public class TabPaneManager implements SwitchPaneService {
         controller = loader.getController();
 
         // 根据面板名称获取相应的标签页工厂
-        controller.setTabFactory(TabFactoryEnum.getByPaneType(tabPaneName).getTabFactory());
-        controller.setTabPaneName(tabPaneName);
+        controller.setTabFactory(tabPaneName);
 
         VBox.setVgrow(contentPane, Priority.ALWAYS);
         // 添加到全局contentPane集合，便于切换各个功能面板
