@@ -13,14 +13,14 @@ import java.util.Map;
 
 /**
  * <p>
- *
+ * 配置类保存和加载仓库
  * <p>
  *
  * @author hqully
  * @version 1.0
  * @date 2023/7/1 19:46
  */
-public class NewTopConfig {
+public class ConfigStore {
 
     public static final List<BaseController> controllers = new ArrayList<>();
 
@@ -64,7 +64,6 @@ public class NewTopConfig {
 
     public static void load() throws FileNotFoundException {
         sessionConfigs = ConfUtil.load();
-        System.out.println(sessionConfigs);
         isLoad = true;
     }
 

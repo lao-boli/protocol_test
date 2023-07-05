@@ -8,7 +8,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.hqu.lly.constant.ResLoc;
-import org.hqu.lly.domain.config.NewTopConfig;
+import org.hqu.lly.domain.config.ConfigStore;
 import org.hqu.lly.domain.config.SendSettingConfig;
 import org.hqu.lly.utils.DragUtil;
 import org.hqu.lly.utils.UIUtil;
@@ -49,7 +49,7 @@ public class SendSettingPaneFactory {
             controller.setCustomDataConfig(sendConfig.getCustomDataConfig());
 
             // 若存在本地配置文件,则加载.
-            if (NewTopConfig.isLoad){
+            if (ConfigStore.isLoad){
                 controller.loadConfig();
             }
 

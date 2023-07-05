@@ -12,8 +12,8 @@ import javafx.stage.Stage;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.hqu.lly.domain.base.BaseServer;
+import org.hqu.lly.domain.config.ConfigStore;
 import org.hqu.lly.domain.config.CustomDataConfig;
-import org.hqu.lly.domain.config.NewTopConfig;
 import org.hqu.lly.domain.config.SendSettingConfig;
 import org.hqu.lly.domain.config.ServerSessionConfig;
 import org.hqu.lly.enums.ConfigType;
@@ -136,7 +136,7 @@ public abstract class BaseServerController<T> extends CommonUIContorller impleme
 
 
     public void initConfig() {
-        serverConfig = (ServerSessionConfig) NewTopConfig.createConfig(ConfigType.SERVER);
+        serverConfig = (ServerSessionConfig) ConfigStore.createConfig(ConfigType.SERVER);
         sendSettingConfig = serverConfig.getSendSettingConfig();
     }
 
@@ -321,8 +321,8 @@ public abstract class BaseServerController<T> extends CommonUIContorller impleme
             scheduleSendBtn.setSelected(false);
         }
         server.destroy();
-        NewTopConfig.controllers.remove(this);
-        NewTopConfig.removeSessionConfig(serverConfig.getId());
+        ConfigStore.controllers.remove(this);
+        ConfigStore.removeSessionConfig(serverConfig.getId());
         destroyed = true;
     }
 
@@ -456,7 +456,7 @@ public abstract class BaseServerController<T> extends CommonUIContorller impleme
 
     @Override
     public void init(ServerSessionConfig config) {
-        NewTopConfig.controllers.add(this);
+        ConfigStore.controllers.add(this);
         if (config == null) {
             initConfig();
         } else {

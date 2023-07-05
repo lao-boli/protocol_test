@@ -14,8 +14,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.hqu.lly.domain.base.BaseClient;
 import org.hqu.lly.domain.component.MsgLabel;
 import org.hqu.lly.domain.config.ClientSessionConfig;
+import org.hqu.lly.domain.config.ConfigStore;
 import org.hqu.lly.domain.config.CustomDataConfig;
-import org.hqu.lly.domain.config.NewTopConfig;
 import org.hqu.lly.domain.config.SendSettingConfig;
 import org.hqu.lly.enums.ConfigType;
 import org.hqu.lly.exception.UnSetBoundException;
@@ -233,8 +233,8 @@ public abstract class BaseClientController<T extends BaseClient> extends CommonU
      */
     public void destroy() {
         destroyTask();
-        NewTopConfig.removeSessionConfig(clientConfig.getId());
-        NewTopConfig.controllers.remove(this);
+        ConfigStore.removeSessionConfig(clientConfig.getId());
+        ConfigStore.controllers.remove(this);
         destroyed = true;
     }
 
@@ -354,9 +354,9 @@ public abstract class BaseClientController<T extends BaseClient> extends CommonU
     }
     @Override
     public void init(ClientSessionConfig config) {
-        NewTopConfig.controllers.add(this);
+        ConfigStore.controllers.add(this);
         if (config == null) {
-            clientConfig = (ClientSessionConfig) NewTopConfig.createConfig(ConfigType.CLIENT);
+            clientConfig = (ClientSessionConfig) ConfigStore.createConfig(ConfigType.CLIENT);
         }else {
             clientConfig = config;
             tabTitle.setText(config.getTabName());

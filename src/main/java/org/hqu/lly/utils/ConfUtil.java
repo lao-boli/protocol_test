@@ -7,7 +7,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
-import org.hqu.lly.domain.config.NewTopConfig;
+import org.hqu.lly.domain.config.ConfigStore;
 import org.hqu.lly.domain.config.SessionConfig;
 
 import java.io.FileInputStream;
@@ -77,7 +77,7 @@ public class ConfUtil {
     /**
      * 加载配置文件
      *
-     * @return {@link NewTopConfig#sessionConfigs} 全局配置文件
+     * @return {@link ConfigStore#sessionConfigs} 全局配置文件
      * @throws FileNotFoundException 未读取到本地配置文件
      */
     public static HashMap<String, SessionConfig> load() throws FileNotFoundException {

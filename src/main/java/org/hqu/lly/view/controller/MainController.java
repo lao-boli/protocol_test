@@ -12,7 +12,7 @@ import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
 import org.hqu.lly.constant.ContentPaneConsts;
 import org.hqu.lly.domain.component.MyAlert;
-import org.hqu.lly.domain.config.NewTopConfig;
+import org.hqu.lly.domain.config.ConfigStore;
 import org.hqu.lly.domain.config.SessionConfig;
 import org.hqu.lly.domain.vo.ServiceItem;
 import org.hqu.lly.enums.PaneType;
@@ -72,7 +72,7 @@ public class MainController implements Initializable {
             Optional<ButtonType> result = myAlert.showAndWait();
 
             if(result.get().equals(ButtonType.OK)){
-                NewTopConfig.save();
+                ConfigStore.save();
             }
 
             return result.get().equals(ButtonType.OK) || result.get().equals(ButtonType.CANCEL);
@@ -85,7 +85,7 @@ public class MainController implements Initializable {
         setupSpiltPane();
 
         try {
-            NewTopConfig.load();
+            ConfigStore.load();
             initByConfig();
         } catch (FileNotFoundException e) {
             log.warn("miss match config file");
@@ -125,7 +125,7 @@ public class MainController implements Initializable {
      * @date 2023-02-04 18:35:07 <br>
      */
     private void initByConfig() {
-        Map<String, SessionConfig> configs = NewTopConfig.getSessionConfigs();
+        Map<String, SessionConfig> configs = ConfigStore.getSessionConfigs();
         configs.values().forEach(c -> {
             switch (c.getPaneType()) {
                 case TCP_SERVER -> managerMap.get(TCP_SERVER).initAndCreateTab(c);
