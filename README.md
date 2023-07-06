@@ -27,20 +27,20 @@
 
 ### 下载
 下载release中的压缩包，并解压。  
-解压后将会看到run。bat，protocol_test[版本号]。jar两个文件以及一个lib文件夹。
+解压后将会看到 **run.bat，protocol_test[版本号].jar** 两个文件以及一个 **lib** 文件夹。
 ### 运行
 #### windows用户
-点击run。bat即可运行。
+点击run.bat即可运行。
 #### mac用户和linux用户
 在安装目录执行以下命令启动本软件。
 ```
-javaw -jar filename。jar
+javaw -jar filename.jar
 ```
 filename 为对应jar包的名字。
 
  以下是一个示例:
 ```
-javaw -jar protocol_test-0。1。0-beta。jar
+javaw -jar protocol_test-0.1.0-beta.jar
 ```
 > **注意** <br>
 >请不要将jar包和lib放在不同的目录。
@@ -52,8 +52,8 @@ javaw -jar protocol_test-0。1。0-beta。jar
 输入要连接的主机ip地址后点击连接即可。
 > **注意** <br>
 > 不需要输入协议的名称。 <br>
-> 例如想要连接的主机地址为: tcp://127。0。0。1:10250 <br>
-> 只需要输入: 127。0。0。1:10250 即可。
+> 例如想要连接的主机地址为: tcp://127.0.0.1:10250 <br>
+> 只需要输入: 127.0.0.1:10250 即可。
 ### 数据发送
 #### 固定文本
 在输入框中输入要发送的数据，点击发送即可发送数据。  
@@ -83,7 +83,7 @@ javaw -jar protocol_test-0。1。0-beta。jar
 退出程序时将会弹出保存对话框，点击确认后即可保存配置(收发的历史消息将不会被保存)。  
 下次启动程序时将会自动加载配置。
 #### 工作流预览
-![workflow](https://github.com/lao-boli/protocol_test/blob/image/assets/master/workflow.gif)  
+![workflow](https://github.com/lao-boli/protocol_test/blob/master/assets/image/workflow.gif)  
 ## 预计开发功能
 * 对json(格式化)，hex，base64等数据传输格式支持(目前仅支持字符串)
 * 自定义的数据随机规则
