@@ -44,9 +44,7 @@ public class SendSettingPaneFactory {
             SendSettingController controller = loader.getController();
 
             // 载入要使用的配置类
-            controller.setSendSettingConfig(sendConfig);
-            controller.setScheduledSendConfig(sendConfig.getScheduledSendConfig());
-            controller.setCustomDataConfig(sendConfig.getCustomDataConfig());
+            controller.setConfig(sendConfig);
 
             // 若存在本地配置文件,则加载.
             if (ConfigStore.isLoad){
