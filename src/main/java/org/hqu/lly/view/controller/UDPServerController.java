@@ -1,5 +1,6 @@
 package org.hqu.lly.view.controller;
 
+import org.hqu.lly.enums.PaneType;
 import org.hqu.lly.protocol.udp.server.UDPServer;
 
 /**
@@ -16,6 +17,7 @@ public class UDPServerController extends ConnectionlessServerController{
     @Override
     protected void setServer() {
         server = new UDPServer();
+        serverConfig.setPaneType(PaneType.UDP_SERVER);
     }
 
 }

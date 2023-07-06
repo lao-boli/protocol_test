@@ -5,15 +5,13 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.control.Label;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Region;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.hqu.lly.constant.ResLoc;
 import org.hqu.lly.service.TaskService;
 import org.hqu.lly.view.handler.DragWindowHandler;
 
@@ -94,8 +92,8 @@ public class TitleBarController implements Initializable {
      * 窗口最大化标识
      */
     private boolean maxed = true;
-    private ImageView restoreIcon;
-    private ImageView maxIcon;
+    private Region restoreIcon;
+    private Region maxIcon;
 
     @FXML
     void minimizeWindow(MouseEvent mouseEvent) {
@@ -248,16 +246,11 @@ public class TitleBarController implements Initializable {
         });
 
 
-        restoreIcon = new ImageView(new Image(ResLoc.RESTORE_ICON.toString()));
-        restoreIcon.setFitHeight(15);
-        restoreIcon.setFitWidth(15);
-        restoreIcon.setPreserveRatio(true);
-        restoreIcon.setPickOnBounds(true);
+        restoreIcon = new Region();
+        restoreIcon.getStyleClass().add("icon-restore");
 
-        maxIcon = new ImageView(new Image(ResLoc.MAX_ICON.toString()));
-        maxIcon.setFitHeight(15);
-        maxIcon.setFitWidth(15);
-        maxIcon.setPreserveRatio(true);
-        maxIcon.setPickOnBounds(true);
+        maxIcon = new Region();
+        maxIcon.getStyleClass().add("icon-max");
+
     }
 }

@@ -1,0 +1,16 @@
+.alert-content-pane {
+    -fx-background-color: #3c3f41;
+    -fx-padding: 5;
+}
+
+.alert-content {
+    -fx-alignment: center;
+}
+
+.alert-btn-group {
+    -fx-spacing: 5;
+    -fx-alignment: bottom-right;
+}
+
+
+

@@ -2,7 +2,6 @@
 
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
-<?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 <VBox spacing="10.0" stylesheets="@../css/TabPane.css" VBox.vgrow="ALWAYS" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.hqu.lly.view.controller.UDPServerController">
     <children>
@@ -38,25 +37,17 @@
                             <padding>
                                 <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
                             </padding>
-                            <graphic>
-                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true" styleClass="clear-button">
-                                    <image>
-                                        <Image url="@../icon/select_all.png" />
-                                    </image>
-                                </ImageView>
-                            </graphic>
+                     <graphic>
+                        <Region prefHeight="200.0" prefWidth="200.0" styleClass="icon-select-all" />
+                     </graphic>
                         </Button>
                         <Button fx:id="removeClientBtn" mnemonicParsing="false" onMouseClicked="#removeClient" prefHeight="20.0" prefWidth="20.0" styleClass="icon-button">
                             <padding>
                                 <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
                             </padding>
-                            <graphic>
-                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true" styleClass="clear-button">
-                                    <image>
-                                        <Image url="@../icon/remove.png" />
-                                    </image>
-                                </ImageView>
-                            </graphic>
+                     <graphic>
+                        <Region prefHeight="200.0" prefWidth="200.0" styleClass="icon-delete" />
+                     </graphic>
                         </Button>
                     </children>
                     <padding>
@@ -74,11 +65,7 @@
                     <children>
                         <ToggleButton fx:id="softWrapBtn" contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" maxHeight="20.0" maxWidth="20.0" mnemonicParsing="false" onMouseClicked="#handleSoftWrap" prefHeight="17.0" prefWidth="18.0">
                             <graphic>
-                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                    <image>
-                                        <Image url="@../icon/wrap.png" />
-                                    </image>
-                                </ImageView>
+                                <Region prefHeight="20.0" prefWidth="20.0" styleClass="icon-wrap" />
                             </graphic>
                             <padding>
                                 <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
@@ -86,11 +73,7 @@
                         </ToggleButton>
                         <Button fx:id="clearBtn" mnemonicParsing="false" onMouseClicked="#clearMsg" prefHeight="20.0" prefWidth="20.0" styleClass="icon-button">
                             <graphic>
-                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                    <image>
-                                        <Image url="@../icon/clear.png" />
-                                    </image>
-                                </ImageView>
+                                <Region prefHeight="200.0" prefWidth="200.0" styleClass="icon-clear" />
                             </graphic>
                             <padding>
                                 <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
@@ -101,11 +84,7 @@
                                 <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
                             </padding>
                             <graphic>
-                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true" styleClass="clear-button">
-                                    <image>
-                                        <Image url="@../icon/display_setting.png" />
-                                    </image>
-                                </ImageView>
+                                <Region prefHeight="200.0" prefWidth="200.0" styleClass="icon-display-setting" />
                             </graphic>
                         </Button>
                         <Button fx:id="recvFormatBtn" mnemonicParsing="false" prefHeight="20.0" prefWidth="20.0" styleClass="icon-button">
@@ -113,11 +92,14 @@
                                 <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
                             </padding>
                             <graphic>
-                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                    <image>
-                                        <Image url="@../icon/data_format.png" />
-                                    </image>
-                                </ImageView>
+                                <StackPane>
+                                    <children>
+                                        <Region prefHeight="200.0" prefWidth="200.0" styleClass="icon-encode-setting" />
+                                    </children>
+                                    <padding>
+                                        <Insets left="2.0" />
+                                    </padding>
+                                </StackPane>
                             </graphic>
                         </Button>
                     </children>
@@ -134,6 +116,7 @@
         </HBox>
         <HBox VBox.vgrow="ALWAYS">
             <children>
+
                 <VBox spacing="3.0">
                     <children>
                         <Button fx:id="sendSettingBtn" mnemonicParsing="false" onMouseClicked="#showSendSetting" prefHeight="20.0" prefWidth="20.0" styleClass="icon-button">
@@ -141,11 +124,7 @@
                                 <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
                             </padding>
                             <graphic>
-                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                    <image>
-                                        <Image url="@../icon/setting.png" />
-                                    </image>
-                                </ImageView>
+                                <Region prefHeight="200.0" prefWidth="200.0" styleClass="icon-send-setting" />
                             </graphic>
                         </Button>
                         <Button fx:id="sendFormatBtn" mnemonicParsing="false" prefHeight="20.0" prefWidth="20.0" styleClass="icon-button">
@@ -153,15 +132,12 @@
                                 <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
                             </padding>
                             <graphic>
-                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                    <image>
-                                        <Image url="@../icon/data_format.png" />
-                                    </image>
-                                </ImageView>
+                                <Region prefHeight="200.0" prefWidth="200.0" styleClass="icon-encode-setting" />
                             </graphic>
                         </Button>
                     </children>
-                </VBox>                <TextArea fx:id="msgInput" disable="true" prefHeight="52.0" prefWidth="425.0" text="test text 123" wrapText="true" HBox.hgrow="ALWAYS">
+                </VBox>
+                <TextArea fx:id="msgInput" disable="true" prefHeight="52.0" prefWidth="425.0" text="test text 123" wrapText="true" HBox.hgrow="ALWAYS">
                     <HBox.margin>
                         <Insets left="3.0" />
                     </HBox.margin>

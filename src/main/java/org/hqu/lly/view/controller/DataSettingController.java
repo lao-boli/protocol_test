@@ -6,8 +6,8 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.hqu.lly.domain.bean.CustomDataConfig;
 import org.hqu.lly.domain.component.DataItem;
+import org.hqu.lly.domain.config.CustomDataConfig;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -38,9 +38,9 @@ public class DataSettingController implements Initializable {
     private CustomDataConfig dataConfig;
 
     @Setter
-    private List<DataItem> dataItemList = new ArrayList();
+    private List<DataItem> dataItemList = new ArrayList<>();
 
-    private List<Map<String, String>> boundList = new ArrayList();
+    private List<Map<String, String>> boundList = new ArrayList<>();
 
     @FXML
     void saveSetting(MouseEvent event) {

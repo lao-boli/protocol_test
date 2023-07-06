@@ -8,17 +8,14 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.input.MouseEvent;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.hqu.lly.constant.ContentPaneConsts;
-import org.hqu.lly.domain.config.Config;
-import org.hqu.lly.domain.config.TabConfig;
-import org.hqu.lly.domain.config.TabPaneConfig;
+import org.hqu.lly.domain.config.SessionConfig;
+import org.hqu.lly.enums.PaneType;
+import org.hqu.lly.enums.TabFactoryEnum;
 import org.hqu.lly.factory.BaseTabFactory;
 
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.ResourceBundle;
 
 /**
@@ -34,11 +31,6 @@ import java.util.ResourceBundle;
 public class TabPaneController extends BaseController implements Initializable {
 
     /**
-     * 本 {@link #mainTabPane}下的标签页 {@link Tab}的控制器列表 <br>
-     * 用于遍历来获取并保存每一个标签页的配置类。
-     */
-    private final List<BaseController> controllers;
-    /**
      * fxml的tabPane节点
      */
     @FXML
@@ -50,25 +42,24 @@ public class TabPaneController extends BaseController implements Initializable {
      * 标签页面板名称<br>
      * 应为 {@link ContentPaneConsts}中的一种.
      */
-    @Setter
     private String tabPaneName;
-    /**
-     * 本页面配置类
-     */
-    @Setter
-    private TabPaneConfig tabPaneConfig;
 
     public TabPaneController() {
-        controllers = new ArrayList<>();
     }
 
-    public void setTabFactory(BaseTabFactory tabFactory) {
-        this.tabFactory = tabFactory;
+    public void setTabFactory(PaneType paneType) {
+        this.tabFactory = TabFactoryEnum.getByPaneType(paneType).getTabFactory();
+        this.tabFactory.setTabPane(mainTabPane);
     }
 
 
     @FXML
     void createNewTab(Event event) {
+        // 页面初始化时会触发一次tab selection change 事件，
+        // 此时本方法会触发,从配置文件加载时，生成一个无配置的new tab会导致异常，
+        // 原因为生成新tab会创建一个config并加入sessionconfig中，而在迭代中不能新增或删除元素。
+        // 所以这里需要忽略掉初始化时触发的tab selection change 事件
+        // tabFactory 也应在controller初始化完成后进行设置.
         if (tabFactory != null) {
             createNewTab();
         }
@@ -84,9 +75,7 @@ public class TabPaneController extends BaseController implements Initializable {
      * @date 2023-02-05 20:09:11 <br>
      */
     public void createNewTab() {
-        tabFactory.setTabPane(mainTabPane);
-        Tab tab = tabFactory.create();
-        controllers.add(tabFactory.getController());
+        Tab tab = tabFactory.create(null);
 
         mainTabPane.getTabs().add(mainTabPane.getTabs().size() - 1, tab);
 
@@ -101,30 +90,13 @@ public class TabPaneController extends BaseController implements Initializable {
      *
      * @date 2023-02-05 20:09:11 <br>
      */
-    public void createNewTab(TabConfig config) {
-        tabFactory.setTabPane(mainTabPane);
+    public void createNewTab(SessionConfig config) {
         Tab tab = tabFactory.create(config);
-        controllers.add(tabFactory.getController());
 
         mainTabPane.getTabs().add(mainTabPane.getTabs().size() - 1, tab);
 
         // 切换到新添加的标签页
         mainTabPane.getSelectionModel().select(tab);
-    }
-
-    @Override
-    public TabPaneConfig saveAndGetConfig() {
-        TabPaneConfig tabPaneConfig = new TabPaneConfig(tabPaneName);
-        // XXX 当前方式会导致当tab页关闭时controller不能及时移除，
-        //  只是标记已移除，保证在保存时能够跳过.待优化实现。
-        for (BaseController controller : controllers) {
-            if (controller.isDestroyed()) {
-                continue;
-            }
-            Config subTabConfig = controller.saveAndGetConfig();
-            tabPaneConfig.addSubConfig((TabConfig) subTabConfig);
-        }
-        return tabPaneConfig;
     }
 
 
@@ -144,6 +116,12 @@ public class TabPaneController extends BaseController implements Initializable {
                 }
             }
         });
+    }
+
+
+    @Override
+    public void save() {
+
     }
 
 }

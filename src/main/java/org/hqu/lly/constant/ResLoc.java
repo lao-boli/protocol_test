@@ -19,7 +19,6 @@ public class ResLoc {
     public static final URL MAIN_PANE = realPath("views/MainPane.fxml");
     public static final URL SEND_SETTING_PANE = realPath("views/SendSettingPane.fxml");
     public static final URL DATA_SETTING_PANE = realPath("views/DataSettingPane.fxml");
-    public static final URL CUSTOM_ALERT = realPath("components/CustomAlert.fxml");
     public static final URL TCP_CLIENT_PANE =realPath("views/TCPClientPane.fxml");
     public static final URL TCP_SERVER_PANE =realPath("views/TCPServerPane.fxml");
     public static final URL UDP_CLIENT_PANE =realPath("views/UDPClientPane.fxml");
@@ -27,14 +26,18 @@ public class ResLoc {
     public static final URL WEB_SOCKET_SERVER_PANE = realPath("views/WebSocketServerPane.fxml");
     public static final URL WEB_SOCKET_CLIENT_PANE = realPath("views/WebSocketClientPane.fxml");
 
+    public static final URL TITLE_BAR = realPath("views/titleBar.fxml");
+
     public static final URL TAB_TITLE = realPath("css/tabTitle.css");
     public static final URL COMMON_CSS = realPath("css/Common.css");
 
+    public static final URL MY_ALERT_CSS = realPath("css/MyAlert.css");
+
+    public static final URL ALERT_TITLE_BAR_CSS = realPath("css/alertTitleBar.css");
+
     public static final URL MESSAGE_POPUP_CSS = realPath("css/MessagePopup.css");
 
-    public static final URL MAX_ICON = realPath("icon/max.png");
-    public static final URL RESTORE_ICON = realPath("icon/restore.png");
-    public static final URL WARN_ICON = realPath("icon/warn.png");
+    public static final URL ICON = realPath("icon/icon.css");
 
     /**
      * <p>

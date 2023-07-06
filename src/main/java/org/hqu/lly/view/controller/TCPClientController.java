@@ -1,6 +1,7 @@
 package org.hqu.lly.view.controller;
 
 import org.hqu.lly.constant.ProtocolConsts;
+import org.hqu.lly.enums.PaneType;
 import org.hqu.lly.protocol.tcp.client.TCPClient;
 
 /**
@@ -22,6 +23,7 @@ public class TCPClientController extends BaseClientController<TCPClient> {
     @Override
     protected void setClient() {
         client = new TCPClient();
+        clientConfig.setPaneType(PaneType.TCP_CLIENT);
     }
 
 }

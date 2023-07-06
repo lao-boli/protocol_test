@@ -2,9 +2,7 @@
 
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
-<?import javafx.scene.image.*?>
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
 <BorderPane fx:id="titleBar" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onMouseMoved="#initDrag" prefHeight="26.0" prefWidth="620.0" styleClass="root" stylesheets="@../css/titleBar.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.hqu.lly.view.controller.TitleBarController">
     <left>
@@ -21,11 +19,7 @@
                   <Insets bottom="1.0" />
                </padding>
                <graphic>
-                  <ImageView fitHeight="15.0" fitWidth="15.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../icon/pin.png" />
-                     </image>
-                  </ImageView>
+                  <Region prefHeight="200.0" prefWidth="200.0" styleClass="icon-pin" />
                </graphic>
             </Label>
                 <Label fx:id="minimizeLabel" alignment="CENTER" onMouseClicked="#minimizeWindow" prefHeight="25.0" prefWidth="30.0" styleClass="min-label" stylesheets="@../css/titleBar.css" textAlignment="RIGHT" textFill="#f4f3f3" textOverrun="CENTER_ELLIPSIS">
@@ -39,11 +33,7 @@
                   <Insets bottom="1.0" />
                </padding>
                <graphic>
-                  <ImageView fitHeight="15.0" fitWidth="15.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../icon/minimize.png" />
-                     </image>
-                  </ImageView>
+                  <Region prefHeight="200.0" prefWidth="200.0" styleClass="icon-min" />
                </graphic>
                 </Label>
             <Label fx:id="maxLabel" alignment="CENTER" onMouseClicked="#switchSize" prefHeight="25.0" prefWidth="30.0" styleClass="max-label" stylesheets="@../css/titleBar.css" textAlignment="CENTER" textFill="#f4f3f3" textOverrun="CENTER_ELLIPSIS">
@@ -57,11 +47,7 @@
                   <Insets bottom="-1.0" />
                </padding>
                <graphic>
-                  <ImageView fitHeight="15.0" fitWidth="15.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../icon/max.png" />
-                     </image>
-                  </ImageView>
+                  <Region prefHeight="200.0" prefWidth="200.0" styleClass="icon-max" />
                </graphic>
             </Label>
                 <Label fx:id="closeLabel" alignment="CENTER" contentDisplay="GRAPHIC_ONLY" onMouseClicked="#handleCloseWindow" prefHeight="30.0" prefWidth="30.0" styleClass="close-button" stylesheets="@../css/titleBar.css" textAlignment="RIGHT" textFill="#f4f3f3" textOverrun="CENTER_ELLIPSIS">
@@ -69,11 +55,7 @@
                         <Font size="20.0" />
                     </font>
                <graphic>
-                  <ImageView fitHeight="15.0" fitWidth="15.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../icon/close.png" />
-                     </image>
-                  </ImageView>
+                  <Region prefHeight="200.0" prefWidth="200.0" styleClass="icon-close" />
                </graphic>
                 </Label>
          </children>

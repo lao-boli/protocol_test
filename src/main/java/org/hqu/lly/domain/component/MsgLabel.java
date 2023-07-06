@@ -2,18 +2,17 @@ package org.hqu.lly.domain.component;
 
 import io.netty.util.CharsetUtil;
 import javafx.beans.property.BooleanProperty;
+import javafx.geometry.Bounds;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
-import org.hqu.lly.constant.ResLoc;
 import org.hqu.lly.enums.DataType;
+import org.hqu.lly.icon.WarnIcon;
 import org.hqu.lly.utils.CommonUtil;
 import org.hqu.lly.utils.UIUtil;
 
@@ -216,16 +215,14 @@ public class MsgLabel extends TextFlow {
     public void initWarn() {
         warn = new Label();
         warn.setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
+        warn.setGraphic(new WarnIcon());
+        warn.setStyle("-fx-padding: 0 5 0 0");
 
-        ImageView warnIcon = new ImageView(new Image(ResLoc.WARN_ICON.toString()));
-        warnIcon.setFitHeight(15);
-        warnIcon.setFitWidth(15);
-        warnIcon.setPreserveRatio(true);
-        warnIcon.setPickOnBounds(true);
-
-        warn.setGraphic(warnIcon);
-
-        UIUtil.setTooltip(warn, warnTip);
+        UIUtil.setTooltip(warn, warnTip,event -> {
+            // 设置提示显示位置
+            Bounds bounds = warn.localToScreen(warn.getBoundsInLocal());
+            warnTip.show(warn, bounds.getMinX(), bounds.getMinY() - 40);
+        });
 
     }
 

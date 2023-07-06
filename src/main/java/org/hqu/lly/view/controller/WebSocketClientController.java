@@ -1,6 +1,7 @@
 package org.hqu.lly.view.controller;
 
 import org.hqu.lly.constant.ProtocolConsts;
+import org.hqu.lly.enums.PaneType;
 import org.hqu.lly.protocol.websocket.client.WebSocketClient;
 
 /**
@@ -22,6 +23,7 @@ public class WebSocketClientController extends BaseClientController<WebSocketCli
     @Override
     protected void setClient() {
         client = new WebSocketClient();
+        clientConfig.setPaneType(PaneType.WS_CLIENT);
     }
 
 }

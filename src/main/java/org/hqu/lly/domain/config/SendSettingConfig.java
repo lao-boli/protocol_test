@@ -1,9 +1,8 @@
-package org.hqu.lly.domain.bean;
+package org.hqu.lly.domain.config;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import org.hqu.lly.domain.config.Config;
 import org.hqu.lly.service.TaskService;
 
 /**

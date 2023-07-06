@@ -1,24 +1,16 @@
 package org.hqu.lly.view.controller;
 
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.hqu.lly.domain.bean.CustomDataConfig;
-import org.hqu.lly.domain.bean.ScheduledSendConfig;
-import org.hqu.lly.domain.bean.SendSettingConfig;
+import org.hqu.lly.domain.config.CustomDataConfig;
+import org.hqu.lly.domain.config.ScheduledSendConfig;
+import org.hqu.lly.domain.config.SendSettingConfig;
 import org.hqu.lly.factory.DataSettingPaneFactory;
-
-import java.net.URL;
-import java.util.ResourceBundle;
-import java.util.concurrent.Callable;
 
 import static org.hqu.lly.utils.CommonUtil.intToStr;
 import static org.hqu.lly.utils.CommonUtil.strToInt;
@@ -33,7 +25,7 @@ import static org.hqu.lly.utils.CommonUtil.strToInt;
  * @date 2022/9/25 17:37
  */
 @Slf4j
-public class SendSettingController implements Initializable {
+public class SendSettingController {
 
     private static final Integer TIMES = 0;
     private static final Integer MANUAL_STOP = 1;
@@ -58,9 +50,7 @@ public class SendSettingController implements Initializable {
     private BorderPane titleBar;
     @FXML
     private TitleBarController titleBarController;
-    @Setter
     private SendSettingConfig sendSettingConfig;
-    @Setter
     private ScheduledSendConfig scheduledSendConfig;
 
     // region 自定义数据相关
@@ -70,10 +60,15 @@ public class SendSettingController implements Initializable {
     private TextArea customFormTextArea;
     @FXML
     private Button showBoundPaneBtn;
-    @Setter
     private CustomDataConfig customDataConfig;
     // endregion
 
+
+    public void setConfig(SendSettingConfig config) {
+        this.sendSettingConfig = config;
+        this.customDataConfig = config.getCustomDataConfig();
+        this.scheduledSendConfig = config.getScheduledSendConfig();
+    }
 
     @FXML
     void saveSetting(MouseEvent event) {
@@ -144,57 +139,47 @@ public class SendSettingController implements Initializable {
         }
     }
 
-    @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
+    @FXML
+    public void initialize() {
         // 标题栏初始化
         titleBarController.initOnlyClose("发送设置");
-        titleBarController.setOnBeforeClose(new Callable<Boolean>() {
-            @Override
-            public Boolean call() throws Exception {
-                saveSetting();
-                return true;
-            }
+        titleBarController.setOnBeforeClose(() -> {
+            saveSetting();
+            return true;
         });
 
         // 定时发送设置初始化
-        sendSetting.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
-            @Override
-            public void changed(ObservableValue<? extends Toggle> observable, Toggle oldValue, Toggle newValue) {
-                if (newValue == sendByTimesBtn) {
-                    scheduledSendConfig.setSendType(TIMES);
-                }
-                if (newValue == manualStopBtn) {
-                    scheduledSendConfig.setSendType(MANUAL_STOP);
-                }
+        sendSetting.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue == sendByTimesBtn) {
+                scheduledSendConfig.setSendType(TIMES);
+            }
+            if (newValue == manualStopBtn) {
+                scheduledSendConfig.setSendType(MANUAL_STOP);
             }
         });
 
         // 发送模式设置初始化
-
         modeChoiceBox.getItems().addAll(modeArray);
         // 设置初始模式为"普通文本"模式.
         modeChoiceBox.setValue(modeArray[0]);
-        modeChoiceBox.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
-            @Override
-            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                // 普通文本模式
-                if (newValue.intValue() == 0) {
-                    sendSettingConfig.setTextMode();
-                    sendSettingConfig.getOnModeChange().fireTask();
-                    Platform.runLater(() -> {
-                        customFormTextArea.setDisable(true);
-                        showBoundPaneBtn.setDisable(true);
-                    });
-                }
-                // 自定义数据模式
-                if (newValue.intValue() == 1) {
-                    sendSettingConfig.setCustomMode();
-                    sendSettingConfig.getOnModeChange().fireTask();
-                    Platform.runLater(() -> {
-                        customFormTextArea.setDisable(false);
-                        showBoundPaneBtn.setDisable(false);
-                    });
-                }
+        modeChoiceBox.getSelectionModel().selectedIndexProperty().addListener((observable, oldValue, newValue) -> {
+            // 普通文本模式
+            if (newValue.intValue() == 0) {
+                sendSettingConfig.setTextMode();
+                sendSettingConfig.getOnModeChange().fireTask();
+                Platform.runLater(() -> {
+                    customFormTextArea.setDisable(true);
+                    showBoundPaneBtn.setDisable(true);
+                });
+            }
+            // 自定义数据模式
+            if (newValue.intValue() == 1) {
+                sendSettingConfig.setCustomMode();
+                sendSettingConfig.getOnModeChange().fireTask();
+                Platform.runLater(() -> {
+                    customFormTextArea.setDisable(false);
+                    showBoundPaneBtn.setDisable(false);
+                });
             }
         });
     }

@@ -27,8 +27,12 @@ public class App extends Application {
         DarculaFX.applyDarculaStyle(scene);
         primaryStage.initStyle(StageStyle.TRANSPARENT);
         primaryStage.setScene(scene);
-        DragUtil.setDrag(primaryStage,scene.getRoot());
+        DragUtil.setDrag(primaryStage, scene.getRoot());
         primaryStage.show();
+        // Optional<ButtonType> result = new MyAlert(Alert.AlertType.CONFIRMATION, "保存配置", "是否保存配置到本地?").showAndWait();
+        // Optional<ButtonType> result = new Alert(Alert.AlertType.CONFIRMATION).showAndWait();
+        // System.out.println(result);
+
     }
 
 }

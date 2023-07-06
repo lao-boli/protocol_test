@@ -6,22 +6,24 @@ import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.hqu.lly.domain.base.BaseServer;
-import org.hqu.lly.domain.bean.CustomDataConfig;
-import org.hqu.lly.domain.bean.SendSettingConfig;
-import org.hqu.lly.domain.config.ServerConfig;
+import org.hqu.lly.domain.config.ConfigStore;
+import org.hqu.lly.domain.config.CustomDataConfig;
+import org.hqu.lly.domain.config.SendSettingConfig;
+import org.hqu.lly.domain.config.ServerSessionConfig;
+import org.hqu.lly.enums.ConfigType;
 import org.hqu.lly.exception.UnSetBoundException;
 import org.hqu.lly.factory.SendSettingPaneFactory;
 import org.hqu.lly.factory.SendTaskFactory;
 import org.hqu.lly.protocol.tcp.server.TCPServer;
 import org.hqu.lly.protocol.udp.server.UDPServer;
 import org.hqu.lly.protocol.websocket.server.WebSocketServer;
+import org.hqu.lly.service.MyInitialize;
 import org.hqu.lly.service.ScheduledTaskService;
 import org.hqu.lly.service.impl.ScheduledSendService;
 import org.hqu.lly.service.impl.ServerService;
@@ -29,8 +31,6 @@ import org.hqu.lly.utils.DataUtil;
 import org.hqu.lly.utils.MsgUtil;
 import org.hqu.lly.utils.UIUtil;
 
-import java.net.URL;
-import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
@@ -50,8 +50,9 @@ import static org.hqu.lly.enums.DataType.PLAIN_TEXT;
  * @date 2022/10/3 10:45
  */
 @Slf4j
-public abstract class BaseServerController<T> extends CommonUIContorller implements Initializable {
+public abstract class BaseServerController<T> extends CommonUIContorller implements MyInitialize<ServerSessionConfig> {
 
+    protected boolean fromConfig = false;
     protected Executor executor = Executors.newSingleThreadExecutor();
 
     @FXML
@@ -98,6 +99,19 @@ public abstract class BaseServerController<T> extends CommonUIContorller impleme
      */
     protected ServerService serverService;
 
+    // region config
+
+    /**
+     * 客户端面板配置类
+     */
+    protected ServerSessionConfig serverConfig;
+    /**
+     * 发送设置配置类
+     */
+    protected SendSettingConfig sendSettingConfig;
+
+    // endregion
+
     /**
      * 发送设置面板
      */
@@ -106,19 +120,11 @@ public abstract class BaseServerController<T> extends CommonUIContorller impleme
      * 定时发送服务
      */
     protected ScheduledSendService scheduledService;
-    /**
-     * 发送设置配置类
-     */
-    protected SendSettingConfig sendSettingConfig = new SendSettingConfig();
 
     /**
      * 定时发送任务
      */
     protected ScheduledTaskService scheduledTaskService;
-    /**
-     * 客户端面板配置类
-     */
-    protected ServerConfig serverConfig;
     /**
      * 显示在 {@link #clientListBox} 中的客户端列表
      */
@@ -126,8 +132,12 @@ public abstract class BaseServerController<T> extends CommonUIContorller impleme
 
 
     public BaseServerController() {
-        setServer();
-        setServerService();
+    }
+
+
+    public void initConfig() {
+        serverConfig = (ServerSessionConfig) ConfigStore.createConfig(ConfigType.SERVER);
+        sendSettingConfig = serverConfig.getSendSettingConfig();
     }
 
     /**
@@ -138,11 +148,12 @@ public abstract class BaseServerController<T> extends CommonUIContorller impleme
      * @param config 服务端配置文件类
      * @date 2023-02-06 11:34:25 <br>
      */
-    public void initByConfig(ServerConfig config) {
+    public void initByConfig(ServerSessionConfig config) {
+        serverConfig = config;
+        sendSettingConfig = config.getSendSettingConfig();
         tabTitle.setText(config.getTabName());
         serverPort.setText(config.getPort());
         msgInput.setText(config.getMsgInput());
-        sendSettingConfig = config.getSendSettingConfig();
         initSendSetting();
     }
 
@@ -248,7 +259,7 @@ public abstract class BaseServerController<T> extends CommonUIContorller impleme
                     if (sendMsgType == HEX) {
                         server.sendMessage(MsgUtil.convertText(HEX, PLAIN_TEXT, text), client);
                     } else {
-                        server.sendMessage(text,client);
+                        server.sendMessage(text, client);
                     }
                 }
 
@@ -259,7 +270,7 @@ public abstract class BaseServerController<T> extends CommonUIContorller impleme
                         if (sendMsgType == HEX) {
                             server.sendMessage(MsgUtil.convertText(HEX, PLAIN_TEXT, text), client);
                         } else {
-                            server.sendMessage(text,client);
+                            server.sendMessage(text, client);
                         }
                         server.sendMessage(msg, client);
                     }
@@ -310,13 +321,15 @@ public abstract class BaseServerController<T> extends CommonUIContorller impleme
             scheduleSendBtn.setSelected(false);
         }
         server.destroy();
+        ConfigStore.controllers.remove(this);
+        ConfigStore.removeSessionConfig(serverConfig.getId());
         destroyed = true;
     }
 
 
-    @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
-        initSendSetting();
+    @FXML
+    public void initialize() {
+        System.out.println(this);
         // 初始化客户端列表盒子
         setClientBox();
         // 功能按钮悬浮tip提示
@@ -403,17 +416,13 @@ public abstract class BaseServerController<T> extends CommonUIContorller impleme
      * 3.发送设置.
      * </p>
      *
-     * @return {@link ServerConfig} 服务端标签页配置
-     * @date 2023-02-06 11:26:53 <br>
+     * @date 2023-07-02 19:52
      */
     @Override
-    public ServerConfig saveAndGetConfig() {
-        serverConfig = new ServerConfig();
+    public void save() {
         serverConfig.setTabName(tabTitle.getText());
         serverConfig.setMsgInput(msgInput.getText());
         serverConfig.setPort(serverPort.getText());
-        serverConfig.setSendSettingConfig(sendSettingConfig);
-        return serverConfig;
     }
 
     /**
@@ -438,6 +447,28 @@ public abstract class BaseServerController<T> extends CommonUIContorller impleme
 
         selectAllBtn.setTooltip(UIUtil.getTooltip("全选/取消全选"));
         removeClientBtn.setTooltip(UIUtil.getTooltip("删除客户端"));
+
+    }
+
+    @Override
+    public void init() {
+    }
+
+    @Override
+    public void init(ServerSessionConfig config) {
+        ConfigStore.controllers.add(this);
+        if (config == null) {
+            initConfig();
+        } else {
+            serverConfig = config;
+            sendSettingConfig = config.getSendSettingConfig();
+            tabTitle.setText(config.getTabName());
+            serverPort.setText(config.getPort());
+            msgInput.setText(config.getMsgInput());
+        }
+        setServer();
+        setServerService();
+        initSendSetting();
 
     }
 

@@ -1,0 +1,49 @@
+.alert-title-bar {
+    -fx-background-color: #3c3f41;
+    -fx-border-color: #a9a9a9;
+    -fx-border-style: solid;
+    -fx-border-width: 0 0 0.2 0;
+}
+.title {
+    -fx-padding: 0 0 0 10;
+    -fx-text-fill: #a9a9a9;
+    -fx-pref-height: 25;
+    -fx-alignment: center-left;
+    -fx-text-alignment: center;
+}
+.maximize,
+.minimize,
+.close {
+    -fx-pref-height: 25px;
+    -fx-pref-width: 30px;
+    -fx-max-height: 25px;
+    -fx-max-width: 30px;
+    -fx-alignment: center;
+}
+.maximize,
+.minimize,
+.pin-label {
+    -fx-background-color: #3c3f41;
+    -fx-text-fill: #a9a9a9;
+    -fx-content-display: graphic-only;
+}
+.maximize:hover,
+.minimize:hover,
+.pin-label:hover{
+    -fx-background-color: #4f5254;
+    -fx-text-fill: #a9a9a9;
+
+}
+
+.close:hover {
+    -fx-background-color: red;
+}
+
+.close Region{
+    -fx-shape: "M15.43,20l1.14,1.15-.14.14-1.14-1.15-1.15,1.15L14,21.19,15.14,20,14,18.89l.14-.14,1.15,1.15,1.14-1.15.14.14Z";
+    -fx-pref-height: 12px;
+    -fx-pref-width: 12px;
+    -fx-max-width: 12px;
+    -fx-max-height: 12px;
+    -fx-background-color: #a9a9a9;
+}

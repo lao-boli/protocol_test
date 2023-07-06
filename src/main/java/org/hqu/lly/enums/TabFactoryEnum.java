@@ -1,8 +1,9 @@
 package org.hqu.lly.enums;
 
 import lombok.Getter;
-import org.hqu.lly.constant.ContentPaneConsts;
 import org.hqu.lly.factory.*;
+
+import static org.hqu.lly.enums.PaneType.*;
 
 /**
  * <p>
@@ -18,23 +19,23 @@ public enum TabFactoryEnum {
     /**
      *标签页工厂
      */
-    TCP_CLIENT_TAB_FACTORY(ContentPaneConsts.TCP_CLIENT_PANE, new TCPClientTabFactory()),
-    TCP_SERVER_TAB_FACTORY(ContentPaneConsts.TCP_SERVER_PANE, new TCPServerTabFactory()),
-    UDP_CLIENT_TAB_FACTORY(ContentPaneConsts.UDP_CLIENT_PANE, new UDPClientTabFactory()),
-    UDP_SERVER_TAB_FACTORY(ContentPaneConsts.UDP_SERVER_PANE, new UDPServerTabFactory()),
-    WEB_SOCKET_CLIENT_TAB_FACTORY(ContentPaneConsts.WEB_SOCKET_CLIENT_PANE, new WSClientTabFactory()),
-    WEB_SOCKET_SEVER_TAB_FACTORY(ContentPaneConsts.WEB_SOCKET_SERVER_PANE, new WSServerTabFactory());
+    TCP_CLIENT_TAB_FACTORY(TCP_CLIENT, new TCPClientTabFactory()),
+    TCP_SERVER_TAB_FACTORY(TCP_SERVER, new TCPServerTabFactory()),
+    UDP_CLIENT_TAB_FACTORY(UDP_CLIENT, new UDPClientTabFactory()),
+    UDP_SERVER_TAB_FACTORY(UDP_SERVER, new UDPServerTabFactory()),
+    WEB_SOCKET_CLIENT_TAB_FACTORY(WS_CLIENT, new WSClientTabFactory()),
+    WEB_SOCKET_SEVER_TAB_FACTORY(WS_SERVER, new WSServerTabFactory());
 
-    private String paneType;
+    private PaneType paneType;
 
     private BaseTabFactory tabFactory;
 
-    TabFactoryEnum(String paneType, BaseTabFactory tabFactory) {
+    TabFactoryEnum(PaneType paneType, BaseTabFactory tabFactory) {
         this.paneType = paneType;
         this.tabFactory = tabFactory;
     }
 
-    public static TabFactoryEnum getByPaneType(String paneType) {
+    public static TabFactoryEnum getByPaneType(PaneType paneType) {
         for (TabFactoryEnum value : TabFactoryEnum.values()) {
             if (value.paneType.equals(paneType)) {
                 return value;

@@ -1,5 +1,6 @@
 package org.hqu.lly.view.controller;
 
+import org.hqu.lly.enums.PaneType;
 import org.hqu.lly.protocol.websocket.server.WebSocketServer;
 
 /**
@@ -16,6 +17,7 @@ public class WebSocketServerController extends ConnectedServerController{
     @Override
     protected void setServer() {
         server = new WebSocketServer();
+        serverConfig.setPaneType(PaneType.WS_SERVER);
     }
 
 }

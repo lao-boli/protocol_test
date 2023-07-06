@@ -2,6 +2,7 @@ package org.hqu.lly.view.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.hqu.lly.constant.ProtocolConsts;
+import org.hqu.lly.enums.PaneType;
 import org.hqu.lly.protocol.udp.client.UDPClient;
 
 /**
@@ -24,6 +25,7 @@ public class UDPClientController extends BaseClientController<UDPClient> {
     @Override
     protected void setClient() {
         client = new UDPClient();
+        clientConfig.setPaneType(PaneType.UDP_CLIENT);
     }
 
 }

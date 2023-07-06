@@ -1,18 +1,19 @@
 package org.hqu.lly.utils;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
-import org.hqu.lly.domain.config.TopConfig;
+import org.hqu.lly.domain.config.ConfigStore;
+import org.hqu.lly.domain.config.SessionConfig;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+import java.util.HashMap;
 
 /**
  * <p>
@@ -37,8 +38,15 @@ public class ConfUtil {
     /**
      * 配置文件名称
      */
-    private static final String name = "\\config.json";
-    ;
+    private static final String latest = "\\config.json";
+    /**
+     * 配置文件备份名称
+     */
+    private static final String backup = "\\config.bk.json";
+
+    private static final Path dirPath = Path.of(path);
+    private static final Path latestPath = Path.of(path + latest);
+    private static final Path backupPath = Path.of(path + backup);
 
     static {
         mapper.configure(
@@ -55,42 +63,41 @@ public class ConfUtil {
      */
     public static void saveConf(Object o) {
         try {
-            boolean notExists = Files.notExists(Path.of(path));
+
+            boolean notExists = Files.notExists(dirPath);
             if (notExists) {
-                Files.createDirectory(Path.of(path));
+                Files.createDirectory(dirPath);
             }
             String s = mapper.writeValueAsString(o);
             log.debug(s);
-            Files.writeString(Path.of(path + name), s);
 
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
+
+            if (Files.exists(latestPath)) {
+                Files.copy(latestPath, backupPath, StandardCopyOption.REPLACE_EXISTING);
+            }
+
+            Files.writeString(latestPath, s);
+
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     /**
-     * <p>
      * 加载配置文件
-     * </p>
      *
-     * @return {@link TopConfig} 全局配置文件
+     * @return {@link ConfigStore#sessionConfigs} 全局配置文件
      * @throws FileNotFoundException 未读取到本地配置文件
-     * @date 2023-02-08 13:47:11 <br>
      */
-    public static TopConfig loadTopConf() throws FileNotFoundException {
+    public static HashMap<String, SessionConfig> load() throws FileNotFoundException {
         try {
-            FileInputStream fileInputStream = new FileInputStream(path + name);
-            TopConfig config = mapper.readValue(fileInputStream, TopConfig.class);
+            FileInputStream fileInputStream = new FileInputStream(path + latest);
+            HashMap<String, SessionConfig> config = mapper.readValue(fileInputStream, new TypeReference<HashMap<String, SessionConfig>>() {
+            });
             return config;
 
         } catch (FileNotFoundException e) {
             throw e;
-        } catch (JsonParseException e) {
-            e.printStackTrace();
-        } catch (JsonMappingException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
