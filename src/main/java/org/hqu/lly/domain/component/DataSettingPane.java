@@ -17,6 +17,10 @@ import org.hqu.lly.utils.DragUtil;
 import org.hqu.lly.utils.UIUtil;
 import org.hqu.lly.view.handler.DragWindowHandler;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 /**
  * <p>
  * 数据设置面板
@@ -34,6 +38,7 @@ public class DataSettingPane {
     private BorderPane pane = new BorderPane();
 
     void close() {
+        contentPane.saveSetting();
         stage.close();
     }
    public void show() {
@@ -46,11 +51,11 @@ public class DataSettingPane {
     public DataSettingPane(CustomDataConfig config) {
         titleBar = new TitleBar(this, "数据值域设置");
         pane.setTop(titleBar);
-        contentPane = new ContentPane(this, config);
+        contentPane = new ContentPane( config);
         pane.setCenter(contentPane);
         pane.getStylesheets().add(ResLoc.DATA_SETTING_PANE_CSS.toExternalForm());
 
-        val scene = UIUtil.getShadowScene(pane, 300, 200);
+        val scene = UIUtil.getShadowScene(pane, 450, 300);
         DragUtil.setDrag(stage, scene.getRoot());
         DarculaFX.applyDarculaStyle(scene);
         stage.setScene(scene);
@@ -65,27 +70,42 @@ public class DataSettingPane {
 
     class ContentPane extends VBox {
 
-        DataSettingPane rootPane;
-
+        // region UI controls
         HBox btnGroup = new HBox();
 
         ScrollPane scrollPane = new ScrollPane();
 
         VBox settingVBox = new VBox();
+        //endregion
+
+        private List<DataItem> dataItemList = new ArrayList<>();
+
+        private List<Map<String, String>> boundList = new ArrayList<>();
 
         private CustomDataConfig config;
 
-        public ContentPane(DataSettingPane rootPane) {
-            init(rootPane);
-        }
-
-        public ContentPane(DataSettingPane rootPane, CustomDataConfig config) {
-            init(rootPane);
+        public ContentPane( CustomDataConfig config) {
             this.config = config;
+            init();
+            initFunction();
         }
 
-        void init(DataSettingPane rootPane) {
-            this.rootPane = rootPane;
+        void saveSetting() {
+            boundList.clear();
+            dataItemList.forEach(dataItem -> {
+                boundList.add(dataItem.getData());
+            });
+            this.config.setBoundList(boundList);
+        }
+
+        public void initFunction() {
+            dataItemList = config.getDataItemList();
+            for (DataItem dataItem : dataItemList) {
+                settingVBox.getChildren().add(dataItem.getItemPane());
+            }
+        }
+
+        void init() {
             this.getStyleClass().add("content-pane");
             setupContent();
             setupBtnGroup();
@@ -102,6 +122,7 @@ public class DataSettingPane {
             scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
             VBox.setVgrow(scrollPane, Priority.ALWAYS);
             settingVBox.getStyleClass().add("setting-VBox");
+            settingVBox.prefWidthProperty().bind(scrollPane.widthProperty());
             scrollPane.setContent(settingVBox);
         }
 

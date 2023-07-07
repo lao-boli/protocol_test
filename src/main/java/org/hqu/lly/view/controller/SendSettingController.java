@@ -5,12 +5,11 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
-import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
+import org.hqu.lly.domain.component.DataSettingPane;
 import org.hqu.lly.domain.config.CustomDataConfig;
 import org.hqu.lly.domain.config.ScheduledSendConfig;
 import org.hqu.lly.domain.config.SendSettingConfig;
-import org.hqu.lly.factory.DataSettingPaneFactory;
 
 import static org.hqu.lly.utils.CommonUtil.intToStr;
 import static org.hqu.lly.utils.CommonUtil.strToInt;
@@ -33,7 +32,7 @@ public class SendSettingController {
     /**
      * 自定义数据设置面板
      */
-    protected Stage dataSettingPane;
+    protected DataSettingPane dataSettingPane;
     @FXML
     private TextField intervalTextField;
     @FXML
@@ -115,7 +114,7 @@ public class SendSettingController {
         // 若为从本地配置文件中首次加载,则从本地配置中加载[customDataConfig]的数据
         customDataConfig.loadLocalConfig();
         //生成自定义数据面板
-        dataSettingPane = DataSettingPaneFactory.create(customDataConfig);
+        dataSettingPane = new DataSettingPane(customDataConfig);
 
     }
 
@@ -134,7 +133,7 @@ public class SendSettingController {
             // 读取输入框中新的数据格式,更新[customDataConfig]的数据
             customDataConfig.updateConfig(dataPattern);
             // 创建新的面板并显示
-            dataSettingPane = DataSettingPaneFactory.create(customDataConfig);
+            dataSettingPane = new DataSettingPane(customDataConfig);
             dataSettingPane.show();
         }
     }
