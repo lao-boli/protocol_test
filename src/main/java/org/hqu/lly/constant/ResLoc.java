@@ -33,6 +33,8 @@ public class ResLoc {
 
     public static final URL MY_ALERT_CSS = realPath("css/MyAlert.css");
 
+    public static final URL DATA_SETTING_PANE_CSS = realPath("css/DataSettingPane.css");
+
     public static final URL ALERT_TITLE_BAR_CSS = realPath("css/alertTitleBar.css");
 
     public static final URL MESSAGE_POPUP_CSS = realPath("css/MessagePopup.css");

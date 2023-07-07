@@ -1,0 +1,24 @@
+.data-setting-pane {
+    -fx-background-color: #3c3f41;
+    -fx-padding: 5;
+}
+.content-pane {
+    -fx-background-color: #3c3f41;
+    -fx-padding: 5;
+    -fx-pref-width: 300;
+    -fx-pref-height: 300;
+}
+
+.setting-VBox {
+    -fx-alignment: center;
+    -fx-padding: 0 15 0 5;
+}
+
+.btn-group {
+    -fx-spacing: 5;
+    -fx-alignment: top-right;
+    -fx-padding: 0 15 0 0;
+}
+
+
+
