@@ -25,6 +25,7 @@
     /*保证字体不模糊.
     see also: https://stackoverflow.com/questions/23728517/blurred-text-in-javafx-textarea*/
     -fx-padding: 0;
+    -fx-hbar-policy: never;
 }
 
 

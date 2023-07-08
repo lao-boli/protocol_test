@@ -17,9 +17,8 @@ import org.hqu.lly.utils.DragUtil;
 import org.hqu.lly.utils.UIUtil;
 import org.hqu.lly.view.handler.DragWindowHandler;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -41,26 +40,36 @@ public class DataSettingPane {
         contentPane.saveSetting();
         stage.close();
     }
-   public void show() {
+
+    public void show() {
         stage.show();
     }
 
     /**
      *
      */
-    public DataSettingPane(CustomDataConfig config) {
+    public DataSettingPane(CustomDataConfig config, Stage parent) {
+
+        // title bar
         titleBar = new TitleBar(this, "数据值域设置");
         pane.setTop(titleBar);
-        contentPane = new ContentPane( config);
+
+        // content pane
+        contentPane = new ContentPane(config);
         pane.setCenter(contentPane);
+
+        // css
         pane.getStylesheets().add(ResLoc.DATA_SETTING_PANE_CSS.toExternalForm());
 
+        // scene and stage
         val scene = UIUtil.getShadowScene(pane, 450, 300);
         DragUtil.setDrag(stage, scene.getRoot());
         DarculaFX.applyDarculaStyle(scene);
         stage.setScene(scene);
         stage.initStyle(StageStyle.TRANSPARENT);
         stage.initModality(Modality.APPLICATION_MODAL);
+
+        initOwner(parent);
     }
 
 
@@ -70,7 +79,7 @@ public class DataSettingPane {
 
     class ContentPane extends VBox {
 
-        // region UI controls
+        // region base UI controls
         HBox btnGroup = new HBox();
 
         ScrollPane scrollPane = new ScrollPane();
@@ -78,51 +87,52 @@ public class DataSettingPane {
         VBox settingVBox = new VBox();
         //endregion
 
-        private List<DataItem> dataItemList = new ArrayList<>();
-
-        private List<Map<String, String>> boundList = new ArrayList<>();
+        private List<DataItem> dataItemList;
 
         private CustomDataConfig config;
 
-        public ContentPane( CustomDataConfig config) {
+        public ContentPane(CustomDataConfig config) {
             this.config = config;
             init();
-            initFunction();
         }
 
         void saveSetting() {
-            boundList.clear();
-            dataItemList.forEach(dataItem -> {
-                boundList.add(dataItem.getData());
-            });
-            this.config.setBoundList(boundList);
+            this.config.setBoundList(dataItemList.stream()
+                                             .map(DataItem::getData)
+                                             .collect(Collectors.toList()));
         }
 
-        public void initFunction() {
+        public void initDataItem() {
             dataItemList = config.getDataItemList();
-            for (DataItem dataItem : dataItemList) {
-                settingVBox.getChildren().add(dataItem.getItemPane());
-            }
+            settingVBox.getChildren().addAll(dataItemList.stream()
+                                                     .map(DataItem::getItemPane)
+                                                     .collect(Collectors.toList()));
         }
 
         void init() {
-            this.getStyleClass().add("content-pane");
             setupContent();
             setupBtnGroup();
+
+            this.getStyleClass().add("content-pane");
             this.getChildren().addAll(scrollPane, btnGroup);
+
+            initDataItem();
         }
 
         private void setupBtnGroup() {
             btnGroup.getStyleClass().add("btn-group");
-            btnGroup.getChildren().add(new Button("保存设置"));
+
+            Button saveBtn = new Button("保存设置");
+            saveBtn.setOnMouseClicked(e -> saveSetting());
+            btnGroup.getChildren().add(saveBtn);
         }
 
 
         void setupContent() {
-            scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-            VBox.setVgrow(scrollPane, Priority.ALWAYS);
             settingVBox.getStyleClass().add("setting-VBox");
             settingVBox.prefWidthProperty().bind(scrollPane.widthProperty());
+
+            VBox.setVgrow(scrollPane, Priority.ALWAYS);
             scrollPane.setContent(settingVBox);
         }
 
@@ -166,7 +176,6 @@ public class DataSettingPane {
         }
 
     }
-
 
 
 }

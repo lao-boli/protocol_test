@@ -5,6 +5,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
+import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
 import org.hqu.lly.domain.component.DataSettingPane;
 import org.hqu.lly.domain.config.CustomDataConfig;
@@ -109,12 +110,18 @@ public class SendSettingController {
         if (sendSettingConfig.isCustomMode()) {
             modeChoiceBox.setValue(modeArray[1]);
         }
+        
+        customFormTextArea.setText(customDataConfig.getCustomDataPattern());
 
         // XXX 当配置文件保存的发送格式为文本时仍然会加载自定义数据面板,待优化.
-        // 若为从本地配置文件中首次加载,则从本地配置中加载[customDataConfig]的数据
-        customDataConfig.loadLocalConfig();
-        //生成自定义数据面板
-        dataSettingPane = new DataSettingPane(customDataConfig);
+
+        // 防止空指针异常
+        Platform.runLater(() -> {
+            // 若为从本地配置文件中首次加载,则从本地配置中加载[customDataConfig]的数据
+            customDataConfig.loadLocalConfig();
+            //生成自定义数据面板
+            dataSettingPane = new DataSettingPane(customDataConfig, (Stage) titleBar.getScene().getWindow());
+        });
 
     }
 
@@ -133,7 +140,7 @@ public class SendSettingController {
             // 读取输入框中新的数据格式,更新[customDataConfig]的数据
             customDataConfig.updateConfig(dataPattern);
             // 创建新的面板并显示
-            dataSettingPane = new DataSettingPane(customDataConfig);
+            dataSettingPane = new DataSettingPane(customDataConfig, (Stage) titleBar.getScene().getWindow());
             dataSettingPane.show();
         }
     }
