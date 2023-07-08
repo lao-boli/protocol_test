@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
+<?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<BorderPane fx:id="container" minWidth="1.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.hqu.lly.view.controller.SendSettingController">
+<BorderPane fx:id="container" minWidth="1.0" prefHeight="305.0" prefWidth="619.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.hqu.lly.view.controller.SendSettingController">
    <center>
       <VBox prefHeight="237.0" prefWidth="400.0" spacing="10.0" style="-fx-background-color: #3c3f41;">
          <children>
@@ -14,7 +14,7 @@
                         <Insets top="3.0" />
                      </padding>
                   </Label>
-                  <VBox HBox.hgrow="ALWAYS" spacing="2.0">
+                  <VBox spacing="2.0" HBox.hgrow="ALWAYS">
                      <children>
                         <RadioButton fx:id="sendByTimesBtn" mnemonicParsing="false">
                            <graphic>
@@ -46,24 +46,64 @@
                   <Label text="ms" />
                </children>
             </HBox>
-            <HBox spacing="5.0">
+            <HBox spacing="5.0" prefHeight="165.0" prefWidth="350.0" VBox.vgrow="ALWAYS">
                <children>
-                  <Label prefHeight="24.0" prefWidth="51.0" text="发送模式:" />
-                  <ChoiceBox fx:id="modeChoiceBox" prefHeight="23.0" prefWidth="88.0" />
-               </children>
-            </HBox>
-            <HBox VBox.vgrow="ALWAYS" spacing="5.0">
-               <children>
-                  <Label text="自定义格式:" />
-                  <TextArea HBox.hgrow="ALWAYS" fx:id="customFormTextArea" disable="true" focusTraversable="false" prefHeight="92.0" prefWidth="216.0" text="\\%.2f %d" wrapText="true" />
-                  <VBox alignment="BOTTOM_LEFT">
-                     <HBox.margin>
-                        <Insets />
-                     </HBox.margin>
-                     <children>
-                        <Button fx:id="showBoundPaneBtn" disable="true" mnemonicParsing="false" onMouseClicked="#showDataRangeSettingPane" text="确认" />
-                     </children>
-                  </VBox>
+                  <Label text="发送模式:" HBox.hgrow="NEVER" />
+                  <TabPane fx:id="sendModeTabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="117.0" prefWidth="300.0" tabClosingPolicy="UNAVAILABLE" HBox.hgrow="SOMETIMES">
+                    <tabs>
+                      <Tab text="普通文本">
+                        <content>
+                          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="113.0" prefWidth="200.0">
+                                 <children>
+                                    <Label text="请直接在输入框中输入文本" />
+                                 </children>
+                              </AnchorPane>
+                        </content>
+                      </Tab>
+                      <Tab text="自定义格式">
+                           <content>
+                              <VBox prefHeight="200.0" prefWidth="100.0">
+                                 <children>
+                                    <HBox spacing="5.0" VBox.vgrow="ALWAYS">
+                                       <children>
+                                          <TextArea fx:id="customFormTextArea" disable="true" focusTraversable="false" prefHeight="92.0" prefWidth="216.0" text="\\%.2f %d" wrapText="true" HBox.hgrow="ALWAYS" />
+                                          <VBox alignment="BOTTOM_LEFT">
+                                             <HBox.margin>
+                                                <Insets />
+                                             </HBox.margin>
+                                             <children>
+                                                <Button fx:id="showBoundPaneBtn" disable="true" mnemonicParsing="false" onMouseClicked="#showDataRangeSettingPane" text="确认" />
+                                             </children>
+                                          </VBox>
+                                       </children>
+                                    </HBox>
+                                 </children>
+                              </VBox>
+                           </content>
+                      </Tab>
+                        <Tab text="使用JavaScript">
+                           <content>
+                              <VBox prefHeight="200.0" prefWidth="100.0">
+                                 <children>
+                                    <HBox spacing="5.0" VBox.vgrow="ALWAYS">
+                                       <children>
+                                          <TextArea fx:id="customFormTextArea1" disable="true" focusTraversable="false" prefHeight="92.0" prefWidth="216.0" text="\\%.2f %d" wrapText="true" HBox.hgrow="ALWAYS" />
+                                          <VBox alignment="BOTTOM_LEFT">
+                                             <HBox.margin>
+                                                <Insets />
+                                             </HBox.margin>
+                                             <children>
+                                                <Button fx:id="showBoundPaneBtn1" disable="true" mnemonicParsing="false" onMouseClicked="#showDataRangeSettingPane" text="确认" />
+                                             </children>
+                                          </VBox>
+                                       </children>
+                                    </HBox>
+                                 </children>
+                              </VBox>
+                           </content>
+                        </Tab>
+                    </tabs>
+                  </TabPane>
                </children>
             </HBox>
             <HBox alignment="TOP_RIGHT">

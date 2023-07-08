@@ -29,7 +29,11 @@ public class SendSettingController {
 
     private static final Integer TIMES = 0;
     private static final Integer MANUAL_STOP = 1;
+    public static final int TEXT_MODE = 0;
+    public static final int CUSTOM_DATA_MODE = 1;
+    public static final int JS_MODE = 2;
     private final String[] modeArray = {"普通文本", "自定义数据"};
+
     /**
      * 自定义数据设置面板
      */
@@ -44,6 +48,11 @@ public class SendSettingController {
     private RadioButton sendByTimesBtn;
     @FXML
     private RadioButton manualStopBtn;
+    /**
+     * 发送模式设置面板
+     */
+    @FXML
+    public TabPane sendModeTabPane;
     @FXML
     private Button saveSettingBtn;
     @FXML
@@ -54,8 +63,6 @@ public class SendSettingController {
     private ScheduledSendConfig scheduledSendConfig;
 
     // region 自定义数据相关
-    @FXML
-    private ChoiceBox<String> modeChoiceBox;
     @FXML
     private TextArea customFormTextArea;
     @FXML
@@ -104,13 +111,13 @@ public class SendSettingController {
 
         // 设置模式为配置中的模式
         if (sendSettingConfig.isTextMode()) {
-            modeChoiceBox.setValue(modeArray[0]);
+            sendModeTabPane.getSelectionModel().select(TEXT_MODE);
         }
 
         if (sendSettingConfig.isCustomMode()) {
-            modeChoiceBox.setValue(modeArray[1]);
+            sendModeTabPane.getSelectionModel().select(CUSTOM_DATA_MODE);
         }
-        
+
         customFormTextArea.setText(customDataConfig.getCustomDataPattern());
 
         // XXX 当配置文件保存的发送格式为文本时仍然会加载自定义数据面板,待优化.
@@ -165,12 +172,10 @@ public class SendSettingController {
         });
 
         // 发送模式设置初始化
-        modeChoiceBox.getItems().addAll(modeArray);
-        // 设置初始模式为"普通文本"模式.
-        modeChoiceBox.setValue(modeArray[0]);
-        modeChoiceBox.getSelectionModel().selectedIndexProperty().addListener((observable, oldValue, newValue) -> {
-            // 普通文本模式
-            if (newValue.intValue() == 0) {
+        sendModeTabPane.getSelectionModel().selectedIndexProperty().addListener((observable, oldValue, newValue) -> {
+            System.out.println(newValue.intValue());
+            int i = newValue.intValue();
+            if (i == TEXT_MODE) {
                 sendSettingConfig.setTextMode();
                 sendSettingConfig.getOnModeChange().fireTask();
                 Platform.runLater(() -> {
@@ -178,14 +183,18 @@ public class SendSettingController {
                     showBoundPaneBtn.setDisable(true);
                 });
             }
-            // 自定义数据模式
-            if (newValue.intValue() == 1) {
+
+            if (i == CUSTOM_DATA_MODE) {
                 sendSettingConfig.setCustomMode();
                 sendSettingConfig.getOnModeChange().fireTask();
                 Platform.runLater(() -> {
                     customFormTextArea.setDisable(false);
                     showBoundPaneBtn.setDisable(false);
                 });
+            }
+
+            if (i == JS_MODE) {
+                // TODO js
             }
         });
     }
