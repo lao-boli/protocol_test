@@ -18,7 +18,6 @@ public class ResLoc {
     public static final URL TAB_PANE = realPath("views/TabPane.fxml");
     public static final URL MAIN_PANE = realPath("views/MainPane.fxml");
     public static final URL SEND_SETTING_PANE = realPath("views/SendSettingPane.fxml");
-    public static final URL DATA_SETTING_PANE = realPath("views/DataSettingPane.fxml");
     public static final URL TCP_CLIENT_PANE =realPath("views/TCPClientPane.fxml");
     public static final URL TCP_SERVER_PANE =realPath("views/TCPServerPane.fxml");
     public static final URL UDP_CLIENT_PANE =realPath("views/UDPClientPane.fxml");
