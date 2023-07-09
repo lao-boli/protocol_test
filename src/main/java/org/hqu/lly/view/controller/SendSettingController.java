@@ -116,9 +116,9 @@ public class SendSettingController {
 
         if (sendSettingConfig.isCustomMode()) {
             sendModeTabPane.getSelectionModel().select(CUSTOM_DATA_MODE);
+            customFormTextArea.setText(customDataConfig.getCustomDataPattern());
         }
 
-        customFormTextArea.setText(customDataConfig.getCustomDataPattern());
 
         // XXX 当配置文件保存的发送格式为文本时仍然会加载自定义数据面板,待优化.
 
