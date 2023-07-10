@@ -157,6 +157,7 @@ public class MyAlert {
 
         void init(MyAlert alert) {
             this.alert = alert;
+            this.contentText.setWrapText(true);
             this.getStyleClass().add("alert-content-pane");
             setupContent();
             setupBtnGroup();
