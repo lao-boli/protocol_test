@@ -1,6 +1,7 @@
 package org.hqu.lly.utils;
 
 import javafx.application.Platform;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.graalvm.polyglot.Context;
 import org.graalvm.polyglot.Engine;
@@ -28,14 +29,13 @@ public class JSParser {
     static Context graalCtx = Context.newBuilder("js").engine(graal).build();
 
     // endregion
-    static {
-        try {
-            nashorn.eval("1");
-        } catch (ScriptException e) {
-            throw new RuntimeException(e);
-        }
+
+    @SneakyThrows
+    public static void preheat() {
+        nashorn.eval("1");
         graalCtx.eval("js", "1");
     }
+
 
     public static Object evalScript(String script) {
         return evalScript(EngineType.NASHORN, script);
