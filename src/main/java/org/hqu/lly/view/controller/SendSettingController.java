@@ -70,6 +70,13 @@ public class SendSettingController {
     private CustomDataConfig customDataConfig;
     // endregion
 
+    // region js数据相关
+    @FXML
+    public TextArea jsTextArea;
+    @FXML
+    public Button jsConfirmBtn;
+    // endregion
+
 
     public void setConfig(SendSettingConfig config) {
         this.sendSettingConfig = config;
@@ -94,6 +101,7 @@ public class SendSettingController {
     private void saveSetting() {
         scheduledSendConfig.setInterval(strToInt(intervalTextField.getText()));
         scheduledSendConfig.setSendTimes(strToInt(sendCountTextField.getText()));
+        sendSettingConfig.setJsScript(jsTextArea.getText());
     }
 
     /**
@@ -117,6 +125,10 @@ public class SendSettingController {
         if (sendSettingConfig.isCustomMode()) {
             sendModeTabPane.getSelectionModel().select(CUSTOM_DATA_MODE);
             customFormTextArea.setText(customDataConfig.getCustomDataPattern());
+        }
+        if (sendSettingConfig.isJSMode()) {
+            sendModeTabPane.getSelectionModel().select(JS_MODE);
+            jsTextArea.setText(sendSettingConfig.getJsScript());
         }
 
 
@@ -173,15 +185,10 @@ public class SendSettingController {
 
         // 发送模式设置初始化
         sendModeTabPane.getSelectionModel().selectedIndexProperty().addListener((observable, oldValue, newValue) -> {
-            System.out.println(newValue.intValue());
             int i = newValue.intValue();
             if (i == TEXT_MODE) {
                 sendSettingConfig.setTextMode();
                 sendSettingConfig.getOnModeChange().fireTask();
-                Platform.runLater(() -> {
-                    customFormTextArea.setDisable(true);
-                    showBoundPaneBtn.setDisable(true);
-                });
             }
 
             if (i == CUSTOM_DATA_MODE) {
@@ -194,7 +201,8 @@ public class SendSettingController {
             }
 
             if (i == JS_MODE) {
-                // TODO js
+                sendSettingConfig.setJSMode();
+                sendSettingConfig.getOnModeChange().fireTask();
             }
         });
     }

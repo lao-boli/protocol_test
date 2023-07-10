@@ -26,6 +26,7 @@ import org.hqu.lly.service.ScheduledTaskService;
 import org.hqu.lly.service.impl.ClientService;
 import org.hqu.lly.service.impl.ScheduledSendService;
 import org.hqu.lly.utils.DataUtil;
+import org.hqu.lly.utils.JSParser;
 import org.hqu.lly.utils.MsgUtil;
 
 import java.net.URI;
@@ -104,7 +105,6 @@ public abstract class BaseClientController<T extends BaseClient> extends CommonU
 
     public BaseClientController() {
     }
-
 
 
     /**
@@ -191,6 +191,16 @@ public abstract class BaseClientController<T extends BaseClient> extends CommonU
         } catch (UnSetBoundException e) {
             log.warn(e.getMessage());
             Platform.runLater(() -> errorMsgLabel.setText("未定义数据边界!"));
+        }
+        // js mode
+        if (sendSettingConfig.isJSMode()) {
+            Object res = JSParser.evalScript(sendSettingConfig.getJsScript());
+            String msg = res == null ? "" : res.toString();
+            if (sendMsgType == HEX) {
+                client.sendMessage(MsgUtil.convertText(HEX, PLAIN_TEXT, msg));
+            } else {
+                client.sendMessage(msg);
+            }
         }
     }
 
@@ -320,7 +330,7 @@ public abstract class BaseClientController<T extends BaseClient> extends CommonU
             if (sendSettingConfig.isTextMode()) {
                 Platform.runLater(() -> msgInput.setDisable(false));
             }
-            if (sendSettingConfig.isCustomMode()) {
+            if (sendSettingConfig.isCustomMode() || sendSettingConfig.isJSMode()) {
                 Platform.runLater(() -> msgInput.setDisable(true));
             }
         });
@@ -352,12 +362,13 @@ public abstract class BaseClientController<T extends BaseClient> extends CommonU
     public void init() {
 
     }
+
     @Override
     public void init(ClientSessionConfig config) {
         ConfigStore.controllers.add(this);
         if (config == null) {
             clientConfig = (ClientSessionConfig) ConfigStore.createConfig(ConfigType.CLIENT);
-        }else {
+        } else {
             clientConfig = config;
             tabTitle.setText(config.getTabName());
             remoteAddressInput.setText(config.getServerAddr());
@@ -413,7 +424,7 @@ public abstract class BaseClientController<T extends BaseClient> extends CommonU
      * 3.发送设置.
      * </p>
      *
-     *  @date 2023-07-05 20:15
+     * @date 2023-07-05 20:15
      */
     @Override
     public void save() {

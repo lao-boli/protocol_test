@@ -1,8 +1,10 @@
 package org.hqu.lly.utils;
 
+import javafx.application.Platform;
 import lombok.extern.slf4j.Slf4j;
 import org.graalvm.polyglot.Context;
 import org.graalvm.polyglot.Engine;
+import org.hqu.lly.domain.component.MessagePopup;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
@@ -56,6 +58,10 @@ public class JSParser {
             result = nashorn.eval(script);
         } catch (ScriptException e) {
             log.warn(e.getMessage());
+            Platform.runLater(() -> {
+                new MessagePopup(e.getMessage()).showPopup();
+            });
+
 
         }
         System.out.println(System.currentTimeMillis() - begin);

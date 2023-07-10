@@ -26,6 +26,11 @@ public class SendSettingConfig extends Config {
     private CustomDataConfig customDataConfig;
 
     /**
+     * js脚本
+     */
+    private String jsScript;
+
+    /**
      * 定时发送配置类
      */
     private ScheduledSendConfig scheduledSendConfig;
@@ -44,6 +49,11 @@ public class SendSettingConfig extends Config {
      * 自定义数据模式
      */
     private static final String CUSTOM = "custom";
+
+    /**
+     * JS模式
+     */
+    private static final String JS = "js";
 
     /**
      * 模式切换时触发的回调函数
@@ -69,12 +79,20 @@ public class SendSettingConfig extends Config {
         mode = CUSTOM;
     }
 
+    public void setJSMode() {
+        mode = JS;
+    }
+
     public boolean isTextMode() {
         return TEXT.equals(mode);
     }
 
     public boolean isCustomMode() {
         return CUSTOM.equals(mode);
+    }
+
+    public boolean isJSMode() {
+        return JS.equals(mode);
     }
 
 
