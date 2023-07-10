@@ -3,7 +3,7 @@
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<BorderPane fx:id="container" minWidth="1.0" prefHeight="305.0" prefWidth="619.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.hqu.lly.view.controller.SendSettingController">
+<BorderPane fx:id="container" stylesheets="@../css/SendSettingPane.css" minWidth="1.0" prefHeight="305.0" prefWidth="619.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.hqu.lly.view.controller.SendSettingController">
    <center>
       <VBox prefHeight="237.0" prefWidth="400.0" spacing="10.0" style="-fx-background-color: #3c3f41;">
          <children>
