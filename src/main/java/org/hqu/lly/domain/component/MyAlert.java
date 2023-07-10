@@ -31,8 +31,8 @@ import java.util.Optional;
  */
 public class MyAlert {
 
-    private final TitleBar titleBar;
-    private final ContentPane contentPane;
+    private TitleBar titleBar;
+    private ContentPane contentPane;
     private Stage stage = new Stage();
     private BorderPane pane = new BorderPane();
 
@@ -68,6 +68,22 @@ public class MyAlert {
      * @param contentText 弹窗内容文本
      */
     public MyAlert(Alert.AlertType alertType, String title, String contentText) {
+        init(title, contentText);
+    }
+
+    /**
+     *
+     * @param alertType todo custom alert type
+     * @param title 弹窗标题
+     * @param contentText 弹窗内容文本
+     * @param owner 所属stage
+     */
+    public MyAlert(Alert.AlertType alertType, String title, String contentText,Stage owner) {
+        init(title, contentText);
+        stage.initOwner(owner);
+    }
+
+    private void init(String title, String contentText) {
         titleBar = new TitleBar(this, title);
         pane.setTop(titleBar);
         contentPane = new ContentPane(this, contentText);
