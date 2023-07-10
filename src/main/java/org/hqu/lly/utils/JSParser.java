@@ -37,6 +37,10 @@ public class JSParser {
     }
 
 
+    public static MethodTimer.ResultWithTime<Object> testScript(String script) {
+        return MethodTimer.measureExecutionTime(() -> evalScript(EngineType.NASHORN, script));
+    }
+
     public static Object evalScript(String script) {
         return evalScript(EngineType.NASHORN, script);
     }
@@ -64,7 +68,6 @@ public class JSParser {
 
 
         }
-        System.out.println(System.currentTimeMillis() - begin);
         System.out.println("返回结果: " + result);
         return result;
     }

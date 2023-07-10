@@ -93,7 +93,7 @@
                                                 <Insets />
                                              </HBox.margin>
                                              <children>
-                                                <Button fx:id="jsConfirmBtn" mnemonicParsing="false" onMouseClicked="#showDataRangeSettingPane" text="确认" />
+                                                <Button fx:id="jsTestBtn" mnemonicParsing="false" onMouseClicked="#testScript" text="测试脚本" />
                                              </children>
                                           </VBox>
                                        </children>

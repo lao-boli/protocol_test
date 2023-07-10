@@ -8,9 +8,12 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
 import org.hqu.lly.domain.component.DataSettingPane;
+import org.hqu.lly.domain.component.MyAlert;
 import org.hqu.lly.domain.config.CustomDataConfig;
 import org.hqu.lly.domain.config.ScheduledSendConfig;
 import org.hqu.lly.domain.config.SendSettingConfig;
+import org.hqu.lly.utils.JSParser;
+import org.hqu.lly.utils.MethodTimer;
 
 import static org.hqu.lly.utils.CommonUtil.intToStr;
 import static org.hqu.lly.utils.CommonUtil.strToInt;
@@ -74,7 +77,7 @@ public class SendSettingController {
     @FXML
     public TextArea jsTextArea;
     @FXML
-    public Button jsConfirmBtn;
+    public Button jsTestBtn;
     // endregion
 
 
@@ -162,6 +165,13 @@ public class SendSettingController {
             dataSettingPane = new DataSettingPane(customDataConfig, (Stage) titleBar.getScene().getWindow());
             dataSettingPane.show();
         }
+    }
+
+    @FXML
+    public void testScript(MouseEvent event) {
+        MethodTimer.ResultWithTime<Object> cost = JSParser.testScript(jsTextArea.getText());
+        String msg = "脚本执行耗时: "+ cost.getTime() +" ms\n脚本执行结果: " + cost.getResult();
+        new MyAlert(Alert.AlertType.NONE, "执行结果", msg, (Stage) titleBar.getScene().getWindow()).showAndWait();
     }
 
     @FXML
