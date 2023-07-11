@@ -2,6 +2,7 @@ package org.hqu.lly.view.controller;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.geometry.Bounds;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
@@ -14,6 +15,7 @@ import org.hqu.lly.domain.config.ScheduledSendConfig;
 import org.hqu.lly.domain.config.SendSettingConfig;
 import org.hqu.lly.utils.JSParser;
 import org.hqu.lly.utils.MethodTimer;
+import org.hqu.lly.utils.UIUtil;
 
 import static org.hqu.lly.utils.CommonUtil.intToStr;
 import static org.hqu.lly.utils.CommonUtil.strToInt;
@@ -78,6 +80,8 @@ public class SendSettingController {
     public TextArea jsTextArea;
     @FXML
     public Button jsTestBtn;
+    @FXML
+    public Label jsHelpIcon;
     // endregion
 
 
@@ -174,6 +178,20 @@ public class SendSettingController {
         new MyAlert(Alert.AlertType.NONE, "执行结果", msg, (Stage) titleBar.getScene().getWindow()).showAndWait();
     }
 
+    private void initIcon() {
+        // TODO 自定义一个tooltip样式组件
+        Tooltip jsTip = UIUtil.getTooltip("""
+                                                    JS执行时间应小于发送间隔
+                                                    可先执行几次JS脚本进行预热
+                                                    以减少后续执行时间""");
+        UIUtil.setTooltip(jsHelpIcon,
+                          jsTip,
+                          e -> {
+                              Bounds bounds = jsHelpIcon.localToScreen(jsHelpIcon.getBoundsInLocal());
+                              jsTip.show(jsHelpIcon, bounds.getMinX(), bounds.getMinY() - 65);
+                          });
+    }
+
     @FXML
     public void initialize() {
         // 标题栏初始化
@@ -215,6 +233,8 @@ public class SendSettingController {
                 sendSettingConfig.getOnModeChange().fireTask();
             }
         });
+
+        initIcon();
     }
 
 }

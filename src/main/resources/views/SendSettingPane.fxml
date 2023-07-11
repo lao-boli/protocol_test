@@ -3,7 +3,7 @@
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<BorderPane fx:id="container" stylesheets="@../css/SendSettingPane.css" minWidth="1.0" prefHeight="305.0" prefWidth="619.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.hqu.lly.view.controller.SendSettingController">
+<BorderPane fx:id="container" minWidth="1.0" prefHeight="305.0" prefWidth="619.0" stylesheets="@../css/SendSettingPane.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.hqu.lly.view.controller.SendSettingController">
    <center>
       <VBox prefHeight="237.0" prefWidth="400.0" spacing="10.0" style="-fx-background-color: #3c3f41;">
          <children>
@@ -46,7 +46,7 @@
                   <Label text="ms" />
                </children>
             </HBox>
-            <HBox spacing="5.0" prefHeight="165.0" prefWidth="350.0" VBox.vgrow="ALWAYS">
+            <HBox prefHeight="165.0" prefWidth="350.0" spacing="5.0" VBox.vgrow="ALWAYS">
                <children>
                   <Label text="发送模式:" HBox.hgrow="NEVER" />
                   <TabPane fx:id="sendModeTabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="117.0" prefWidth="300.0" tabClosingPolicy="UNAVAILABLE" HBox.hgrow="SOMETIMES">
@@ -88,11 +88,20 @@
                                     <HBox spacing="5.0" VBox.vgrow="ALWAYS">
                                        <children>
                                           <TextArea fx:id="jsTextArea" focusTraversable="false" prefHeight="92.0" prefWidth="216.0" text="\\%.2f %d" wrapText="true" HBox.hgrow="ALWAYS" />
-                                          <VBox alignment="BOTTOM_LEFT">
+                                          <VBox alignment="BOTTOM_LEFT" spacing="5.0">
                                              <HBox.margin>
                                                 <Insets />
                                              </HBox.margin>
                                              <children>
+                                                <StackPane alignment="TOP_LEFT" styleClass="icon-help">
+                                                   <children>
+                                                      <Label fx:id="jsHelpIcon" contentDisplay="GRAPHIC_ONLY" text="Label">
+                                                         <graphic>
+                                                            <Region prefHeight="18.0" prefWidth="64.0" />
+                                                         </graphic>
+                                                      </Label>
+                                                   </children>
+                                                </StackPane>
                                                 <Button fx:id="jsTestBtn" mnemonicParsing="false" onMouseClicked="#testScript" text="测试脚本" />
                                              </children>
                                           </VBox>
