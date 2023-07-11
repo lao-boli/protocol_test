@@ -234,7 +234,9 @@ public abstract class BaseServerController<T> extends CommonUIContorller impleme
     protected void setInactiveUI() {
         Platform.runLater(() -> {
             serverPort.setDisable(false);
-            msgInput.setDisable(true);
+            if (!server.isActive()){
+                msgInput.setDisable(true);
+            }
             confirmButton.setDisable(false);
             closeServerButton.setDisable(true);
             sendMsgButton.setDisable(true);
@@ -409,10 +411,10 @@ public abstract class BaseServerController<T> extends CommonUIContorller impleme
         sendSettingConfig.getScheduledSendConfig().setTaskFactory(new SendTaskFactory(this::sendMsg));
 
         sendSettingConfig.setOnModeChange(() -> {
-            if (sendSettingConfig.isTextMode()) {
+            if (sendSettingConfig.isTextMode() && server.isActive()) {
                 Platform.runLater(() -> msgInput.setDisable(false));
             }
-            if (sendSettingConfig.isCustomMode()) {
+            if (sendSettingConfig.isCustomMode() || sendSettingConfig.isJSMode()) {
                 Platform.runLater(() -> msgInput.setDisable(true));
             }
         });
