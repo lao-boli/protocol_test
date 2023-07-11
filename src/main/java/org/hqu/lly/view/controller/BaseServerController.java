@@ -28,6 +28,7 @@ import org.hqu.lly.service.ScheduledTaskService;
 import org.hqu.lly.service.impl.ScheduledSendService;
 import org.hqu.lly.service.impl.ServerService;
 import org.hqu.lly.utils.DataUtil;
+import org.hqu.lly.utils.JSParser;
 import org.hqu.lly.utils.MsgUtil;
 import org.hqu.lly.utils.UIUtil;
 
@@ -253,6 +254,7 @@ public abstract class BaseServerController<T> extends CommonUIContorller impleme
         }
 
         if (!targetClientSet.isEmpty()) {
+            // text mode
             targetClientSet.forEach((client) -> {
                 String text = msgInput.getText();
                 if (sendSettingConfig.isTextMode()) {
@@ -263,6 +265,7 @@ public abstract class BaseServerController<T> extends CommonUIContorller impleme
                     }
                 }
 
+                // custom mode
                 try {
                     if (sendSettingConfig.isCustomMode()) {
                         CustomDataConfig customDataConfig = sendSettingConfig.getCustomDataConfig();
@@ -277,6 +280,17 @@ public abstract class BaseServerController<T> extends CommonUIContorller impleme
                 } catch (UnSetBoundException e) {
                     log.warn(e.getMessage());
                     Platform.runLater(() -> errorMsgLabel.setText("未定义数据边界!"));
+                }
+
+                // js mode
+                if (sendSettingConfig.isJSMode()) {
+                    Object res = JSParser.evalScript(sendSettingConfig.getJsScript());
+                    String msg = res == null ? "" : res.toString();
+                    if (sendMsgType == HEX) {
+                        server.sendMessage(MsgUtil.convertText(HEX, PLAIN_TEXT, msg),client);
+                    } else {
+                        server.sendMessage(msg,client);
+                    }
                 }
             });
         }
@@ -423,6 +437,7 @@ public abstract class BaseServerController<T> extends CommonUIContorller impleme
         serverConfig.setTabName(tabTitle.getText());
         serverConfig.setMsgInput(msgInput.getText());
         serverConfig.setPort(serverPort.getText());
+        serverConfig.setSendSettingConfig(sendSettingConfig);
     }
 
     /**
