@@ -129,6 +129,7 @@ public class MsgUtil {
      */
     @SneakyThrows
     public static String jsonFormat(String str) {
+        // XXX 转换形如 "1.83 1 1 1"这样的非法json字符串也会转换成功并只保留首位
         JsonNode jsonNode = mapper.readTree(str);
         return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(jsonNode).replaceAll("\r", "");
     }

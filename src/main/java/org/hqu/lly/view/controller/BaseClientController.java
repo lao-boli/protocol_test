@@ -327,7 +327,7 @@ public abstract class BaseClientController<T extends BaseClient> extends CommonU
 
         // 发送模式改变时的回调
         sendSettingConfig.setOnModeChange(() -> {
-            if (sendSettingConfig.isTextMode()) {
+            if (sendSettingConfig.isTextMode()  && client.isActive()) {
                 Platform.runLater(() -> msgInput.setDisable(false));
             }
             if (sendSettingConfig.isCustomMode() || sendSettingConfig.isJSMode()) {
