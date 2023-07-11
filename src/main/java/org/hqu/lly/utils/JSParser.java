@@ -30,6 +30,9 @@ public class JSParser {
 
     // endregion
 
+    /**
+     * js引擎预热,减少首次执行脚本时间
+     */
     @SneakyThrows
     public static void preheat() {
         nashorn.eval("1");
@@ -37,14 +40,48 @@ public class JSParser {
     }
 
 
+    /**
+     * 测试js脚本
+     *
+     * @param engineType js执行引擎类型
+     * @param script     要执行的js脚本
+     * @return 执行时间和结果
+     * @date 2023-07-11 19:45
+     */
+    public static MethodTimer.ResultWithTime<Object> testScript(EngineType engineType, String script) {
+        return MethodTimer.measureExecutionTime(() -> evalScript(engineType, script));
+    }
+
+    /**
+     * 默认的测试js脚本,js引擎为 NASHORN
+     *
+     * @param script 要执行的js脚本
+     * @return 执行时间和结果
+     * @date 2023-07-11 19:45
+     */
     public static MethodTimer.ResultWithTime<Object> testScript(String script) {
         return MethodTimer.measureExecutionTime(() -> evalScript(EngineType.NASHORN, script));
     }
 
+    /**
+     * 默认的执行js脚本,js引擎为 NASHORN
+     *
+     * @param script 要执行的js脚本
+     * @return 执行结果
+     * @date 2023-07-11 19:45
+     */
     public static Object evalScript(String script) {
         return evalScript(EngineType.NASHORN, script);
     }
 
+    /**
+     * 执行js脚本
+     *
+     * @param engineType js引擎类型,为nashorn 或 graal
+     * @param script 要执行的js脚本
+     * @return 执行结果
+     * @date 2023-07-11 19:45
+     */
     public static Object evalScript(EngineType engineType, String script) {
         if (engineType.equals(EngineType.NASHORN)) {
             return nashornEval(script);
@@ -56,49 +93,20 @@ public class JSParser {
     }
 
     public static Object nashornEval(String script) {
-        long begin = System.currentTimeMillis();
         Object result = null;
         try {
             result = nashorn.eval(script);
         } catch (ScriptException e) {
-            log.warn(e.getMessage());
+            // TODO 分离ui逻辑
             Platform.runLater(() -> {
                 new MessagePopup(e.getMessage()).showPopup();
             });
-
-
         }
-        System.out.println("返回结果: " + result);
         return result;
     }
 
     public static Object graalEval(String script) {
-        long begin = System.currentTimeMillis();
-        Object result = graalCtx.eval("js", script);
-        System.out.println(System.currentTimeMillis() - begin);
-        System.out.println("返回结果: " + result);
-        return result;
+        return graalCtx.eval("js", script);
     }
-
-
-/*    public static void main(String[] args) throws ScriptException {
-        String script = "function add(a, b) { return Math.random().toFixed(2); }() add(2, 3);1;";
-        // String script = "function add(a, b) { return a+b; } add(2, 3);";
-        for (int i = 0; i < 50; i++) {
-            evalScript(script);
-        }
-
-
-        // 执行 JavaScript 代码，并获取返回结果
-        nashorn.eval("1");
-        graalCtx.eval("js", "1");
-        long begin = System.currentTimeMillis();
-        // Object result = graalCtx.eval("js", script);
-        Object result = nashorn.eval(script);
-        System.out.println(System.currentTimeMillis() - begin);
-
-        System.out.println("返回结果: " + result);
-
-    }*/
 
 }
