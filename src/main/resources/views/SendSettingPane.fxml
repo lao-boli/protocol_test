@@ -87,7 +87,7 @@
                                  <children>
                                     <HBox spacing="5.0" VBox.vgrow="ALWAYS">
                                        <children>
-                                          <TextArea fx:id="jsTextArea" focusTraversable="false" prefHeight="92.0" prefWidth="216.0" text="\\%.2f %d" wrapText="true" HBox.hgrow="ALWAYS" />
+                                          <TextArea fx:id="jsTextArea" focusTraversable="false" prefHeight="92.0" prefWidth="216.0" text="Math.random()" wrapText="true" HBox.hgrow="ALWAYS" />
                                           <VBox alignment="BOTTOM_LEFT" spacing="5.0">
                                              <HBox.margin>
                                                 <Insets />
