@@ -37,8 +37,6 @@ public class UDPServer extends ConnectionlessServer {
 
     private  ConnectionlessServerService serverService;
 
-    private Channel channel;
-
     private EventLoopGroup bossGroup;
 
     @Override

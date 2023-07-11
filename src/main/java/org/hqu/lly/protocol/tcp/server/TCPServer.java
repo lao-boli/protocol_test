@@ -50,8 +50,6 @@ public class TCPServer extends ConnectedServer {
 
     private NioEventLoopGroup workerGroup;
 
-    private Channel channel;
-
     @Override
     public void init() {
         bossGroup = new NioEventLoopGroup();
