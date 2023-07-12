@@ -203,7 +203,7 @@ public abstract class BaseServerController<T> extends CommonUIContorller impleme
 
     @FXML
     void closeServer(MouseEvent event) {
-        destroy();
+        destroyTask();
         setInactiveUI();
     }
 
@@ -325,6 +325,18 @@ public abstract class BaseServerController<T> extends CommonUIContorller impleme
     }
 
     /**
+     * 销毁server并在做一些清理工作
+     *  @date 2023-07-12 20:16
+     */
+    public void destroyTask() {
+        // 如果有定时任务正在执行,则取消
+        if (scheduledService != null && scheduledService.isRunning()) {
+            scheduledService.cancel();
+            scheduleSendBtn.setSelected(false);
+        }
+        server.destroy();
+    }
+    /**
      * <p>
      * 标签页关闭前的回调函数。<br>
      * 负责取消定时任务以及关闭服务端连接。
@@ -333,15 +345,9 @@ public abstract class BaseServerController<T> extends CommonUIContorller impleme
      * @date 2023-02-06 12:27:58 <br>
      */
     public void destroy() {
-        // 如果有定时任务正在执行,则取消
-        if (scheduledService != null && scheduledService.isRunning()) {
-            scheduledService.cancel();
-            scheduleSendBtn.setSelected(false);
-        }
-        server.destroy();
+        destroyTask();
         ConfigStore.controllers.remove(this);
         ConfigStore.removeSessionConfig(serverConfig.getId());
-        destroyed = true;
     }
 
 
