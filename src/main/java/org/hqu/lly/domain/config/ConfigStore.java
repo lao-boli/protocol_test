@@ -1,6 +1,7 @@
 package org.hqu.lly.domain.config;
 
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import org.hqu.lly.enums.ConfigType;
 import org.hqu.lly.utils.ConfUtil;
 import org.hqu.lly.view.controller.BaseController;
@@ -20,6 +21,7 @@ import java.util.Map;
  * @version 1.0
  * @date 2023/7/1 19:46
  */
+@Slf4j
 public class ConfigStore {
 
     public static final List<BaseController> controllers = new ArrayList<>();
@@ -34,6 +36,7 @@ public class ConfigStore {
 
     public static void addSessionConfig(SessionConfig config){
         sessionConfigs.put(config.id, config);
+        log.debug("add config {}",config);
     }
 
     public static void removeSessionConfig(String id){
@@ -59,6 +62,7 @@ public class ConfigStore {
 
     public static void save(){
         controllers.forEach(BaseController::save);
+        log.debug("save {}",sessionConfigs);
         ConfUtil.saveConf(sessionConfigs);
     }
 
