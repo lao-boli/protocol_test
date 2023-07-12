@@ -129,7 +129,12 @@ public abstract class BaseClientController<T extends BaseClient> extends CommonU
     @FXML
     void confirmAddr(MouseEvent event) {
         URI uri = URI.create(protocol + remoteAddressInput.getText());
-        client.setURI(uri);
+        try {
+            client.setURI(uri);
+        } catch (IllegalArgumentException e) {
+            errorMsgLabel.setText(e.getMessage());
+            return;
+        }
         client.setService(new BaseClientService());
 
         FutureTask<Channel> channel = new FutureTask<>(client);

@@ -27,10 +27,7 @@ import org.hqu.lly.service.MyInitialize;
 import org.hqu.lly.service.ScheduledTaskService;
 import org.hqu.lly.service.impl.ScheduledSendService;
 import org.hqu.lly.service.impl.ServerService;
-import org.hqu.lly.utils.DataUtil;
-import org.hqu.lly.utils.JSParser;
-import org.hqu.lly.utils.MsgUtil;
-import org.hqu.lly.utils.UIUtil;
+import org.hqu.lly.utils.*;
 
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -189,6 +186,12 @@ public abstract class BaseServerController<T> extends CommonUIContorller impleme
 
     @FXML
     void startServer(MouseEvent event) {
+        try {
+            ValidateUtil.checkPort(serverPort.getText());
+        } catch (IllegalArgumentException e) {
+            errorMsgLabel.setText(e.getMessage());
+            return;
+        }
         int port = Integer.parseInt(serverPort.getText());
         server.setPort(port);
         server.setService(serverService);
@@ -273,11 +276,10 @@ public abstract class BaseServerController<T> extends CommonUIContorller impleme
                         CustomDataConfig customDataConfig = sendSettingConfig.getCustomDataConfig();
                         String msg = DataUtil.createMsg(customDataConfig.getCustomDataPattern(), customDataConfig.getBoundList());
                         if (sendMsgType == HEX) {
-                            server.sendMessage(MsgUtil.convertText(HEX, PLAIN_TEXT, text), client);
+                            server.sendMessage(MsgUtil.convertText(HEX, PLAIN_TEXT, msg), client);
                         } else {
-                            server.sendMessage(text, client);
+                            server.sendMessage(msg, client);
                         }
-                        server.sendMessage(msg, client);
                     }
                 } catch (UnSetBoundException e) {
                     log.warn(e.getMessage());
