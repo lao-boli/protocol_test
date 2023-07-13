@@ -228,7 +228,9 @@ public abstract class BaseServerController<T> extends CommonUIContorller impleme
     protected void setActiveUI() {
         Platform.runLater(() -> {
             serverPort.setDisable(true);
-            msgInput.setDisable(false);
+            if (sendSettingConfig.isTextMode()){
+                msgInput.setDisable(false);
+            }
             confirmButton.setDisable(true);
             closeServerButton.setDisable(false);
         });
