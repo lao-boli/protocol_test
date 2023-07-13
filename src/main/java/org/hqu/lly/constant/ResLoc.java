@@ -40,6 +40,10 @@ public class ResLoc {
 
     public static final URL ICON = realPath("icon/icon.css");
 
+    // js lab
+
+    public static final URL RANDOM_UTIL = realPath("js/random-util.js");
+
     /**
      * <p>
      * 返回资源的真实路径
