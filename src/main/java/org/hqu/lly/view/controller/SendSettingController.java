@@ -176,17 +176,18 @@ public class SendSettingController {
 
     @FXML
     public void testScript(MouseEvent event) {
-        MethodTimer.ResultWithTime<Object> cost = JSParser.testScript(jsEngineBox.getSelectionModel().getSelectedItem(),jsTextArea.getText());
-        String msg = "脚本执行耗时: "+ cost.getTime() +" ms\n脚本执行结果: " + cost.getResult();
+        System.out.println(sendSettingConfig.getCurEngine());
+        MethodTimer.ResultWithTime<Object> cost = JSParser.testScript(jsEngineBox.getSelectionModel().getSelectedItem(), jsTextArea.getText());
+        String msg = "脚本执行耗时: " + cost.getTime() + " ms\n脚本执行结果: " + cost.getResult();
         new MyAlert(Alert.AlertType.NONE, "执行结果", msg, (Stage) titleBar.getScene().getWindow()).showAndWait();
     }
 
     private void initIcon() {
         // TODO 自定义一个tooltip样式组件
         Tooltip jsTip = UIUtil.getTooltip("""
-                                                    JS执行时间应小于发送间隔
-                                                    可先执行几次JS脚本进行预热
-                                                    以减少后续执行时间""");
+                                                  JS执行时间应小于发送间隔
+                                                  可先执行几次JS脚本进行预热
+                                                  以减少后续执行时间""");
         UIUtil.setTooltip(jsHelpIcon,
                           jsTip,
                           e -> {
@@ -242,8 +243,18 @@ public class SendSettingController {
     }
 
     private void initEngineBox() {
+        jsEngineBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            sendSettingConfig.setCurEngine(newValue);
+        });
         jsEngineBox.getItems().addAll(JSParser.EngineType.GRAAL, JSParser.EngineType.NASHORN);
-        jsEngineBox.getSelectionModel().select(JSParser.EngineType.NASHORN);
+        Platform.runLater(() -> {
+            if (sendSettingConfig != null && sendSettingConfig.getCurEngine() != null) {
+                jsEngineBox.getSelectionModel().select(sendSettingConfig.getCurEngine());
+            }else  {
+                jsEngineBox.getSelectionModel().select(JSParser.EngineType.NASHORN);
+            }
+        });
+
     }
 
 }

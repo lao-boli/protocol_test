@@ -290,7 +290,7 @@ public abstract class BaseServerController<T> extends CommonUIContorller impleme
 
                 // js mode
                 if (sendSettingConfig.isJSMode()) {
-                    Object res = JSParser.evalScript(sendSettingConfig.getJsScript());
+                    Object res = JSParser.evalScript(sendSettingConfig.getCurEngine(),sendSettingConfig.getJsScript());
                     String msg = res == null ? "" : res.toString();
                     if (sendMsgType == HEX) {
                         server.sendMessage(MsgUtil.convertText(HEX, PLAIN_TEXT, msg),client);

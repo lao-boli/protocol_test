@@ -199,7 +199,7 @@ public abstract class BaseClientController<T extends BaseClient> extends CommonU
         }
         // js mode
         if (sendSettingConfig.isJSMode()) {
-            Object res = JSParser.evalScript(sendSettingConfig.getJsScript());
+            Object res = JSParser.evalScript(sendSettingConfig.getCurEngine(),sendSettingConfig.getJsScript());
             String msg = res == null ? "" : res.toString();
             if (sendMsgType == HEX) {
                 client.sendMessage(MsgUtil.convertText(HEX, PLAIN_TEXT, msg));
