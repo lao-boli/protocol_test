@@ -7,6 +7,7 @@ import org.graalvm.polyglot.*;
 import org.hqu.lly.constant.ResLoc;
 import org.hqu.lly.domain.component.MessagePopup;
 
+import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
@@ -97,31 +98,52 @@ public class JSParser {
     }
 
     public static Object nashornEval(String script) {
+        String s = "(function() {" + script + "})();";
         Object result = null;
         try {
-            result = nashorn.eval(script);
+            result = nashorn.eval(s);
         } catch (ScriptException e) {
             // TODO 分离ui逻辑
             Platform.runLater(() -> {
                 new MessagePopup(e.getMessage()).showPopup();
             });
         }
+        // nashornPrint();
         return result;
+    }
+
+    private static void nashornPrint() {
+        String[] variableNames = nashorn.getContext().getBindings(ScriptContext.ENGINE_SCOPE).keySet().toArray(new String[0]);
+        // 打印变量名
+        for (String name : variableNames) {
+            System.out.println(name);
+        }
     }
 
     public static Object graalEval(String script) {
         Object result = null;
+        String s = "(function() {" + script + "})();";
         try {
-            result = graalCtx.eval("js", script);
+            result = graalCtx.eval("js", s);
         } catch (PolyglotException e) {
             SourceSection sl = e.getSourceLocation();
-            String msg = e.getMessage() +"\nerror in: " + sl.getStartLine() + ':' + sl.getStartColumn() +" - "+ sl.getEndLine() + ':' + sl.getEndColumn();
+            String msg = e.getMessage() + "\nerror in: " + sl.getStartLine() + ':' + sl.getStartColumn() + " - " + sl.getEndLine() + ':' + sl.getEndColumn();
             // TODO 分离ui逻辑
             Platform.runLater(() -> {
                 new MessagePopup(msg).showPopup();
             });
         }
+
+        // graalPrint();
         return result;
+    }
+
+    private static void graalPrint() {
+        Value bindings = graalCtx.getBindings("js");
+        // 获取所有存在的变量和函数
+        for (String key : bindings.getMemberKeys()) {
+            System.out.println(key);
+        }
     }
 
 }
