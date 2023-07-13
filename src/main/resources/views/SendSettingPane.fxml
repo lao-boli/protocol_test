@@ -102,6 +102,7 @@
                                                       </Label>
                                                    </children>
                                                 </StackPane>
+                                                <ChoiceBox fx:id="jsEngineBox" prefHeight="23.0" prefWidth="65.0" />
                                                 <Button fx:id="jsTestBtn" mnemonicParsing="false" onMouseClicked="#testScript" text="测试脚本" />
                                              </children>
                                           </VBox>

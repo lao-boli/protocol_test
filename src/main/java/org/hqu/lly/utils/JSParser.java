@@ -16,7 +16,7 @@ import java.io.File;
 @Slf4j
 public class JSParser {
 
-    enum EngineType {
+   public enum EngineType {
         NASHORN,
         GRAAL
     }

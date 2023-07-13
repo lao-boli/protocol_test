@@ -39,6 +39,7 @@ public class SendSettingController {
     public static final int JS_MODE = 2;
     private final String[] modeArray = {"普通文本", "自定义数据"};
 
+
     /**
      * 自定义数据设置面板
      */
@@ -82,6 +83,8 @@ public class SendSettingController {
     public Button jsTestBtn;
     @FXML
     public Label jsHelpIcon;
+    @FXML
+    public ChoiceBox<JSParser.EngineType> jsEngineBox;
     // endregion
 
 
@@ -173,7 +176,7 @@ public class SendSettingController {
 
     @FXML
     public void testScript(MouseEvent event) {
-        MethodTimer.ResultWithTime<Object> cost = JSParser.testScript(jsTextArea.getText());
+        MethodTimer.ResultWithTime<Object> cost = JSParser.testScript(jsEngineBox.getSelectionModel().getSelectedItem(),jsTextArea.getText());
         String msg = "脚本执行耗时: "+ cost.getTime() +" ms\n脚本执行结果: " + cost.getResult();
         new MyAlert(Alert.AlertType.NONE, "执行结果", msg, (Stage) titleBar.getScene().getWindow()).showAndWait();
     }
@@ -235,6 +238,12 @@ public class SendSettingController {
         });
 
         initIcon();
+        initEngineBox();
+    }
+
+    private void initEngineBox() {
+        jsEngineBox.getItems().addAll(JSParser.EngineType.GRAAL, JSParser.EngineType.NASHORN);
+        jsEngineBox.getSelectionModel().select(JSParser.EngineType.NASHORN);
     }
 
 }
