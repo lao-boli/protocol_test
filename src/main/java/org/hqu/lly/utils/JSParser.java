@@ -11,7 +11,6 @@ import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
-import java.io.File;
 
 @Slf4j
 public class JSParser {
@@ -40,7 +39,7 @@ public class JSParser {
         nashorn.eval("1");
         nashorn.eval("load('" + ResLoc.RANDOM_UTIL + "')");
         graalCtx.eval("js", "1");
-        Source source = Source.newBuilder("js", new File(ResLoc.RANDOM_UTIL.getPath())).build();
+        Source source = Source.newBuilder("js", ResLoc.RANDOM_UTIL).build();
         graalCtx.eval(source);
     }
 
@@ -88,7 +87,6 @@ public class JSParser {
      * @date 2023-07-11 19:45
      */
     public static Object evalScript(EngineType engineType, String script) {
-        System.out.println(engineType);
         if (engineType.equals(EngineType.NASHORN)) {
             return nashornEval(script);
         }
