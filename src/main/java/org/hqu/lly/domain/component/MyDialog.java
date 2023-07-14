@@ -29,11 +29,11 @@ import org.hqu.lly.view.handler.DragWindowHandler;
  */
 public class MyDialog<T extends Node> {
 
-    private TitleBar titleBar;
-    private Stage stage = new Stage();
+    protected TitleBar titleBar;
+    protected Stage stage = new Stage();
 
     protected T content;
-    private BorderPane pane = new BorderPane();
+    protected BorderPane pane = new BorderPane();
 
    public void close() {
         stage.close();
@@ -47,9 +47,6 @@ public class MyDialog<T extends Node> {
 
         // title bar
         initTitleBar();
-
-        // css
-        pane.getStylesheets().add(ResLoc.DATA_SETTING_PANE_CSS.toExternalForm());
 
         // scene and stage
         final Scene scene = initScene();
@@ -68,7 +65,7 @@ public class MyDialog<T extends Node> {
         initOwner(parent);
     }
 
-    private Scene initScene() {
+    protected Scene initScene() {
         return initScene(450, 300);
     }
     protected Scene initScene(double width, double height) {
@@ -76,8 +73,8 @@ public class MyDialog<T extends Node> {
         return scene;
     }
 
-    private TitleBar initTitleBar() {
-        return initTitleBar("title");
+    protected void initTitleBar() {
+         initTitleBar("title");
     }
     protected TitleBar initTitleBar(String title) {
         titleBar = new TitleBar(this, title);
