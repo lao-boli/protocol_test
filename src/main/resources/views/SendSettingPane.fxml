@@ -72,7 +72,7 @@
                                                 <Insets />
                                              </HBox.margin>
                                              <children>
-                                                <Button fx:id="showBoundPaneBtn" disable="true" mnemonicParsing="false" onMouseClicked="#showDataRangeSettingPane" text="确认" />
+                                                <Button fx:id="showBoundPaneBtn" disable="true" mnemonicParsing="false" onMouseClicked="#showDataRangeSettingPane" text="设置值域" />
                                              </children>
                                           </VBox>
                                        </children>
