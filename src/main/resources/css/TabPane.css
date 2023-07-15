@@ -133,3 +133,10 @@
 .tab-pane > .tab-header-area > .headers-region > .tab:top > .tab-container > .tab-label{
     -fx-content-display: graphic-only;
 }
+
+.split-pane {
+    -fx-padding: 5 5 10 5;
+}
+.split-pane > .split-pane-divider {
+    -fx-background-color: transparent;
+}
