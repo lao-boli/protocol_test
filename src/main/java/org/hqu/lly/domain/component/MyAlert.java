@@ -1,22 +1,17 @@
 package org.hqu.lly.domain.component;
 
-import com.github.mouse0w0.darculafx.DarculaFX;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.event.ActionEvent;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.*;
-import javafx.stage.Modality;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
-import javafx.stage.Window;
 import lombok.val;
 import org.hqu.lly.constant.ResLoc;
-import org.hqu.lly.utils.DragUtil;
-import org.hqu.lly.utils.UIUtil;
-import org.hqu.lly.view.handler.DragWindowHandler;
 
 import java.util.Optional;
 
@@ -29,12 +24,9 @@ import java.util.Optional;
  * @version 1.0
  * @date 2023/5/30 21:12
  */
-public class MyAlert {
+public class MyAlert extends MyDialog<MyAlert.ContentPane>{
 
-    private TitleBar titleBar;
     private ContentPane contentPane;
-    private Stage stage = new Stage();
-    private BorderPane pane = new BorderPane();
 
     private final ObjectProperty<ButtonType> resultProperty = new SimpleObjectProperty<>() {
         protected void invalidated() {
@@ -54,7 +46,8 @@ public class MyAlert {
         this.resultProperty().set(value);
     }
 
-    void close() {
+    @Override
+    public void close() {
         if (getResult() == null) {
             setResultAndClose(ButtonType.CLOSE);
         }
@@ -68,7 +61,13 @@ public class MyAlert {
      * @param contentText 弹窗内容文本
      */
     public MyAlert(Alert.AlertType alertType, String title, String contentText) {
-        init(title, contentText);
+        super();
+        titleBar.setTitle(title);
+
+        contentPane = new ContentPane(this, contentText);
+        pane.setCenter(contentPane);
+
+        pane.getStylesheets().add(ResLoc.MY_ALERT_CSS.toExternalForm());
     }
 
     /**
@@ -79,23 +78,13 @@ public class MyAlert {
      * @param owner 所属stage
      */
     public MyAlert(Alert.AlertType alertType, String title, String contentText,Stage owner) {
-        init(title, contentText);
-        stage.initOwner(owner);
+        this(alertType,title,contentText);
+        initOwner(owner);
     }
 
-    private void init(String title, String contentText) {
-        titleBar = new TitleBar(this, title);
-        pane.setTop(titleBar);
-        contentPane = new ContentPane(this, contentText);
-        pane.setCenter(contentPane);
-        pane.getStylesheets().add(ResLoc.MY_ALERT_CSS.toExternalForm());
-
-        val scene = UIUtil.getShadowScene(pane, 300, 200);
-        DragUtil.setDrag(stage, scene.getRoot());
-        DarculaFX.applyDarculaStyle(scene);
-        stage.setScene(scene);
-        stage.initStyle(StageStyle.TRANSPARENT);
-        stage.initModality(Modality.APPLICATION_MODAL);
+    @Override
+    protected Scene initScene() {
+        return initScene(300,200);
     }
 
     public Optional<ButtonType> showAndWait() {
@@ -103,55 +92,11 @@ public class MyAlert {
         return Optional.ofNullable(getResult());
     }
 
-    public void initOwner(Window owner) {
-        stage.initOwner(owner);
-    }
-
     private void setResultAndClose(ButtonType cmd) {
         setResult(cmd);
         stage.close();
-
     }
 
-
-    class TitleBar extends BorderPane {
-
-        Label titleLabel;
-
-        StackPane close;
-
-        MyAlert alert;
-
-        public TitleBar(MyAlert myAlert, String title) {
-            this.alert = myAlert;
-            this.getStyleClass().add("alert-title-bar");
-            this.getStylesheets().add(ResLoc.ALERT_TITLE_BAR_CSS.toExternalForm());
-
-            // todo perf ugly
-            DragWindowHandler dragWindowHandler = new DragWindowHandler(myAlert.stage);
-            setOnMousePressed(dragWindowHandler);
-            setOnMouseDragged(dragWindowHandler);
-
-            setupClose();
-            setupTitle(title);
-
-        }
-
-        private void setupTitle(String title) {
-            titleLabel = new Label(title);
-            titleLabel.getStyleClass().add("title");
-            setLeft(titleLabel);
-        }
-
-        void setupClose() {
-            close = new StackPane(new Region());
-            close.getStyleClass().add("close");
-            close.addEventFilter(MouseEvent.MOUSE_CLICKED, event -> alert.close());
-            setRight(close);
-
-        }
-
-    }
 
     class ContentPane extends VBox {
 
@@ -163,15 +108,6 @@ public class MyAlert {
         private Label contentText = new Label();
 
         public ContentPane(MyAlert alert) {
-            init(alert);
-        }
-
-        public ContentPane(MyAlert alert, String contentText) {
-            init(alert);
-            this.contentText.setText(contentText);
-        }
-
-        void init(MyAlert alert) {
             this.alert = alert;
             this.contentText.setWrapText(true);
             this.getStyleClass().add("alert-content-pane");
@@ -180,12 +116,24 @@ public class MyAlert {
             this.getChildren().addAll(content, btnGroup);
         }
 
+        public ContentPane(MyAlert alert, String contentText) {
+            this(alert);
+            this.contentText.setText(contentText);
+        }
+
+        void setupContent() {
+            content.getStyleClass().add("alert-content");
+            VBox.setVgrow(content, Priority.ALWAYS);
+            content.getChildren().add(contentText);
+        }
+
         void setupBtnGroup() {
             btnGroup.getStyleClass().add("alert-btn-group");
             val okBtn = createButton(ButtonType.OK);
             val cancelBtn = createButton(ButtonType.CANCEL);
             btnGroup.getChildren().addAll(okBtn, cancelBtn);
         }
+
 
         /**
          *
@@ -212,11 +160,6 @@ public class MyAlert {
             return button;
         }
 
-        void setupContent() {
-            content.getStyleClass().add("alert-content");
-            VBox.setVgrow(content, Priority.ALWAYS);
-            content.getChildren().add(contentText);
-        }
 
     }
 

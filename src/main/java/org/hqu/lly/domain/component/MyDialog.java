@@ -112,6 +112,10 @@ public class MyDialog<T extends Node> {
 
         }
 
+        public void setTitle(String title) {
+            titleLabel.setText(title);
+        }
+
         private void setupTitle(String title) {
             titleLabel = new Label(title);
             titleLabel.getStyleClass().add("title");
