@@ -20,12 +20,12 @@ import org.hqu.lly.view.handler.DragWindowHandler;
 
 /**
  * <p>
- * 数据设置面板
+ * my dialog
  * <p>
  *
  * @author hqully
  * @version 1.0
- * @date 2023/5/30 21:12
+ * @date 2023-07-15 09:32
  */
 public class MyDialog<T extends Node> {
 
@@ -35,7 +35,7 @@ public class MyDialog<T extends Node> {
     protected T content;
     protected BorderPane pane = new BorderPane();
 
-   public void close() {
+    public void close() {
         stage.close();
     }
 
@@ -68,14 +68,16 @@ public class MyDialog<T extends Node> {
     protected Scene initScene() {
         return initScene(450, 300);
     }
+
     protected Scene initScene(double width, double height) {
         val scene = UIUtil.getShadowScene(pane, width, height);
         return scene;
     }
 
     protected void initTitleBar() {
-         initTitleBar("title");
+        initTitleBar("title");
     }
+
     protected TitleBar initTitleBar(String title) {
         titleBar = new TitleBar(this, title);
         pane.setTop(titleBar);
