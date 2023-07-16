@@ -102,6 +102,8 @@
                                                       </Label>
                                                    </children>
                                                 </StackPane>
+                                                <Button fx:id="storingCodeBtn" mnemonicParsing="false" onMouseClicked="#storingCode" text="加至暂存区" />
+                                                <Button fx:id="jsStoringAreaBtn" mnemonicParsing="false" onMouseClicked="#openStoringArea" text="暂存区" />
                                                 <ChoiceBox fx:id="jsEngineBox" prefHeight="23.0" prefWidth="65.0" />
                                                 <Button fx:id="jsTestBtn" mnemonicParsing="false" onMouseClicked="#testScript" text="测试脚本" />
                                              </children>

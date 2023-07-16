@@ -14,9 +14,12 @@ import javafx.scene.layout.VBox;
  */
 public class JSStagingArea extends MyDialog<Node>{
 
+    public final StagingArea stagingArea;
+
     public JSStagingArea() {
         super();
-        VBox vBox = new VBox(new StagingArea().root);
+        stagingArea = new StagingArea();
+        VBox vBox = new VBox(stagingArea.root);
         vBox.setStyle("-fx-background-color:#3c3f41");
         content = vBox;
         pane.setCenter(content);

@@ -9,6 +9,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
 import org.hqu.lly.domain.component.DataSettingPane;
+import org.hqu.lly.domain.component.JSStagingArea;
 import org.hqu.lly.domain.component.MyAlert;
 import org.hqu.lly.domain.config.CustomDataConfig;
 import org.hqu.lly.domain.config.ScheduledSendConfig;
@@ -44,6 +45,7 @@ public class SendSettingController {
      * 自定义数据设置面板
      */
     protected DataSettingPane dataSettingPane;
+    protected JSStagingArea jsStagingArea = new JSStagingArea();
     @FXML
     private TextField intervalTextField;
     @FXML
@@ -85,6 +87,8 @@ public class SendSettingController {
     public Label jsHelpIcon;
     @FXML
     public ChoiceBox<JSParser.EngineType> jsEngineBox;
+    @FXML
+    public Button jsStoringAreaBtn;
     // endregion
 
 
@@ -196,6 +200,17 @@ public class SendSettingController {
                           });
     }
 
+    public void openStoringArea(MouseEvent event) {
+        jsStagingArea.show();
+
+    }
+
+    public void storingCode(MouseEvent event) {
+        jsStagingArea.stagingArea.storeText(jsTextArea.getText());
+    }
+
+
+
     @FXML
     public void initialize() {
         // 标题栏初始化
@@ -240,6 +255,10 @@ public class SendSettingController {
 
         initIcon();
         initEngineBox();
+        Platform.runLater(() -> {
+            jsStagingArea.initOwner(titleBar.getScene().getWindow());
+        });
+
     }
 
     private void initEngineBox() {
