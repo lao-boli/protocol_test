@@ -13,10 +13,7 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.hqu.lly.domain.base.BaseClient;
 import org.hqu.lly.domain.component.MsgLabel;
-import org.hqu.lly.domain.config.ClientSessionConfig;
-import org.hqu.lly.domain.config.ConfigStore;
-import org.hqu.lly.domain.config.CustomDataConfig;
-import org.hqu.lly.domain.config.SendSettingConfig;
+import org.hqu.lly.domain.config.*;
 import org.hqu.lly.enums.ConfigType;
 import org.hqu.lly.exception.UnSetBoundException;
 import org.hqu.lly.factory.SendSettingPaneFactory;
@@ -199,7 +196,8 @@ public abstract class BaseClientController<T extends BaseClient> extends CommonU
         }
         // js mode
         if (sendSettingConfig.isJSMode()) {
-            Object res = JSParser.evalScript(sendSettingConfig.getCurEngine(),sendSettingConfig.getJsScript());
+            JSCodeConfig jsCodeConfig = sendSettingConfig.getJsCodeConfig();
+            Object res = JSParser.evalScript(jsCodeConfig.getEngine(), jsCodeConfig.getScript());
             String msg = res == null ? "" : res.toString();
             if (sendMsgType == HEX) {
                 client.sendMessage(MsgUtil.convertText(HEX, PLAIN_TEXT, msg));

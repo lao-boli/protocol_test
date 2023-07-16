@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.hqu.lly.service.TaskService;
-import org.hqu.lly.utils.JSParser;
 
 /**
  * <p>
@@ -27,14 +26,10 @@ public class SendSettingConfig extends Config {
     private CustomDataConfig customDataConfig;
 
     /**
-     * js脚本
+     * js 脚本配置类
      */
-    private String jsScript;
+    private JSCodeConfig jsCodeConfig;
 
-    /**
-     * 当前js引擎
-     */
-    private JSParser.EngineType curEngine;
 
     /**
      * 定时发送配置类
@@ -74,6 +69,7 @@ public class SendSettingConfig extends Config {
     public SendSettingConfig() {
         scheduledSendConfig = new ScheduledSendConfig();
         customDataConfig = new CustomDataConfig();
+        jsCodeConfig = new JSCodeConfig();
         mode = TEXT;
     }
 
