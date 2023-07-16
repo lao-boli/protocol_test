@@ -8,6 +8,9 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import org.hqu.lly.constant.ResLoc;
+import org.hqu.lly.domain.config.StoringAreaConfig;
+
+import java.util.List;
 
 /**
  * <p>
@@ -27,14 +30,22 @@ public class StagingArea {
         root.setPrefWidth(400);
         root.setTabDragPolicy(TabPane.TabDragPolicy.REORDER);
         root.getStylesheets().add(ResLoc.STAGING_AREA_CSS.toExternalForm());
-        storeText("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
-        storeText("bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb");
     }
 
     public void storeText(String text) {
         TitleTab tab = new TitleTab("title", root);
         tab.setContent(new Content(text));
         root.getTabs().add(tab);
+    }
+
+    public void loadConfig(StoringAreaConfig config) {
+        TitleTab tab = new TitleTab(config.getTitle(), root);
+        tab.setContent(new Content(config.getText()));
+        root.getTabs().add(tab);
+    }
+
+    public void loadConfig(List<StoringAreaConfig> configs) {
+        configs.forEach(this::loadConfig);
     }
 
     public class Content extends VBox {
@@ -64,6 +75,9 @@ public class StagingArea {
             this("");
         }
 
+        public String getCode(){
+            return textArea.getText();
+        }
     }
 
 }

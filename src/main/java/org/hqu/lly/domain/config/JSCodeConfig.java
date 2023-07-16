@@ -26,6 +26,6 @@ public class JSCodeConfig {
      */
     private JSParser.EngineType engine;
 
-    private List<StoringAreaConfig> storingCodes;
+    private List<StoringAreaConfig> storingAreaConfigs;
 
 }

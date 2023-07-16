@@ -120,6 +120,7 @@ public class SendSettingController {
         scheduledSendConfig.setInterval(strToInt(intervalTextField.getText()));
         scheduledSendConfig.setSendTimes(strToInt(sendCountTextField.getText()));
         jsCodeConfig.setScript(jsTextArea.getText());
+        jsStagingArea.saveConfig(jsCodeConfig);
     }
 
     /**
@@ -151,6 +152,7 @@ public class SendSettingController {
             sendModeTabPane.getSelectionModel().select(JS_MODE);
             jsTextArea.setText(jsCodeConfig.getScript());
         }
+        jsStagingArea.loadConfig(jsCodeConfig);
 
 
         // XXX 当配置文件保存的发送格式为文本时仍然会加载自定义数据面板,待优化.

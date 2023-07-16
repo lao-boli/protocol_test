@@ -18,5 +18,11 @@ public class StoringAreaConfig {
 
     private String text;
 
+    public StoringAreaConfig() {
+    }
+    public StoringAreaConfig(String title, String text) {
+        this.title = title;
+        this.text = text;
+    }
 
 }
