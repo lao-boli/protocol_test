@@ -143,15 +143,16 @@ public class SendSettingController {
         if (sendSettingConfig.isTextMode()) {
             sendModeTabPane.getSelectionModel().select(TEXT_MODE);
         }
-
         if (sendSettingConfig.isCustomMode()) {
             sendModeTabPane.getSelectionModel().select(CUSTOM_DATA_MODE);
-            customFormTextArea.setText(customDataConfig.getCustomDataPattern());
         }
         if (sendSettingConfig.isJSMode()) {
             sendModeTabPane.getSelectionModel().select(JS_MODE);
-            jsTextArea.setText(jsCodeConfig.getScript());
         }
+
+        customFormTextArea.setText(customDataConfig.getCustomDataPattern());
+
+        jsTextArea.setText(jsCodeConfig.getScript());
         jsStagingArea.loadConfig(jsCodeConfig);
 
 
