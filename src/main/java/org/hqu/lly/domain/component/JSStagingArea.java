@@ -7,6 +7,7 @@ import org.hqu.lly.domain.config.StoringAreaConfig;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * <p>
@@ -23,18 +24,13 @@ public class JSStagingArea extends MyDialog<Node>{
 
     public JSCodeConfig jsCodeConfig;
 
-    public JSStagingArea() {
+    public JSStagingArea(Consumer<String> onChoose) {
         super();
-        stagingArea = new StagingArea();
+        stagingArea = new StagingArea(onChoose);
         VBox vBox = new VBox(stagingArea.root);
         vBox.setStyle("-fx-background-color:#3c3f41");
         content = vBox;
         pane.setCenter(content);
-    }
-
-    public JSStagingArea(JSCodeConfig config) {
-        this();
-        jsCodeConfig = config;
     }
 
     public void saveConfig(JSCodeConfig config){

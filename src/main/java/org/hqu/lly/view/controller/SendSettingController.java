@@ -46,7 +46,7 @@ public class SendSettingController {
      * 自定义数据设置面板
      */
     protected DataSettingPane dataSettingPane;
-    protected JSStagingArea jsStagingArea = new JSStagingArea();
+    protected JSStagingArea jsStagingArea;
     @FXML
     private TextField intervalTextField;
     @FXML
@@ -91,7 +91,7 @@ public class SendSettingController {
     @FXML
     public Button jsStoringAreaBtn;
     private JSCodeConfig jsCodeConfig;
-;
+    ;
     // endregion
 
 
@@ -219,7 +219,6 @@ public class SendSettingController {
     }
 
 
-
     @FXML
     public void initialize() {
         // 标题栏初始化
@@ -264,6 +263,8 @@ public class SendSettingController {
 
         initIcon();
         initEngineBox();
+
+        jsStagingArea = new JSStagingArea(s -> jsTextArea.setText(s));
         Platform.runLater(() -> {
             jsStagingArea.initOwner(titleBar.getScene().getWindow());
         });
@@ -278,7 +279,7 @@ public class SendSettingController {
         Platform.runLater(() -> {
             if (sendSettingConfig != null && jsCodeConfig.getEngine() != null) {
                 jsEngineBox.getSelectionModel().select(jsCodeConfig.getEngine());
-            }else  {
+            } else {
                 jsEngineBox.getSelectionModel().select(JSParser.EngineType.NASHORN);
             }
         });

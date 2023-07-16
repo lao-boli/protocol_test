@@ -11,6 +11,7 @@ import org.hqu.lly.constant.ResLoc;
 import org.hqu.lly.domain.config.StoringAreaConfig;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * <p>
@@ -24,6 +25,8 @@ import java.util.List;
 public class StagingArea {
     TabPane root;
 
+    Consumer<String> onChoose;
+
     public StagingArea() {
         root = new TabPane();
         root.setPrefHeight(600);
@@ -32,15 +35,20 @@ public class StagingArea {
         root.getStylesheets().add(ResLoc.STAGING_AREA_CSS.toExternalForm());
     }
 
+    public StagingArea(Consumer<String> onChoose) {
+        this();
+        this.onChoose = onChoose;
+    }
+
     public void storeText(String text) {
         TitleTab tab = new TitleTab("title", root);
-        tab.setContent(new Content(text));
+        tab.setContent(new Content(text,onChoose));
         root.getTabs().add(tab);
     }
 
     public void loadConfig(StoringAreaConfig config) {
         TitleTab tab = new TitleTab(config.getTitle(), root);
-        tab.setContent(new Content(config.getText()));
+        tab.setContent(new Content(config.getText(),onChoose));
         root.getTabs().add(tab);
     }
 
@@ -56,11 +64,13 @@ public class StagingArea {
 
         Button chooseBtn;
 
-        public Content(String text) {
+        public Content(String text, Consumer<String> onChoose) {
             textArea = new TextArea(text);
             textArea.setEditable(false);
+
             chooseBtn = new Button("选择");
             chooseBtn.setMinWidth(50);
+            chooseBtn.setOnMouseClicked(e->onChoose.accept(textArea.getText()));
 
             HBox.setHgrow(textArea, Priority.ALWAYS);
             container = new HBox(textArea,chooseBtn);
@@ -71,9 +81,6 @@ public class StagingArea {
             getChildren().add(container);
         }
 
-        public Content() {
-            this("");
-        }
 
         public String getCode(){
             return textArea.getText();
