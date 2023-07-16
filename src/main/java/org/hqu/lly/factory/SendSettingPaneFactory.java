@@ -52,7 +52,7 @@ public class SendSettingPaneFactory {
             }
 
             // Scene scene = new Scene(contentPane, 400, 300);
-            Scene scene = UIUtil.getShadowScene(contentPane, 400, 300);
+            Scene scene = UIUtil.getShadowScene(contentPane, 400, 350);
             DarculaFX.applyDarculaStyle(scene);
 
             sendSettingStage.setScene(scene);
