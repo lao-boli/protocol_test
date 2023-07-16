@@ -38,6 +38,8 @@ public class ResLoc {
 
     public static final URL MESSAGE_POPUP_CSS = realPath("css/MessagePopup.css");
 
+    public static final URL STAGING_AREA_CSS = realPath("css/StagingArea.css");
+
     public static final URL ICON = realPath("icon/icon.css");
 
     // js lab
