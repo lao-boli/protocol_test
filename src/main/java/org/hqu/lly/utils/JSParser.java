@@ -104,7 +104,7 @@ public class JSParser {
         } catch (ScriptException e) {
             // TODO 分离ui逻辑
             Platform.runLater(() -> {
-                new MessagePopup(e.getMessage()).showPopup();
+                new MessagePopup(MessagePopup.Type.ERROR, e.getMessage()).showPopup();
             });
         }
         // nashornPrint();
@@ -129,7 +129,7 @@ public class JSParser {
             String msg = e.getMessage() + "\nerror in: " + sl.getStartLine() + ':' + sl.getStartColumn() + " - " + sl.getEndLine() + ':' + sl.getEndColumn();
             // TODO 分离ui逻辑
             Platform.runLater(() -> {
-                new MessagePopup(msg).showPopup();
+                new MessagePopup(MessagePopup.Type.ERROR,msg).showPopup();
             });
         }
 

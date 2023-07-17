@@ -175,7 +175,7 @@ public abstract class CommonUIContorller extends BaseController {
                 toggleGroup.selectToggle(oldValue);
                 sendMsgType = from;
 
-                new MessagePopup(e.toString()).showPopup();
+                new MessagePopup(MessagePopup.Type.ERROR,e.toString()).showPopup();
             }
             msgInput.setText(converted);
         });

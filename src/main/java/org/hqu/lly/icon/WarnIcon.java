@@ -16,4 +16,9 @@ public class WarnIcon extends BaseIcon {
         setStyleClass("icon-warn");
     }
 
+    public WarnIcon(String color) {
+        super(color);
+        setStyleClass("icon-warn");
+    }
+
 }

@@ -27,30 +27,30 @@ import static org.hqu.lly.utils.UIUtil.copyToClipboard;
  * <p>
  *
  * @author hqully
- * @since 0.2.0
  * @date 2023/4/4 19:40
+ * @since 0.2.0
  */
 public class MessagePopup extends Popup {
 
     private ContextMenu menu;
 
-    enum Type {
+    public enum Type {
         /**
          * 信息提示
          */
-       INFO,
+        INFO,
         /**
          * 警告消息
          */
-       WARN,
+        WARN,
         /**
          * 错误消息
          */
-       ERROR,
+        ERROR,
         /**
          * 成功消息
          */
-       SUCCESS;
+        SUCCESS;
     }
 
     private HBox content;
@@ -64,23 +64,26 @@ public class MessagePopup extends Popup {
     private Type type;
 
     public MessagePopup() {
-        super();
-        init("");
+        this("");
     }
 
     public MessagePopup(String msgText) {
-        super();
-        init(msgText);
+        this(Type.SUCCESS,msgText);
     }
 
-    private void init(String msgText) {
-        setupIcon();
+    public MessagePopup(Type type, String msgText) {
+        super();
         msg = new Label(msgText);
-        content = new HBox(icon,msg);
 
+        switch (type) {
+            case INFO -> generateFromType("msg-content-info", "#3592c4");
+            case WARN -> generateFromType("msg-content-warn", "#e6a23c");
+            case SUCCESS -> generateFromType("msg-content-success", "#67c23a");
+            case ERROR -> generateFromType("msg-content-error", "#c75450");
+        }
         // setup css
-        content.getStyleClass().add("msg-content");
         content.getStylesheets().add(ResLoc.MESSAGE_POPUP_CSS.toString());
+
 
         // wrapper 让消息框显示前就能获取到宽度,
         // 以计算消息框的显示位置
@@ -92,6 +95,18 @@ public class MessagePopup extends Popup {
         setupMenu();
     }
 
+    private void generateFromType(String styleClass, String color) {
+        setupIcon(color);
+        content = new HBox(icon, msg);
+        content.getStyleClass().add(styleClass);
+    }
+
+    private void setupIcon(String color) {
+        icon = new Label();
+        icon.setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
+        icon.setGraphic(new WarnIcon(color));
+    }
+
     /**
      * 设置消息复制菜单
      */
@@ -99,13 +114,13 @@ public class MessagePopup extends Popup {
         menu = new ContextMenu();
         // 复制整条消息
         MenuItem copyItem = new MenuItem("复制");
-        copyItem.setOnAction( e -> copyToClipboard(msg.getText()));
+        copyItem.setOnAction(e -> copyToClipboard(msg.getText()));
         menu.getItems().add(copyItem);
 
-        content.addEventFilter(MouseEvent.MOUSE_CLICKED,e -> {
-            if (e.getButton().equals(MouseButton.SECONDARY)){
-                menu.show(content,e.getScreenX(),e.getScreenY());
-            }else {
+        content.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> {
+            if (e.getButton().equals(MouseButton.SECONDARY)) {
+                menu.show(content, e.getScreenX(), e.getScreenY());
+            } else {
                 menu.hide();
             }
         });
@@ -135,10 +150,11 @@ public class MessagePopup extends Popup {
 
     /**
      * 为消息提示框设置动画效果
-     * @param popup 本对象
+     *
+     * @param popup        本对象
      * @param primaryStage 应用程序主窗口
-     * @param popupX 显示x坐标
-     * @param popupY 显示y坐标
+     * @param popupX       显示x坐标
+     * @param popupY       显示y坐标
      */
     private void setupAnimation(MessagePopup popup, Stage primaryStage, double popupX, double popupY) {
         // 从下向上移动显示
@@ -160,8 +176,8 @@ public class MessagePopup extends Popup {
         PauseTransition pauseTransition = new PauseTransition(Duration.seconds(3));
 
         // 鼠标悬浮在popup的时候暂停动画
-        content.addEventFilter(MouseEvent.MOUSE_ENTERED,e -> pauseTransition.pause());
-        content.addEventFilter(MouseEvent.MOUSE_EXITED,e -> pauseTransition.play());
+        content.addEventFilter(MouseEvent.MOUSE_ENTERED, e -> pauseTransition.pause());
+        content.addEventFilter(MouseEvent.MOUSE_EXITED, e -> pauseTransition.play());
 
         pauseTransition.setOnFinished(event -> {
             // 淡出
@@ -174,10 +190,5 @@ public class MessagePopup extends Popup {
         pauseTransition.play();
     }
 
-    private void setupIcon(){
-        icon = new Label();
-        icon.setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
-        icon.setGraphic(new WarnIcon());
-    }
 
 }
