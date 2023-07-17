@@ -17,3 +17,8 @@ HBox{
 .tab-pane > .tab-header-area > .headers-region > .tab:top > .tab-container > .tab-label{
     -fx-content-display: graphic-only;
 }
+
+.tab-pane {
+    -fx-pref-width: 400;
+    -fx-pref-height: 600;
+}

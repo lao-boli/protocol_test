@@ -23,16 +23,18 @@ import java.util.function.Consumer;
  * @date 2023/7/15 20:24
  */
 public class StagingArea {
-    TabPane root;
+    TabPane tabPane;
 
+    /**
+     * {@link Content#chooseBtn}的点击回调 <br>
+     * 传入参数为 {@link Content#textArea} 内的文本
+     */
     Consumer<String> onChoose;
 
     public StagingArea() {
-        root = new TabPane();
-        root.setPrefHeight(600);
-        root.setPrefWidth(400);
-        root.setTabDragPolicy(TabPane.TabDragPolicy.REORDER);
-        root.getStylesheets().add(ResLoc.STAGING_AREA_CSS.toExternalForm());
+        tabPane = new TabPane();
+        tabPane.setTabDragPolicy(TabPane.TabDragPolicy.REORDER);
+        tabPane.getStylesheets().add(ResLoc.STAGING_AREA_CSS.toExternalForm());
     }
 
     public StagingArea(Consumer<String> onChoose) {
@@ -41,15 +43,15 @@ public class StagingArea {
     }
 
     public void storeText(String text) {
-        TitleTab tab = new TitleTab("title", root);
+        TitleTab tab = new TitleTab("title", tabPane);
         tab.setContent(new Content(text,onChoose));
-        root.getTabs().add(tab);
+        tabPane.getTabs().add(tab);
     }
 
     public void loadConfig(StoringAreaConfig config) {
-        TitleTab tab = new TitleTab(config.getTitle(), root);
+        TitleTab tab = new TitleTab(config.getTitle(), tabPane);
         tab.setContent(new Content(config.getText(),onChoose));
-        root.getTabs().add(tab);
+        tabPane.getTabs().add(tab);
     }
 
     public void loadConfig(List<StoringAreaConfig> configs) {

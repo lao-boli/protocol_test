@@ -22,12 +22,15 @@ public class JSStagingArea extends MyDialog<Node>{
 
     public final StagingArea stagingArea;
 
-    public JSCodeConfig jsCodeConfig;
-
+    /**
+     *
+     * @param onChoose see: {@link StagingArea#onChoose}
+     */
     public JSStagingArea(Consumer<String> onChoose) {
         super();
         stagingArea = new StagingArea(onChoose);
-        VBox vBox = new VBox(stagingArea.root);
+        VBox vBox = new VBox(stagingArea.tabPane);
+        // do not delete
         vBox.setStyle("-fx-background-color:#3c3f41");
         content = vBox;
         pane.setCenter(content);
@@ -35,25 +38,12 @@ public class JSStagingArea extends MyDialog<Node>{
 
     public void saveConfig(JSCodeConfig config){
         ArrayList<StoringAreaConfig> configs = new ArrayList<>();
-        stagingArea.root.getTabs().forEach(tab -> {
+        stagingArea.tabPane.getTabs().forEach(tab -> {
             String title = ((TitleTab) tab).getTabTitleField().getText();
             String text = ((StagingArea.Content) tab.getContent()).textArea.getText();
             configs.add(new StoringAreaConfig(title,text));
         });
         config.setStoringAreaConfigs(configs);
-    }
-    public void saveConfig(){
-        ArrayList<StoringAreaConfig> configs = new ArrayList<>();
-        stagingArea.root.getTabs().forEach(tab -> {
-            String title = ((TitleTab) tab).getTabTitleField().getText();
-            String text = ((StagingArea.Content) tab.getContent()).textArea.getText();
-            configs.add(new StoringAreaConfig(title,text));
-        });
-        jsCodeConfig.setStoringAreaConfigs(configs);
-    }
-
-    public void loadConfig(){
-        loadConfig(jsCodeConfig);
     }
 
     public void loadConfig(JSCodeConfig config){
