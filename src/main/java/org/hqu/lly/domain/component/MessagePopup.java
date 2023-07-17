@@ -68,7 +68,7 @@ public class MessagePopup extends Popup {
     }
 
     public MessagePopup(String msgText) {
-        this(Type.SUCCESS,msgText);
+        this(Type.INFO,msgText);
     }
 
     public MessagePopup(Type type, String msgText) {

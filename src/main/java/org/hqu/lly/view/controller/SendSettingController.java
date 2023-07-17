@@ -10,6 +10,7 @@ import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
 import org.hqu.lly.domain.component.DataSettingPane;
 import org.hqu.lly.domain.component.JSStagingArea;
+import org.hqu.lly.domain.component.MessagePopup;
 import org.hqu.lly.domain.component.MyAlert;
 import org.hqu.lly.domain.config.CustomDataConfig;
 import org.hqu.lly.domain.config.JSCodeConfig;
@@ -217,6 +218,7 @@ public class SendSettingController {
 
     public void storingCode(MouseEvent event) {
         jsStagingArea.stagingArea.storeText(jsTextArea.getText());
+        new MessagePopup("已加入暂存区").showPopup();
     }
 
 
@@ -265,7 +267,10 @@ public class SendSettingController {
         initIcon();
         initEngineBox();
 
-        jsStagingArea = new JSStagingArea(s -> jsTextArea.setText(s));
+        jsStagingArea = new JSStagingArea(s -> {
+            jsTextArea.setText(s);
+            new MessagePopup("脚本已更改").showPopup();
+        });
         Platform.runLater(() -> {
             jsStagingArea.initOwner(titleBar.getScene().getWindow());
         });
