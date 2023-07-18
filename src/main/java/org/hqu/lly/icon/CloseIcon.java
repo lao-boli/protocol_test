@@ -12,12 +12,19 @@ package org.hqu.lly.icon;
 public class CloseIcon extends BaseIcon {
 
     public CloseIcon() {
-        setStyleClass("icon-close");
+        this(true);
+    }
+    public CloseIcon(boolean bold) {
+        if (bold){
+            setStyleClass("icon-close-bold");
+        }else {
+            setStyleClass("icon-close");
+        }
     }
 
     public CloseIcon(String color) {
         super(color);
-        setStyleClass("icon-close");
+        setStyleClass("icon-close-bold");
     }
 
 }
