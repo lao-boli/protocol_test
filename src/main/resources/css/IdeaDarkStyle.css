@@ -234,18 +234,23 @@ Text:disabled {
 .split-menu-button:focused,
 .color-picker:armed,
 .color-picker:focused {
-    -fx-background-color: #60afff32, #60afff64, #60afffb4, #60afff78, #60afff46, #4c5052;
+    -fx-background-color: transparent, #3d618532, #3d6185, #45698e, #45698e, #4c5052;
     -fx-background-insets: -2, -1, 0, 1, 2;
     -fx-background-radius: 6, 5, 4, 3, 2;
+    /*-fx-background-color: #60afff32, #60afff64, #60afffb4, #60afff78, #60afff46, #4c5052;*/
+    /*-fx-background-insets: -2, -1, 0, 1, 2;*/
+    /*-fx-background-radius: 6, 5, 4, 3, 2;*/
 }
 
 .toggle-button:selected:focused {
-    -fx-background-color: #60afff32, #60afff64, #60afffb4, #60afff78, #60afff46, #2d2f30;
+    /*-fx-background-color: #60afff32, #60afff64, #60afffb4, #60afff78, #60afff46, #2d2f30;*/
+    -fx-background-color: transparent, #3d618532, #3d6185, #45698e, #45698e, #2d2f30;
 }
 
 .button:armed:default,
 .button:focused:default {
-    -fx-background-color: #60afff32, #60afff64, #60afffb4, #60afff78, #60afff46, #365880;
+    -fx-background-color: transparent, #3d618532, #3d6185, #45698e, #45698e, #365880;
+    /*-fx-background-color: #60afff32, #60afff64, #60afffb4, #60afff78, #60afff46, #365880;*/
 }
 
 .combo-box:focused,
@@ -254,7 +259,8 @@ Text:disabled {
 .choice-box:showing,
 .date-picker:focused,
 .spinner:focused {
-    -fx-background-color: #60afff32, #60afff64, #60afffb4, #60afff78, #60afff46, -darcula-base;
+    /*-fx-background-color: transparent, #3d618532, #3d6185, #45698e, #45698e, #4c5052;*/
+    -fx-background-color: transparent, #3d618532, #3d6185, #45698e, #45698e, -darcula-base;
     -fx-background-insets: -2, -1, 0, 1, 2;
     -fx-background-radius: 6, 5, 4, 3, 2;
 }
@@ -263,7 +269,8 @@ Text:disabled {
 .text-area:focused,
 .combo-box:editable:focused,
 .date-picker:editable:focused {
-    -fx-background-color: #60afff32, #60afff64, #60afffb4, #60afff78, #60afff46, -darcula-text-input-background;
+    -fx-background-color: transparent, #3d618532, #3d6185, #45698e, #45698e, -darcula-text-input-background;
+    /*-fx-background-color: #60afff32, #60afff64, #60afffb4, #60afff78, #60afff46, -darcula-text-input-background;*/
     -fx-background-insets: -2, -1, 0, 1, 2;
     -fx-background-radius: 6, 5, 4, 3, 2;
 }
@@ -477,7 +484,8 @@ Text:disabled {
 
 .radio-button:armed > .radio,
 .radio-button:focused > .radio {
-    -fx-background-color: #60afff32, #60afff64, #60afffb4, #60afff78, #60afff46, -darcula-text-input-background;
+    /*-fx-background-color: transparent, #3d618532, #3d6185, #45698e, #45698e, #4c5052;*/
+    -fx-background-color: transparent, #3d618532, #3d6185, #45698e, #45698e, -darcula-text-input-background;
     -fx-background-insets: -2, -1, 0, 1, 2;
     -fx-background-radius: 50%, 50%, 50%, 50%, 50%;
 }
