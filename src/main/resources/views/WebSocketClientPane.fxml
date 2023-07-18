@@ -39,7 +39,7 @@
                             </HBox>
                             <Label fx:id="errorMsgLabel" text="" textFill="#c65551">
                                 <VBox.margin>
-                                    <Insets left="30.0" top="10.0" />
+                                    <Insets left="30.0" top="5.0" bottom="5.0"/>
                                 </VBox.margin>
                             </Label>
                         </children>
@@ -95,7 +95,11 @@
                                     <Insets top="-1.0" />
                                 </padding>
                             </VBox>
-                            <ListView fx:id="msgList" prefHeight="189.0" prefWidth="425.0" HBox.hgrow="ALWAYS" />
+                            <ListView fx:id="msgList" prefHeight="189.0" prefWidth="425.0" HBox.hgrow="ALWAYS">
+                                <HBox.margin>
+                                    <Insets bottom="1.0" />
+                                </HBox.margin>
+                            </ListView>
                         </children>
                     </HBox>
                </children>
