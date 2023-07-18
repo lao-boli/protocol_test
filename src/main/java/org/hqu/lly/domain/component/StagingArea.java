@@ -1,9 +1,7 @@
 package org.hqu.lly.domain.component;
 
 import javafx.geometry.Pos;
-import javafx.scene.control.Button;
-import javafx.scene.control.TabPane;
-import javafx.scene.control.TextArea;
+import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
@@ -11,6 +9,7 @@ import org.hqu.lly.constant.ResLoc;
 import org.hqu.lly.domain.config.StoringAreaConfig;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Consumer;
 
 /**
@@ -35,6 +34,7 @@ public class StagingArea {
         tabPane = new TabPane();
         tabPane.setTabDragPolicy(TabPane.TabDragPolicy.REORDER);
         tabPane.getStylesheets().add(ResLoc.STAGING_AREA_CSS.toExternalForm());
+        tabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE);
     }
 
     public StagingArea(Consumer<String> onChoose) {
@@ -45,12 +45,20 @@ public class StagingArea {
     public void storeText(String text) {
         TitleTab tab = new TitleTab("title", tabPane);
         tab.setContent(new Content(text,onChoose));
+        tab.setOnCloseRequest(() -> {
+            Optional<ButtonType> result = new MyAlert(Alert.AlertType.WARNING, "", "关闭后将删除暂存区内容,是否继续?").showAndWait();
+            return result.get().equals(ButtonType.OK);
+        });
         tabPane.getTabs().add(tab);
     }
 
     public void loadConfig(StoringAreaConfig config) {
         TitleTab tab = new TitleTab(config.getTitle(), tabPane);
         tab.setContent(new Content(config.getText(),onChoose));
+        tab.setOnCloseRequest(() -> {
+            Optional<ButtonType> result = new MyAlert(Alert.AlertType.WARNING, "", "关闭后将删除暂存区内容,是否继续?").showAndWait();
+            return result.get().equals(ButtonType.OK);
+        });
         tabPane.getTabs().add(tab);
     }
 
