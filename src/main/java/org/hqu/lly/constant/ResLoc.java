@@ -42,6 +42,10 @@ public class ResLoc {
 
     public static final URL ICON = realPath("icon/icon.css");
 
+    // region theme
+    public static final URL IDEA = realPath("css/IdeaDarkStyle.css");
+    // endregion
+
     // js lab
 
     public static final URL RANDOM_UTIL = realPath("js/random-util.js");

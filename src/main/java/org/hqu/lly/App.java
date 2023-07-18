@@ -1,6 +1,5 @@
 package org.hqu.lly;
 
-import com.github.mouse0w0.darculafx.DarculaFX;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -10,6 +9,7 @@ import javafx.stage.StageStyle;
 import org.hqu.lly.constant.ResLoc;
 import org.hqu.lly.utils.DragUtil;
 import org.hqu.lly.utils.JSParser;
+import org.hqu.lly.utils.ThemeUtil;
 import org.hqu.lly.utils.UIUtil;
 import org.hqu.lly.view.controller.MainController;
 
@@ -28,7 +28,7 @@ public class App extends Application {
 
         Scene scene = UIUtil.getShadowScene(root, 660, 400);
 
-        DarculaFX.applyDarculaStyle(scene);
+        ThemeUtil.applyStyle(scene);
         primaryStage.initStyle(StageStyle.TRANSPARENT);
         primaryStage.setScene(scene);
         DragUtil.setDrag(primaryStage, scene.getRoot());

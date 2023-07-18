@@ -1,6 +1,5 @@
 package org.hqu.lly.domain.component;
 
-import com.github.mouse0w0.darculafx.DarculaFX;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
@@ -15,6 +14,7 @@ import javafx.stage.Window;
 import lombok.val;
 import org.hqu.lly.constant.ResLoc;
 import org.hqu.lly.utils.DragUtil;
+import org.hqu.lly.utils.ThemeUtil;
 import org.hqu.lly.utils.UIUtil;
 import org.hqu.lly.view.handler.DragWindowHandler;
 
@@ -51,7 +51,7 @@ public class MyDialog<T extends Node> {
         // scene and stage
         final Scene scene = initScene();
         DragUtil.setDrag(stage, scene.getRoot());
-        DarculaFX.applyDarculaStyle(scene);
+        ThemeUtil.applyStyle(scene);
         stage.setScene(scene);
         stage.initStyle(StageStyle.TRANSPARENT);
         stage.initModality(Modality.APPLICATION_MODAL);

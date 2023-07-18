@@ -1,6 +1,5 @@
 package org.hqu.lly.factory;
 
-import com.github.mouse0w0.darculafx.DarculaFX;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -11,6 +10,7 @@ import org.hqu.lly.constant.ResLoc;
 import org.hqu.lly.domain.config.ConfigStore;
 import org.hqu.lly.domain.config.SendSettingConfig;
 import org.hqu.lly.utils.DragUtil;
+import org.hqu.lly.utils.ThemeUtil;
 import org.hqu.lly.utils.UIUtil;
 import org.hqu.lly.view.controller.SendSettingController;
 
@@ -53,7 +53,7 @@ public class SendSettingPaneFactory {
 
             // Scene scene = new Scene(contentPane, 400, 300);
             Scene scene = UIUtil.getShadowScene(contentPane, 400, 350);
-            DarculaFX.applyDarculaStyle(scene);
+            ThemeUtil.applyStyle(scene);
 
             sendSettingStage.setScene(scene);
             sendSettingStage.initStyle(StageStyle.TRANSPARENT);
