@@ -14,11 +14,20 @@ import org.hqu.lly.constant.ResLoc;
  */
 public class BaseIcon extends Region {
 
+    public BaseIcon() {
+        this.getStylesheets().add(ResLoc.ICON.toExternalForm());
+        defaultIconWidth();
+        defaultIconHeight();
+    }
+
     public BaseIcon(String color) {
         this.setStyle("-fx-background-color: " + color);
         this.getStylesheets().add(ResLoc.ICON.toExternalForm());
         defaultIconWidth();
         defaultIconHeight();
+    }
+    public void setColor(String color) {
+        this.setStyle("-fx-background-color: " + color);
     }
 
     protected void setStyleClass(String styleClass) {
@@ -33,13 +42,13 @@ public class BaseIcon extends Region {
         setIconWidth(12);
     }
 
-    private void setIconHeight(double height) {
+    public void setIconHeight(double height) {
         this.setPrefHeight(height);
         this.setMinHeight(height);
         this.setMaxHeight(height);
     }
 
-    private void setIconWidth(double width) {
+    public void setIconWidth(double width) {
         this.setPrefWidth(width);
         this.setMinWidth(width);
         this.setMaxWidth(width);

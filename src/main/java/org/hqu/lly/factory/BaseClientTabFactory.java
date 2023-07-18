@@ -48,7 +48,7 @@ public class BaseClientTabFactory<T extends BaseClientController<?>> extends Bas
             controller.init((ClientSessionConfig) config);
 
             tab.setContent(contentPane);
-            tab.setOnClosed(event -> (controller).destroy());
+            tab.setOnClosed((controller)::destroy);
 
         } catch (IOException e) {
             e.printStackTrace();

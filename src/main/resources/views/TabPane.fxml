@@ -4,7 +4,7 @@
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.layout.AnchorPane?>
-<TabPane fx:id="mainTabPane" tabDragPolicy="REORDER" prefHeight="380.0" stylesheets="@../css/TabPane.css" tabClosingPolicy="ALL_TABS" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.hqu.lly.view.controller.TabPaneController">
+<TabPane fx:id="mainTabPane" tabDragPolicy="REORDER" prefHeight="380.0" stylesheets="@../css/TabPane.css" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.hqu.lly.view.controller.TabPaneController">
     <tabs>
         <Tab fx:id="createTab" closable="false" onSelectionChanged="#createNewTab" text="新建标签页">
             <content>

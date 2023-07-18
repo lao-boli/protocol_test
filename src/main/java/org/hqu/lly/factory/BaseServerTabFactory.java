@@ -47,7 +47,7 @@ public class BaseServerTabFactory<T extends BaseServerController<?>> extends Bas
             controller.init((ServerSessionConfig) config);
 
             tab.setContent(contentPane);
-            tab.setOnClosed(event -> (controller).destroy());
+            tab.setOnClosed((controller)::destroy);
 
         } catch (IOException e) {
             e.printStackTrace();
