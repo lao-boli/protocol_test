@@ -1,6 +1,5 @@
 package org.hqu.lly.domain.component;
 
-import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
@@ -77,17 +76,16 @@ public class StagingArea {
         public Content(String text, Consumer<String> onChoose) {
             textArea = new TextArea(text);
             textArea.setEditable(false);
+            HBox.setHgrow(textArea, Priority.ALWAYS);
 
             chooseBtn = new Button("选择");
             chooseBtn.setMinWidth(50);
             chooseBtn.setOnMouseClicked(e->onChoose.accept(textArea.getText()));
 
-            HBox.setHgrow(textArea, Priority.ALWAYS);
             container = new HBox(textArea,chooseBtn);
-            container.setSpacing(5);
-            container.setAlignment(Pos.BOTTOM_LEFT);
-
             VBox.setVgrow(container,Priority.ALWAYS);
+            container.getStyleClass().add("content-container");
+
             getChildren().add(container);
         }
 

@@ -1,8 +1,10 @@
 .text-area > .scroll-pane {
     -fx-padding: 0;
 }
-HBox{
+.content-container{
     -fx-padding: 10;
+    -fx-spacing: 5.0;
+    -fx-alignment: bottom-left;
 }
 .tooltip {
     -fx-text-fill: #bbbbbb;
