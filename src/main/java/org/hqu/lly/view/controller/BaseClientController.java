@@ -270,7 +270,9 @@ public abstract class BaseClientController<T extends BaseClient> extends CommonU
     protected void setActiveUI() {
         Platform.runLater(() -> {
             remoteAddressInput.setDisable(true);
-            msgInput.setDisable(false);
+            if (sendSettingConfig.isTextMode()){
+                msgInput.setDisable(false);
+            }
             connectButton.setDisable(true);
             disconnectButton.setDisable(false);
             sendMsgButton.setDisable(false);
