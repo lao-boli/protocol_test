@@ -36,6 +36,12 @@ public class JSStagingArea extends MyDialog<Node>{
         pane.setCenter(content);
     }
 
+    @Override
+    protected void initTitleBar() {
+        initTitleBar("JS脚本暂存区");
+    }
+
+
     public void saveConfig(JSCodeConfig config){
         ArrayList<StoringAreaConfig> configs = new ArrayList<>();
         stagingArea.tabPane.getTabs().forEach(tab -> {
