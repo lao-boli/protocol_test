@@ -218,7 +218,7 @@ public class SendSettingController {
 
     public void storingCode(MouseEvent event) {
         jsStagingArea.stagingArea.storeText(jsTextArea.getText());
-        new MessagePopup("已加入暂存区").showPopup();
+        new MessagePopup("已加入暂存区").showPopup(30,0.7);
     }
 
 
@@ -269,7 +269,7 @@ public class SendSettingController {
 
         jsStagingArea = new JSStagingArea(s -> {
             jsTextArea.setText(s);
-            new MessagePopup("脚本已更改").showPopup();
+            new MessagePopup("脚本已更改").showPopup(30,0.7);
         });
         Platform.runLater(() -> {
             jsStagingArea.initOwner(titleBar.getScene().getWindow());

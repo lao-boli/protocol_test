@@ -32,8 +32,6 @@ import static org.hqu.lly.utils.UIUtil.copyToClipboard;
  */
 public class MessagePopup extends Popup {
 
-    private ContextMenu menu;
-
     public enum Type {
         /**
          * 信息提示
@@ -53,6 +51,19 @@ public class MessagePopup extends Popup {
         SUCCESS;
     }
 
+    public enum Direction {
+        /**
+         * 由下至上
+         */
+        DOWN_TO_UP,
+        /**
+         * 由上至下
+         */
+        UP_TO_DOWN,
+    }
+
+    private ContextMenu menu;
+
     private HBox content;
 
     private Pane contentWrapper;
@@ -68,7 +79,7 @@ public class MessagePopup extends Popup {
     }
 
     public MessagePopup(String msgText) {
-        this(Type.INFO,msgText);
+        this(Type.INFO, msgText);
     }
 
     public MessagePopup(Type type, String msgText) {
@@ -132,6 +143,17 @@ public class MessagePopup extends Popup {
     }
 
     public void showPopup() {
+        showPopup(80);
+    }
+
+    public void showPopup(int yOffset) {
+        showPopup(yOffset,Direction.DOWN_TO_UP,3);
+    }
+    public void showPopup(int yOffset,double pauseDuration) {
+        showPopup(yOffset,Direction.DOWN_TO_UP,pauseDuration);
+    }
+
+    public void showPopup(int yOffset, Direction direction, double pauseDuration) {
         Platform.runLater(() -> {
             Stage primaryStage = UIUtil.getPrimaryStage();
             double windowX = primaryStage.getX();
@@ -140,29 +162,44 @@ public class MessagePopup extends Popup {
 
             // 计算提示框应该显示的位置
             double popupX = windowX + (windowWidth - content.getWidth()) / 2;
-            double popupY = windowY + 80;
+            double popupY = windowY + yOffset;
 
-            setupAnimation(this, primaryStage, popupX, popupY);
+            setupAnimation(this, primaryStage, popupX, popupY,direction,pauseDuration);
         });
+    }
 
-
+    private void setupAnimation(MessagePopup popup, Stage primaryStage, double popupX, double popupY) {
+        setupAnimation(popup, primaryStage, popupX, popupY, Direction.UP_TO_DOWN, 3);
     }
 
     /**
      * 为消息提示框设置动画效果
      *
-     * @param popup        本对象
-     * @param primaryStage 应用程序主窗口
-     * @param popupX       显示x坐标
-     * @param popupY       显示y坐标
+     * @param popup         本对象
+     * @param primaryStage  应用程序主窗口
+     * @param popupX        显示x坐标
+     * @param popupY        显示y坐标
+     * @param direction     消息框出现的方向
+     * @param pauseDuration 消息框显示时间
      */
-    private void setupAnimation(MessagePopup popup, Stage primaryStage, double popupX, double popupY) {
+    private void setupAnimation(MessagePopup popup, Stage primaryStage, double popupX, double popupY, Direction direction, double pauseDuration) {
         // 从下向上移动显示
         TranslateTransition transIn = new TranslateTransition(Duration.seconds(0.2), content);
-        // 初始位置向下偏移 30px
-        transIn.setFromY(30);
-        // 移动到初始位置
-        transIn.setToY(0);
+        switch (direction) {
+            case DOWN_TO_UP -> {
+                // 初始位置向下偏移 30px
+                transIn.setFromY(30);
+                // 移动到初始位置
+                transIn.setToY(0);
+            }
+            case UP_TO_DOWN -> {
+                transIn.setFromY(0);
+                // 移动到初始位置向下偏移30px
+                transIn.setToY(30);
+                // 修正出现位置
+                popupY = popupY - 30;
+            }
+        }
         transIn.play();
 
         // 淡入
@@ -173,7 +210,7 @@ public class MessagePopup extends Popup {
         this.show(primaryStage, popupX, popupY);
 
         // 悬浮框显示3s
-        PauseTransition pauseTransition = new PauseTransition(Duration.seconds(3));
+        PauseTransition pauseTransition = new PauseTransition(Duration.seconds(pauseDuration));
 
         // 鼠标悬浮在popup的时候暂停动画
         content.addEventFilter(MouseEvent.MOUSE_ENTERED, e -> pauseTransition.pause());
