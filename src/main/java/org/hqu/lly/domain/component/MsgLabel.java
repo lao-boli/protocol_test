@@ -136,6 +136,10 @@ public class MsgLabel extends TextFlow {
         showMsg = new SimpleBooleanProperty(true);
         showWarn = new SimpleBooleanProperty(false);
         toType = new SimpleObjectProperty<>(DataType.PLAIN_TEXT);
+        toType.addListener((observable, oldValue, newValue) -> {
+            convertTo(newValue);
+
+        });
         setOnShowChange();
     }
 
@@ -189,7 +193,9 @@ public class MsgLabel extends TextFlow {
                 initWarn();
             }
             if (newValue){
-                cell.setGraphic(warn);
+                if (cell != null){
+                    cell.setGraphic(warn);
+                }
             }else {
                 cell.setGraphic(null);
             }

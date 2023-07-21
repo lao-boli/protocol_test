@@ -127,7 +127,7 @@ public abstract class CommonUIContorller extends BaseController {
             }
             DataType from = (DataType) oldValue.getUserData();
             DataType to = (DataType) newValue.getUserData();
-            msgList.getItems().forEach(msgLabel -> msgLabel.convertTo(to));
+            // msgList.getItems().forEach(msgLabel -> msgLabel.convertTo(to));
             recvMsgType.setValue(to);
         });
         setupFormatBtn(toggleGroup, recvFormatBtn);
