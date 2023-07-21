@@ -2,7 +2,9 @@ package org.hqu.lly.view.controller;
 
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
 import javafx.geometry.Side;
@@ -34,7 +36,7 @@ public abstract class CommonUIContorller extends BaseController {
     /**
      * 接收消息的格式类型
      */
-    protected DataType recvMsgType = PLAIN_TEXT;
+    protected ObjectProperty<DataType> recvMsgType = new SimpleObjectProperty<>(PLAIN_TEXT);
 
     protected DataType sendMsgType = PLAIN_TEXT;
 
@@ -85,19 +87,15 @@ public abstract class CommonUIContorller extends BaseController {
     protected void setupDisplaySetting() {
         RadioMenuItem time = new RadioMenuItem("时间");
         time.setSelected(true);
-        time.setOnAction(event -> msgList.getItems().forEach(item -> item.showTime(time.isSelected())));
 
         RadioMenuItem host = new RadioMenuItem("主机");
         host.setSelected(true);
-        host.setOnAction(event -> msgList.getItems().forEach(item -> item.showHost(host.isSelected())));
 
         RadioMenuItem length = new RadioMenuItem("消息长度");
         length.setSelected(true);
-        length.setOnAction(event -> msgList.getItems().forEach(item -> item.showLength(length.isSelected())));
 
         RadioMenuItem msg = new RadioMenuItem("消息内容");
         msg.setSelected(true);
-        msg.setOnAction(event -> msgList.getItems().forEach(item -> item.showMsg(msg.isSelected())));
 
         ContextMenu contextMenu = new ContextMenu(time, host, length, msg);
         displaySettingBtn.setContextMenu(contextMenu);
@@ -105,28 +103,12 @@ public abstract class CommonUIContorller extends BaseController {
             contextMenu.show(displaySettingBtn, Side.BOTTOM, 0, 0);
         });
 
-        msgList.widthProperty().addListener((observable, oldValue, newValue) -> {
-            if (softWrap.getValue()) {
-                Platform.runLater(() -> msgList.getItems().forEach(msgLabel -> msgLabel.setPrefWidth(getFixMsgLabelWidth(newValue.doubleValue()))));
-            }
-        });
-
         msgList.getItems().addListener((ListChangeListener<MsgLabel>) c -> {
             while (c.next()) {
                 if (c.wasAdded()) {
                     c.getAddedSubList().forEach(label -> {
-                        label.showTime(time.isSelected());
-                        label.showHost(host.isSelected());
-                        label.showLength(length.isSelected());
-                        label.showMsg(msg.isSelected());
-
                         label.bindFlag(time.selectedProperty(),host.selectedProperty(),length.selectedProperty(),msg.selectedProperty());
-
-                        if (softWrap.get()) {
-                            label.setPrefWidth(getFixMsgLabelWidth(msgList.getWidth()));
-                        }
-
-                        label.convertTo(recvMsgType);
+                        label.getToType().bind(recvMsgType);
                     });
                 }
             }
@@ -149,7 +131,7 @@ public abstract class CommonUIContorller extends BaseController {
             DataType from = (DataType) oldValue.getUserData();
             DataType to = (DataType) newValue.getUserData();
             msgList.getItems().forEach(msgLabel -> msgLabel.convertTo(to));
-            recvMsgType = to;
+            recvMsgType.setValue(to);
         });
         setupFormatBtn(toggleGroup, recvFormatBtn);
     }
@@ -189,33 +171,31 @@ public abstract class CommonUIContorller extends BaseController {
 
     protected void setupMsgList() {
 
-        msgList.setCellFactory(param -> {
-            return new ListCell<MsgLabel>() {
-                @Override
-                protected void updateItem(MsgLabel item, boolean empty) {
-                    super.updateItem(item, empty);
-                    if (empty || item == null) {
-                        setGraphic(null);
-                        setText(null);
-                    } else {
-                        wrapTextProperty().bind(softWrap);
-                        wrapTextProperty().addListener((observable, oldValue, newValue) -> {
-                            if (newValue){
-                                setMinWidth(100);
-                                setMaxWidth(100);
-                                setPrefWidth(100);
-                            }else {
-                                setMinWidth(-1);
-                                setMaxWidth(-1);
-                                setPrefWidth(-1);
-                            }
+        msgList.setCellFactory(param -> new ListCell<>() {
+            @Override
+            protected void updateItem(MsgLabel item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setGraphic(null);
+                    setText(null);
+                } else {
+                    wrapTextProperty().bind(softWrap);
+                    wrapTextProperty().addListener((observable, oldValue, newValue) -> {
+                        if (newValue) {
+                            setMinWidth(100);
+                            setMaxWidth(100);
+                            setPrefWidth(100);
+                        } else {
+                            setMinWidth(-1);
+                            setMaxWidth(-1);
+                            setPrefWidth(-1);
+                        }
 
-                        });
-                        item.setCell(this);
-                        setText(item.getText());
-                    }
+                    });
+                    item.setCell(this);
+                    setText(item.getText());
                 }
-            };
+            }
         });
     }
 

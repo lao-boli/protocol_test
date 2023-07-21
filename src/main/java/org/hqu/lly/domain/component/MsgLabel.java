@@ -2,7 +2,9 @@ package org.hqu.lly.domain.component;
 
 import io.netty.util.CharsetUtil;
 import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Bounds;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
@@ -20,8 +22,6 @@ import org.hqu.lly.utils.UIUtil;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.hqu.lly.utils.MsgUtil.*;
 
@@ -39,7 +39,6 @@ import static org.hqu.lly.utils.MsgUtil.*;
 @Data
 public class MsgLabel extends TextFlow {
 
-    private ListCell cell;
 
     /**
      * 消息类型枚举
@@ -59,9 +58,7 @@ public class MsgLabel extends TextFlow {
         COMMON
     }
 
-    public BooleanProperty wrapText;
-
-    public List<Text> texts = new ArrayList<>();
+    private ListCell cell;
 
     private Text timeText;
 
@@ -87,8 +84,9 @@ public class MsgLabel extends TextFlow {
     private BooleanProperty showLength;
     private BooleanProperty showHost;
     private BooleanProperty showMsg;
-
     private BooleanProperty showWarn;
+
+    private ObjectProperty<DataType> toType;
 
     /**
      * 普通消息构造器
@@ -103,10 +101,6 @@ public class MsgLabel extends TextFlow {
         this.lengthText = new Text();
         initMsgText(msg);
         this.getChildren().addAll(this.timeText, this.hostText, this.lengthText, this.msgText);
-        texts.add(this.timeText);
-        texts.add(this.hostText);
-        texts.add(this.lengthText);
-        texts.add(this.msgText);
         showTime = new SimpleBooleanProperty(true);
         showHost = new SimpleBooleanProperty(true);
         showLength = new SimpleBooleanProperty(true);
@@ -130,15 +124,12 @@ public class MsgLabel extends TextFlow {
         initLengthText(msg);
         initMsgText(msg);
         this.getChildren().addAll(this.timeText, this.hostText, this.lengthText, this.msgText);
-        texts.add(this.timeText);
-        texts.add(this.hostText);
-        texts.add(this.lengthText);
-        texts.add(this.msgText);
         showTime = new SimpleBooleanProperty(true);
         showHost = new SimpleBooleanProperty(true);
         showLength = new SimpleBooleanProperty(true);
         showMsg = new SimpleBooleanProperty(true);
         showWarn = new SimpleBooleanProperty(false);
+        toType = new SimpleObjectProperty<>(DataType.PLAIN_TEXT);
         setOnShowChange();
     }
 
@@ -172,6 +163,9 @@ public class MsgLabel extends TextFlow {
 
     public void setCell(ListCell cell) {
         this.cell = cell;
+        // TODO cost too many resource
+        convertTo(toType.get());
+        System.out.println("set cell: "+cell);
     }
     public void setOnShowChange() {
         showLength.addListener((observable, oldValue, newValue) -> {
@@ -228,26 +222,6 @@ public class MsgLabel extends TextFlow {
 
     private void initLengthText(String msg) {
         this.lengthText = new Text("[" + CommonUtil.getRealLength(msg) + "字节] ");
-    }
-
-    public void showTime(boolean showTime) {
-        timeText.setVisible(showTime);
-        timeText.setManaged(showTime);
-    }
-
-    public void showLength(boolean showLength) {
-        lengthText.setVisible(showLength);
-        lengthText.setManaged(showLength);
-    }
-
-    public void showHost(boolean showHost) {
-        hostText.setVisible(showHost);
-        hostText.setManaged(showHost);
-    }
-
-    public void showMsg(boolean showMsg) {
-        msgText.setVisible(showMsg);
-        msgText.setManaged(showMsg);
     }
 
     public void showWarn(boolean show) {
