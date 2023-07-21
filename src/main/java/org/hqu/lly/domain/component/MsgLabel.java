@@ -177,6 +177,9 @@ public class MsgLabel extends TextFlow {
         convertTo(toType.get());
         if (showWarn.get()){
             cell.setGraphic(warn);
+        }else {
+            // must be done, or cause strange display issue
+            cell.setGraphic(null);
         }
     }
 
