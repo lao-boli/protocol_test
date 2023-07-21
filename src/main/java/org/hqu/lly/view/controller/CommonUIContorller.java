@@ -1,6 +1,5 @@
 package org.hqu.lly.view.controller;
 
-import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -10,7 +9,6 @@ import javafx.fxml.FXML;
 import javafx.geometry.Side;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Region;
 import lombok.extern.slf4j.Slf4j;
 import org.hqu.lly.domain.component.MessagePopup;
 import org.hqu.lly.domain.component.MsgLabel;
@@ -19,7 +17,6 @@ import org.hqu.lly.utils.MsgUtil;
 import org.hqu.lly.utils.UIUtil;
 
 import static org.hqu.lly.enums.DataType.*;
-import static org.hqu.lly.utils.UIUtil.getFixMsgLabelWidth;
 
 /**
  * <p>
@@ -236,8 +233,6 @@ public abstract class CommonUIContorller extends BaseController {
     @FXML
     protected void handleSoftWrap(MouseEvent event) {
         softWrap.setValue(!softWrap.get());
-        double labelWidth = softWrap.get() ? getFixMsgLabelWidth(msgList.getWidth()) : Region.USE_COMPUTED_SIZE;
-        Platform.runLater(() -> msgList.getItems().forEach(msgLabel -> msgLabel.setPrefWidth(labelWidth)));
     }
 
 }
