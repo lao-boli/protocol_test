@@ -5,6 +5,7 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ChangeListener;
 import javafx.geometry.Bounds;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
@@ -58,6 +59,9 @@ public class MsgLabel extends TextFlow {
         COMMON
     }
 
+    /**
+     * listview的msgLabel所在cell
+     */
     private ListCell cell;
 
     private Text timeText;
@@ -88,6 +92,8 @@ public class MsgLabel extends TextFlow {
 
     private ObjectProperty<DataType> toType;
     //endregion
+
+    private DataType curType = DataType.PLAIN_TEXT;
 
     /**
      * 普通消息构造器
@@ -163,24 +169,21 @@ public class MsgLabel extends TextFlow {
 
     public void setCell(ListCell cell) {
         this.cell = cell;
-        // TODO cost too many resource
+
         convertTo(toType.get());
-        System.out.println("set cell: "+cell);
+        if (showWarn.get()){
+            cell.setGraphic(warn);
+        }
     }
 
     private void setOnShowChange() {
-        showLength.addListener((observable, oldValue, newValue) -> {
-            cell.setText(getText());
-        });
-        showTime.addListener((observable, oldValue, newValue) -> {
-            cell.setText(getText());
-        });
-        showHost.addListener((observable, oldValue, newValue) -> {
-            cell.setText(getText());
-        });
-        showMsg.addListener((observable, oldValue, newValue) -> {
-            cell.setText(getText());
-        });
+        // show flag 改变时重设cell的text
+        ChangeListener<Boolean> listener = (observable, oldValue, newValue) -> cell.setText(getText());
+        showLength.addListener(listener);
+        showTime.addListener(listener);
+        showHost.addListener(listener);
+        showMsg.addListener(listener);
+
         showWarn.addListener((observable, oldValue, newValue) -> {
             if (warn == null) {
                 initWarn();
@@ -250,13 +253,19 @@ public class MsgLabel extends TextFlow {
     }
 
     /**
-     * 将消息字节数组转换成 {@link DataType}中的各种格式.
+     * 将消息字节数组转换成 {@link DataType}中的各种格式.<br>
+     * 并设置cell中的text.
      *
      * @param to 格式类型
      * @date 2023-04-03 21:20
      * @since 0.2.0
      */
     public void convertTo(DataType to) {
+        if (curType.equals(to)) {
+            return;
+        }
+
+        // start convert
         showWarn.setValue(false);
 
         String result = new String(msgBytes, CharsetUtil.UTF_8);
@@ -286,6 +295,9 @@ public class MsgLabel extends TextFlow {
                 }
             }
         };
+        //end convert
+
+        curType = to;
         msgText.setText(result);
         if (cell != null){
             cell.setText(getText());
