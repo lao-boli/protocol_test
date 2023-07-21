@@ -1,6 +1,8 @@
 package org.hqu.lly.view.controller;
 
 import javafx.application.Platform;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
 import javafx.geometry.Side;
@@ -52,7 +54,7 @@ public abstract class CommonUIContorller extends BaseController {
     /**
      * 长文本是否换行flag
      */
-    protected boolean softWrap = false;
+    protected BooleanProperty softWrap = new SimpleBooleanProperty(false);
     @FXML
     protected Button recvFormatBtn;
     @FXML
@@ -104,7 +106,7 @@ public abstract class CommonUIContorller extends BaseController {
         });
 
         msgList.widthProperty().addListener((observable, oldValue, newValue) -> {
-            if (softWrap) {
+            if (softWrap.getValue()) {
                 Platform.runLater(() -> msgList.getItems().forEach(msgLabel -> msgLabel.setPrefWidth(getFixMsgLabelWidth(newValue.doubleValue()))));
             }
         });
@@ -118,7 +120,9 @@ public abstract class CommonUIContorller extends BaseController {
                         label.showLength(length.isSelected());
                         label.showMsg(msg.isSelected());
 
-                        if (softWrap) {
+                        label.bindFlag(time.selectedProperty(),host.selectedProperty(),length.selectedProperty(),msg.selectedProperty());
+
+                        if (softWrap.get()) {
                             label.setPrefWidth(getFixMsgLabelWidth(msgList.getWidth()));
                         }
 
@@ -183,6 +187,39 @@ public abstract class CommonUIContorller extends BaseController {
     }
 
 
+    protected void setupMsgList() {
+
+        msgList.setCellFactory(param -> {
+            return new ListCell<MsgLabel>() {
+                @Override
+                protected void updateItem(MsgLabel item, boolean empty) {
+                    super.updateItem(item, empty);
+                    if (empty || item == null) {
+                        setGraphic(null);
+                        setText(null);
+                    } else {
+                        wrapTextProperty().bind(softWrap);
+                        wrapTextProperty().addListener((observable, oldValue, newValue) -> {
+                            if (newValue){
+                                setMinWidth(100);
+                                setMaxWidth(100);
+                                setPrefWidth(100);
+                            }else {
+                                setMinWidth(-1);
+                                setMaxWidth(-1);
+                                setPrefWidth(-1);
+                            }
+
+                        });
+                        item.setCell(this);
+                        setText(item.getText());
+                    }
+                }
+            };
+        });
+    }
+
+
     /**
      * 初始化文本格式化按钮
      *
@@ -218,8 +255,8 @@ public abstract class CommonUIContorller extends BaseController {
 
     @FXML
     protected void handleSoftWrap(MouseEvent event) {
-        softWrap = !softWrap;
-        double labelWidth = softWrap ? getFixMsgLabelWidth(msgList.getWidth()) : Region.USE_COMPUTED_SIZE;
+        softWrap.setValue(!softWrap.get());
+        double labelWidth = softWrap.get() ? getFixMsgLabelWidth(msgList.getWidth()) : Region.USE_COMPUTED_SIZE;
         Platform.runLater(() -> msgList.getItems().forEach(msgLabel -> msgLabel.setPrefWidth(labelWidth)));
     }
 

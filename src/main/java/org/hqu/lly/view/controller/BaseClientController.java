@@ -300,6 +300,8 @@ public abstract class BaseClientController<T extends BaseClient> extends CommonU
         setupSendFormatBtn();
         setupRecvFormatBtn();
 
+        setupMsgList();
+
         // 消息上下文菜单
         msgList.setContextMenu(getMsgListMenu(msgList));
     }

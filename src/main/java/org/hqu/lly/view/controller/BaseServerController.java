@@ -363,6 +363,7 @@ public abstract class BaseServerController<T> extends CommonUIContorller impleme
         // 多格式设置
         setupSendFormatBtn();
         setupRecvFormatBtn();
+        setupMsgList();
         // 消息上下文菜单
         msgList.setContextMenu(UIUtil.getMsgListMenu(msgList));
         clientListBox.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
