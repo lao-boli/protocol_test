@@ -5,6 +5,8 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Region;
@@ -109,6 +111,13 @@ public class TitleBarController implements Initializable {
                 stage.close();
             }
         }
+    }
+
+    public void setTitleIcon(Image image) {
+        ImageView iv = new ImageView(image);
+        iv.setFitHeight(16);
+        iv.setFitWidth(16);
+        titleLabel.setGraphic(iv);
     }
 
     @FXML

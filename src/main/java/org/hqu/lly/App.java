@@ -37,6 +37,7 @@ public class App extends Application {
                 new Image(ResLoc.APP_ICON_128.toExternalForm()),
                 new Image(ResLoc.APP_ICON_256.toExternalForm())
         );
+        primaryStage.setTitle("protocol test");
 
         ThemeUtil.applyStyle(scene);
         primaryStage.initStyle(StageStyle.TRANSPARENT);
