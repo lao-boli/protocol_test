@@ -1,14 +1,16 @@
 package org.hqu.lly;
 
-import com.github.mouse0w0.darculafx.DarculaFX;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.hqu.lly.constant.ResLoc;
 import org.hqu.lly.utils.DragUtil;
+import org.hqu.lly.utils.JSParser;
+import org.hqu.lly.utils.ThemeUtil;
 import org.hqu.lly.utils.UIUtil;
 import org.hqu.lly.view.controller.MainController;
 
@@ -16,6 +18,9 @@ public class App extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+
+        new Thread(JSParser::preheat).start();
+
         UIUtil.setPrimaryStage(primaryStage);
         FXMLLoader fxmlLoader = new FXMLLoader();
         fxmlLoader.setLocation(ResLoc.MAIN_PANE);
@@ -24,14 +29,21 @@ public class App extends Application {
 
         Scene scene = UIUtil.getShadowScene(root, 660, 400);
 
-        DarculaFX.applyDarculaStyle(scene);
+        // set app logo
+        primaryStage.getIcons().addAll(
+                new Image(ResLoc.APP_ICON_16.toExternalForm()),
+                new Image(ResLoc.APP_ICON_32.toExternalForm()),
+                new Image(ResLoc.APP_ICON_64.toExternalForm()),
+                new Image(ResLoc.APP_ICON_128.toExternalForm()),
+                new Image(ResLoc.APP_ICON_256.toExternalForm())
+        );
+        primaryStage.setTitle("protocol test");
+
+        ThemeUtil.applyStyle(scene);
         primaryStage.initStyle(StageStyle.TRANSPARENT);
         primaryStage.setScene(scene);
         DragUtil.setDrag(primaryStage, scene.getRoot());
         primaryStage.show();
-        // Optional<ButtonType> result = new MyAlert(Alert.AlertType.CONFIRMATION, "保存配置", "是否保存配置到本地?").showAndWait();
-        // Optional<ButtonType> result = new Alert(Alert.AlertType.CONFIRMATION).showAndWait();
-        // System.out.println(result);
 
     }
 

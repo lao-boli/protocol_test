@@ -16,7 +16,7 @@ import java.util.concurrent.Callable;
  */
 public abstract class BaseServer<T> implements Callable<Channel> {
 
-
+    protected Channel channel;
 
     public abstract void init();
 
@@ -27,6 +27,10 @@ public abstract class BaseServer<T> implements Callable<Channel> {
     public abstract void setService(ServerService serverService);
 
     public abstract void sendMessage(String message, T dstAddr);
+
+    public boolean isActive(){
+        return channel != null && channel.isActive();
+    }
 
     @Override
     public Channel call() throws Exception {

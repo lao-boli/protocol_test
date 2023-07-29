@@ -5,12 +5,14 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
 import org.hqu.lly.constant.ContentPaneConsts;
+import org.hqu.lly.constant.ResLoc;
 import org.hqu.lly.domain.component.MyAlert;
 import org.hqu.lly.domain.config.ConfigStore;
 import org.hqu.lly.domain.config.SessionConfig;
@@ -65,6 +67,7 @@ public class MainController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
         titleBarController.init("协议测试工具", true);
+        titleBarController.setTitleIcon(new Image(ResLoc.APP_ICON_64.toExternalForm()));
 
         titleBarController.setOnBeforeClose(() -> {
             MyAlert myAlert = new MyAlert(Alert.AlertType.CONFIRMATION, "保存配置", "是否保存配置到本地?");

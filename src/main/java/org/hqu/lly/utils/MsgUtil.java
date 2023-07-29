@@ -130,6 +130,10 @@ public class MsgUtil {
     @SneakyThrows
     public static String jsonFormat(String str) {
         JsonNode jsonNode = mapper.readTree(str);
+        // fixed: 转换形如 "1.83 1 1 1"这样的非法json字符串也会转换成功并只保留首位
+        if (!jsonNode.isObject()){
+            throw new IllegalArgumentException("\nJSON格式错误: 无法将输入内容转换成对象!");
+        }
         return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(jsonNode).replaceAll("\r", "");
     }
 

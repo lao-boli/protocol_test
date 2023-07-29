@@ -1,9 +1,9 @@
 package org.hqu.lly.domain.component;
 
-import javafx.application.Platform;
 import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.geometry.Bounds;
-import javafx.geometry.Rectangle2D;
+import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Parent;
 import javafx.scene.control.Tab;
@@ -11,15 +11,16 @@ import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.control.skin.TabPaneSkin;
-import javafx.scene.image.WritableImage;
-import javafx.scene.input.*;
-import javafx.scene.robot.Robot;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.HBox;
+import javafx.stage.Stage;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.hqu.lly.constant.ResLoc;
+import org.hqu.lly.icon.CloseIcon;
 import org.hqu.lly.utils.UIUtil;
 
-import java.text.DateFormat;
+import java.util.function.Supplier;
 
 import static org.hqu.lly.utils.CommonUtil.getRealLength;
 
@@ -35,10 +36,6 @@ import static org.hqu.lly.utils.CommonUtil.getRealLength;
 @Slf4j
 public class TitleTab extends Tab {
 
-    /**
-     * 将 {@link Tab}在 {@link #tabPane}中的索引作为 {@link DateFormat}.
-     */
-    private static DataFormat tabIndex = new DataFormat("tab");
     /**
      * 标签页所在的标签面板
      */
@@ -58,6 +55,14 @@ public class TitleTab extends Tab {
      */
     private Parent tabSkin;
 
+    private HBox header;
+
+    private CloseIcon closeIcon;
+
+    private Supplier<Boolean> onCloseRequest;
+
+    private Runnable onClosed;
+
 
     /**
      * <p>
@@ -65,7 +70,7 @@ public class TitleTab extends Tab {
      * </p>
      *
      * @param tabTitle 标签页标题
-     * @param tabPane 标签页所在的标签面板
+     * @param tabPane  标签页所在的标签面板
      * @return {@link TitleTab}
      * @date 2023-02-26 13:36:11 <br>
      */
@@ -73,7 +78,7 @@ public class TitleTab extends Tab {
         super();
         this.tabTitle = tabTitle;
         this.tabPane = tabPane;
-        initTitle();
+        initHeader();
     }
 
     /**
@@ -87,7 +92,6 @@ public class TitleTab extends Tab {
         TextField title = new TextField(tabTitle);
         this.tabTitleField = title;
         // 加载css
-        title.getStylesheets().add(ResLoc.TAB_TITLE.toExternalForm());
         title.setEditable(false);
 
         title.focusedProperty().addListener((observable, oldValue, newValue) -> {
@@ -113,13 +117,44 @@ public class TitleTab extends Tab {
         title.addEventFilter(MouseEvent.MOUSE_RELEASED, event -> transmitEvent(title, event));
         setTooltip(title);
 
-        this.setGraphic(title);
         this.setText(tabTitle);
+    }
+
+    /**
+     * 初始化关闭图标 <br>
+     *
+     */
+    private void initCloseIcon() {
+        closeIcon = new CloseIcon();
+        closeIcon.setIconHeight(10);
+        closeIcon.setIconWidth(10);
+
+        // I don't know why MOUSE_CLICKED doesn't work, so use MOUSE_RELEASED
+        closeIcon.addEventFilter(MouseEvent.MOUSE_RELEASED, e -> {
+            if (onCloseRequest == null || onCloseRequest.get()) {
+                if (onClosed != null){
+                    onClosed.run();
+                }
+                tabPane.getTabs().remove(this);
+            }
+        });
+
+    }
+
+    private void initHeader() {
+        initTitle();
+        initCloseIcon();
+        header = new HBox(tabTitleField, closeIcon);
+        header.setAlignment(Pos.CENTER_LEFT);
+        header.setSpacing(5);
+        header.getStylesheets().add(ResLoc.TAB_TITLE.toExternalForm());
+        this.setGraphic(header);
     }
 
 
     /**
      * 传递拖拽相关事件给原生的tab处理类处理
+     *
      * @param title 标签页的 {@link #getGraphic()} 的返回值
      * @param event 传递的事件
      * @date 2023-03-22 21:30
@@ -132,6 +167,7 @@ public class TitleTab extends Tab {
     /**
      * 获取 {@link TabPaneSkin.TabHeaderSkin}, 原生的tab拖拽事件在此类中处理. <br>
      * 此方法应只在事件回调 EventHandler 或 EventFilter 中调用,否则可能造成空指针异常
+     *
      * @param title 标签页的 {@link #getGraphic()} 的返回值
      * @date 2023-03-22 21:27
      */
@@ -139,56 +175,6 @@ public class TitleTab extends Tab {
         if (tabSkin == null) {
             tabSkin = title.getParent().getParent().getParent();
         }
-    }
-
-    /**
-     * @deprecated 通过 {@link TabPane#setTabDragPolicy(TabPane.TabDragPolicy)} 使用原生拖拽
-     * @param title
-     *  @date 2023-03-22 21:14
-     */
-    private void handleDrag(TextField title) {
-        Tab tab = this;
-
-        title.setOnDragDetected(event -> {
-            Dragboard db = title.startDragAndDrop(TransferMode.MOVE);
-            // 设置拖拽时的图片
-            Robot robot = new Robot();
-            Bounds bounds = title.localToScreen(title.getBoundsInLocal());
-            WritableImage capture = robot.getScreenCapture(null, new Rectangle2D(bounds.getMinX()-2, bounds.getMinY()+2, 66, 25), false);
-            db.setDragView(capture,20,40);
-
-
-            // 传输数据内容
-            ClipboardContent content = new ClipboardContent();
-            // 被拖拽时，本tab为source
-            content.put(tabIndex, tabPane.getTabs().indexOf(tab));
-            db.setContent(content);
-        });
-
-        title.setOnDragOver(event -> event.acceptTransferModes(TransferMode.MOVE));
-
-        title.setOnDragDropped(event -> {
-            // 触发本回调时，本tab为target
-            int targetIndex = tabPane.getTabs().indexOf(tab);
-
-            Dragboard db = event.getDragboard();
-            int sourceIndex = (int) db.getContent(tabIndex);
-
-            // 位置不变，直接返回
-            if (targetIndex == sourceIndex){
-                return;
-            }
-
-            // 交换两个tab
-            Platform.runLater(() -> {
-                Tab sourceTab = tabPane.getTabs().remove(sourceIndex);
-                tabPane.getTabs().add(targetIndex, sourceTab);
-
-                tabPane.getTabs().remove(tab);
-                tabPane.getTabs().add(sourceIndex, tab);
-            });
-
-        });
     }
 
     /**
@@ -218,6 +204,27 @@ public class TitleTab extends Tab {
         title.setOnMouseExited(event -> tooltip.hide());
 
         title.setTooltip(tooltip);
+    }
+
+    /**
+     * 原生的 {@link Tab#setOnCloseRequest(EventHandler)}在回调中调用 {@link Stage#showAndWait()}后
+     * ,再调用 {@link Event#consume()}会造成标签标题无响应,原因未知.
+     * 故不使用原生的关闭图标和{@link Tab#setOnCloseRequest(EventHandler)}.
+     * @param value 返回bool值的回调函数
+     */
+    public void setOnCloseRequest(Supplier<Boolean> value) {
+        onCloseRequest = value;
+    }
+
+    /**
+     * 使用 <br>
+     * {@code tabPane.getTabs().remove(this); }<br>
+     * 这种方法移除tab不会触发原生的 {@link Tab#onClosed}
+     * 故需要采用自己的.
+     * @param value 回调
+     */
+    public void setOnClosed(Runnable value) {
+        onClosed = value;
     }
 
 }

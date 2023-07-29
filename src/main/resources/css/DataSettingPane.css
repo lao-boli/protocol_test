@@ -1,0 +1,32 @@
+.data-setting-pane {
+    -fx-background-color: #3c3f41;
+    -fx-padding: 5;
+}
+
+.content-pane {
+    -fx-background-color: #3c3f41;
+    -fx-padding: 5;
+    -fx-pref-width: 400;
+    -fx-pref-height: 400;
+}
+
+.setting-VBox {
+    -fx-padding: 0 15 0 5;
+    -fx-spacing: 10;
+}
+
+.btn-group {
+    -fx-spacing: 5;
+    -fx-alignment: top-right;
+    -fx-padding: 0 15 0 0;
+}
+
+.scroll-pane {
+    /*保证字体不模糊.
+    see also: https://stackoverflow.com/questions/23728517/blurred-text-in-javafx-textarea*/
+    -fx-padding: 0;
+    -fx-hbar-policy: never;
+}
+
+
+

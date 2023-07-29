@@ -39,7 +39,6 @@ public class WebSocketServer extends ConnectedServer {
     private NioEventLoopGroup bossGroup;
     private NioEventLoopGroup workerGroup;
     private WebSocketServerChannelInitializer wsChannelInitializer = new WebSocketServerChannelInitializer();
-    private Channel channel;
     private ConnectedServerService serverService;
 
     @Override

@@ -40,6 +40,9 @@ public abstract class BaseClient implements Callable<Channel> {
         }
     }
 
+    public boolean isActive(){
+        return channel != null && channel.isActive();
+    }
     @Override
     public Channel call() throws Exception {
         return null;

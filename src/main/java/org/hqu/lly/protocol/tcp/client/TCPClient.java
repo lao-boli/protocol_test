@@ -103,6 +103,8 @@ public class TCPClient extends BaseClient {
             if (e.getCause() instanceof ConnectException) {
                 log.warn(e.toString());
                 clientService.onError(e, "该地址服务未开启");
+            } else if (e instanceof IllegalArgumentException){
+                clientService.onError(e, e.getMessage());
             } else {
                 log.error("tcp client error", e);
                 clientService.onError(e, "未知错误");

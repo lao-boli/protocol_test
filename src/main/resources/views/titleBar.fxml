@@ -6,7 +6,7 @@
 <?import javafx.scene.text.Font?>
 <BorderPane fx:id="titleBar" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onMouseMoved="#initDrag" prefHeight="26.0" prefWidth="620.0" styleClass="root" stylesheets="@../css/titleBar.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.hqu.lly.view.controller.TitleBarController">
     <left>
-        <Label fx:id="titleLabel" layoutX="8.0" layoutY="1.0" prefHeight="25.0" prefWidth="91.0" styleClass="title" stylesheets="@../css/titleBar.css" text="title" textFill="#f4f3f3" textOverrun="CENTER_ELLIPSIS" />
+        <Label fx:id="titleLabel" graphicTextGap="6.0" layoutX="8.0" layoutY="1.0" prefHeight="25.0" prefWidth="165.0" styleClass="title" stylesheets="@../css/titleBar.css" text="title" textFill="#f4f3f3" textOverrun="CENTER_ELLIPSIS" />
     </left>
     <right>
       <HBox prefHeight="26.0">

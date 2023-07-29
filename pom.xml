@@ -6,7 +6,7 @@
 
     <groupId>org.hqu.lly</groupId>
     <artifactId>protocol_test</artifactId>
-    <version>0.1.0-beta</version>
+    <version>0.2.0-beta</version>
 
     <properties>
         <maven.compiler.source>15</maven.compiler.source>
@@ -28,6 +28,24 @@
             <groupId>com.github.mouse0w0</groupId>
             <artifactId>darculafx</artifactId>
             <version>1.0.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.openjdk.nashorn</groupId>
+            <artifactId>nashorn-core</artifactId>
+            <version>15.4</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.graalvm.js</groupId>
+            <artifactId>js</artifactId>
+            <version>22.0.0.2</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.graalvm.js</groupId>
+            <artifactId>js-scriptengine</artifactId>
+            <version>22.0.0.2</version>
         </dependency>
 
         <dependency>
@@ -124,21 +142,21 @@
 
         </plugins>
     </build>
-<!--
-        <build>
-            <plugins>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.8.1</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.openjfx</groupId>
-                    <artifactId>javafx-maven-plugin</artifactId>
-                    <version>0.0.5</version>
-                </plugin>
-            </plugins>
-        </build>
+    <!--
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-compiler-plugin</artifactId>
+                        <version>3.8.1</version>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.openjfx</groupId>
+                        <artifactId>javafx-maven-plugin</artifactId>
+                        <version>0.0.5</version>
+                    </plugin>
+                </plugins>
+            </build>
 
--->
-    </project>
+    -->
+</project>

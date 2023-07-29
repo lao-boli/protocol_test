@@ -2,9 +2,14 @@ package org.hqu.lly.domain.component;
 
 import io.netty.util.CharsetUtil;
 import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ChangeListener;
 import javafx.geometry.Bounds;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
 import javafx.scene.control.Tooltip;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
@@ -35,6 +40,7 @@ import static org.hqu.lly.utils.MsgUtil.*;
 @Data
 public class MsgLabel extends TextFlow {
 
+
     /**
      * 消息类型枚举
      */
@@ -53,7 +59,10 @@ public class MsgLabel extends TextFlow {
         COMMON
     }
 
-    private BooleanProperty wrapText;
+    /**
+     * listview的msgLabel所在cell
+     */
+    private ListCell cell;
 
     private Text timeText;
 
@@ -74,6 +83,18 @@ public class MsgLabel extends TextFlow {
 
     private Tooltip warnTip = new Tooltip("");
 
+    //region properties
+    private BooleanProperty showTime;
+    private BooleanProperty showLength;
+    private BooleanProperty showHost;
+    private BooleanProperty showMsg;
+    private BooleanProperty showWarn;
+
+    private ObjectProperty<DataType> toType;
+    //endregion
+
+    private DataType curType = DataType.PLAIN_TEXT;
+
     /**
      * 普通消息构造器
      *
@@ -81,12 +102,9 @@ public class MsgLabel extends TextFlow {
      * @date 2023-03-25 21:27
      */
     public MsgLabel(String msg) {
-        super();
+        this(Type.COMMON);
         initTimeText();
-        this.hostText = new Text();
-        this.lengthText = new Text();
         initMsgText(msg);
-        this.getChildren().addAll(this.timeText, this.hostText, this.lengthText, this.msgText);
     }
 
     /**
@@ -97,22 +115,107 @@ public class MsgLabel extends TextFlow {
      * @param msg  消息内容
      */
     public MsgLabel(Type type, String host, String msg) {
-        super();
-        this.type = type;
+        this(type);
         initTimeText();
         initHostText(host);
         initLengthText(msg);
         initMsgText(msg);
-        this.getChildren().addAll(this.timeText, this.hostText, this.lengthText, this.msgText);
     }
 
+    private MsgLabel(Type type) {
+        super();
+        this.type = type;
+        this.timeText = new Text();
+        this.hostText = new Text();
+        this.lengthText = new Text();
+        this.msgText = new Text();
+        this.getChildren().addAll(this.timeText, this.hostText, this.lengthText, this.msgText);
+        showTime = new SimpleBooleanProperty(true);
+        showHost = new SimpleBooleanProperty(true);
+        showLength = new SimpleBooleanProperty(true);
+        showMsg = new SimpleBooleanProperty(true);
+        showWarn = new SimpleBooleanProperty(false);
+        toType = new SimpleObjectProperty<>(DataType.PLAIN_TEXT);
+        toType.addListener((observable, oldValue, newValue) -> {
+            convertTo(newValue);
+
+        });
+        setOnShowChange();
+    }
+
+    public String getText(boolean time, boolean host, boolean length, boolean msg) {
+        StringBuilder sb = new StringBuilder();
+        if (time){
+            sb.append(timeText.getText());
+        }
+        if (host){
+            sb.append(hostText.getText());
+        }
+        if (length){
+            sb.append(lengthText.getText());
+        }
+        if (msg){
+            sb.append(msgText.getText());
+        }
+        return sb.toString();
+    }
+
+    public String getText() {
+        return getText(showTime.get(), showHost.get(), showLength.get(),showMsg.get());
+    }
+
+    public void bindFlag(BooleanProperty time, BooleanProperty host, BooleanProperty length, BooleanProperty msg) {
+        showTime.bind(time);
+        showHost.bind(host);
+        showLength.bind(length);
+        showMsg.bind(msg);
+    }
+
+    public void setCell(ListCell cell) {
+        this.cell = cell;
+
+        convertTo(toType.get());
+        if (showWarn.get()){
+            cell.setGraphic(warn);
+        }else {
+            // must be done, or cause strange display issue
+            cell.setGraphic(null);
+        }
+    }
+
+    private void setOnShowChange() {
+        // show flag 改变时重设cell的text
+        ChangeListener<Boolean> listener = (observable, oldValue, newValue) -> cell.setText(getText());
+        showLength.addListener(listener);
+        showTime.addListener(listener);
+        showHost.addListener(listener);
+        showMsg.addListener(listener);
+
+        showWarn.addListener((observable, oldValue, newValue) -> {
+            if (warn == null) {
+                initWarn();
+            }
+            if (newValue){
+                if (cell != null){
+                    cell.setGraphic(warn);
+                }
+            }else {
+                cell.setGraphic(null);
+            }
+        });
+    }
+
+    // region init text
     private void initTimeText() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
         String time = LocalDateTime.now().format(formatter) + " ";
-        this.timeText = new Text(time);
+        this.timeText.setText(time);
     }
 
     private void initHostText(String host) {
+        if (host == null){
+            return;
+        }
         StringBuilder sb = new StringBuilder();
         if (Type.SEND.equals(type)) {
             sb.append("---> ");
@@ -121,60 +224,58 @@ public class MsgLabel extends TextFlow {
             sb.append("<--- ");
         }
         sb.append(host).append(" :");
-        this.hostText = new Text(sb.toString());
+        this.hostText.setText(sb.toString());
+    }
+
+    private void initLengthText(String msg) {
+        this.lengthText.setText("[" + CommonUtil.getRealLength(msg) + "字节] ");
     }
 
     private void initMsgText(String msg) {
-        this.msgText = new Text(msg);
+        this.msgText.setText(msg);
         msgBytes = msg.getBytes(CharsetUtil.UTF_8);
+    }
+    // endregion
+
+    /**
+     * 初始化警告图标
+     *
+     * @date 2023-04-04 19:18
+     * @since 0.2.0
+     */
+    private void initWarn() {
+        warn = new Label();
+        warn.setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
+        warn.setGraphic(new WarnIcon());
+        warn.setStyle("-fx-padding: 0 5 0 0");
+
+        UIUtil.setTooltip(warn, warnTip, event -> {
+            // 设置提示显示位置
+            Bounds bounds = warn.localToScreen(warn.getBoundsInLocal());
+            warnTip.show(warn, bounds.getMinX(), bounds.getMinY() - 40);
+        });
+
     }
 
     public String getFullText() {
         return timeText.getText() + hostText.getText() + lengthText.getText() + msgText.getText();
     }
 
-    private void initLengthText(String msg) {
-        this.lengthText = new Text("[" + CommonUtil.getRealLength(msg) + "字节] ");
-    }
-
-    public void showTime(boolean showTime) {
-        timeText.setVisible(showTime);
-        timeText.setManaged(showTime);
-    }
-
-    public void showLength(boolean showLength) {
-        lengthText.setVisible(showLength);
-        lengthText.setManaged(showLength);
-    }
-
-    public void showHost(boolean showHost) {
-        hostText.setVisible(showHost);
-        hostText.setManaged(showHost);
-    }
-
-    public void showMsg(boolean showMsg) {
-        msgText.setVisible(showMsg);
-        msgText.setManaged(showMsg);
-    }
-
-    public void showWarn(boolean show) {
-        if (warn == null) {
-            initWarn();
-            this.getChildren().add(0, warn);
-        }
-        warn.setVisible(show);
-        warn.setManaged(show);
-    }
-
     /**
-     * 将消息字节数组转换成 {@link DataType}中的各种格式.
+     * 将消息字节数组转换成 {@link DataType}中的各种格式.<br>
+     * 并设置cell中的text.
      *
      * @param to 格式类型
      * @date 2023-04-03 21:20
      * @since 0.2.0
      */
     public void convertTo(DataType to) {
-        showWarn(false);
+        if (curType.equals(to)) {
+            return;
+        }
+
+        // start convert
+        showWarn.setValue(false);
 
         String result = new String(msgBytes, CharsetUtil.UTF_8);
         result = switch (to) {
@@ -187,7 +288,7 @@ public class MsgLabel extends TextFlow {
                     // 非法base64字符就将其当做plainText返回
                     log.warn(e.toString());
                     warnTip.setText("转码Base64失败,\n数据将以普通文本显示");
-                    showWarn(true);
+                    showWarn.setValue(true);
                     yield result;
                 }
             }
@@ -197,33 +298,19 @@ public class MsgLabel extends TextFlow {
                 } catch (Exception e) {
                     // 非法json字符就将其当做plainText返回
                     log.warn(e.toString());
-                    showWarn(true);
+                    showWarn.setValue(true);
                     warnTip.setText("转码Json失败,\n数据将以普通文本显示");
                     yield result;
                 }
             }
         };
+        //end convert
+
+        curType = to;
         msgText.setText(result);
-    }
-
-    /**
-     * 初始化警告图标
-     *
-     * @date 2023-04-04 19:18
-     * @since 0.2.0
-     */
-    public void initWarn() {
-        warn = new Label();
-        warn.setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
-        warn.setGraphic(new WarnIcon());
-        warn.setStyle("-fx-padding: 0 5 0 0");
-
-        UIUtil.setTooltip(warn, warnTip,event -> {
-            // 设置提示显示位置
-            Bounds bounds = warn.localToScreen(warn.getBoundsInLocal());
-            warnTip.show(warn, bounds.getMinX(), bounds.getMinY() - 40);
-        });
-
+        if (cell != null){
+            cell.setText(getText());
+        }
     }
 
 }

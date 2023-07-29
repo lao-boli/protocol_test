@@ -2,13 +2,17 @@ package org.hqu.lly.factory;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Tab;
+import org.hqu.lly.domain.component.MyAlert;
 import org.hqu.lly.domain.component.TitleTab;
 import org.hqu.lly.domain.config.Config;
 import org.hqu.lly.domain.config.ServerSessionConfig;
 import org.hqu.lly.view.controller.BaseServerController;
 
 import java.io.IOException;
+import java.util.Optional;
 
 /**
  * <p>
@@ -47,7 +51,11 @@ public class BaseServerTabFactory<T extends BaseServerController<?>> extends Bas
             controller.init((ServerSessionConfig) config);
 
             tab.setContent(contentPane);
-            tab.setOnClosed(event -> (controller).destroy());
+            tab.setOnCloseRequest(() -> {
+                Optional<ButtonType> result = new MyAlert(Alert.AlertType.CONFIRMATION, "提示", "关闭标签页后将丢失本标签页的数据以及配置文件,是否继续?").showAndWait();
+                return result.get().equals(ButtonType.OK);
+            });
+            tab.setOnClosed((controller)::destroy);
 
         } catch (IOException e) {
             e.printStackTrace();

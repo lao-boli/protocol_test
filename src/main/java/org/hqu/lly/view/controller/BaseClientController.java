@@ -13,10 +13,7 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.hqu.lly.domain.base.BaseClient;
 import org.hqu.lly.domain.component.MsgLabel;
-import org.hqu.lly.domain.config.ClientSessionConfig;
-import org.hqu.lly.domain.config.ConfigStore;
-import org.hqu.lly.domain.config.CustomDataConfig;
-import org.hqu.lly.domain.config.SendSettingConfig;
+import org.hqu.lly.domain.config.*;
 import org.hqu.lly.enums.ConfigType;
 import org.hqu.lly.exception.UnSetBoundException;
 import org.hqu.lly.factory.SendSettingPaneFactory;
@@ -26,6 +23,7 @@ import org.hqu.lly.service.ScheduledTaskService;
 import org.hqu.lly.service.impl.ClientService;
 import org.hqu.lly.service.impl.ScheduledSendService;
 import org.hqu.lly.utils.DataUtil;
+import org.hqu.lly.utils.JSParser;
 import org.hqu.lly.utils.MsgUtil;
 
 import java.net.URI;
@@ -106,7 +104,6 @@ public abstract class BaseClientController<T extends BaseClient> extends CommonU
     }
 
 
-
     /**
      * <p>
      * 为当前controller设置协议
@@ -129,7 +126,12 @@ public abstract class BaseClientController<T extends BaseClient> extends CommonU
     @FXML
     void confirmAddr(MouseEvent event) {
         URI uri = URI.create(protocol + remoteAddressInput.getText());
-        client.setURI(uri);
+        try {
+            client.setURI(uri);
+        } catch (IllegalArgumentException e) {
+            errorMsgLabel.setText(e.getMessage());
+            return;
+        }
         client.setService(new BaseClientService());
 
         FutureTask<Channel> channel = new FutureTask<>(client);
@@ -191,6 +193,17 @@ public abstract class BaseClientController<T extends BaseClient> extends CommonU
         } catch (UnSetBoundException e) {
             log.warn(e.getMessage());
             Platform.runLater(() -> errorMsgLabel.setText("未定义数据边界!"));
+        }
+        // js mode
+        if (sendSettingConfig.isJSMode()) {
+            JSCodeConfig jsCodeConfig = sendSettingConfig.getJsCodeConfig();
+            Object res = JSParser.evalScript(jsCodeConfig.getEngine(), jsCodeConfig.getScript());
+            String msg = res == null ? "" : res.toString();
+            if (sendMsgType == HEX) {
+                client.sendMessage(MsgUtil.convertText(HEX, PLAIN_TEXT, msg));
+            } else {
+                client.sendMessage(msg);
+            }
         }
     }
 
@@ -257,7 +270,9 @@ public abstract class BaseClientController<T extends BaseClient> extends CommonU
     protected void setActiveUI() {
         Platform.runLater(() -> {
             remoteAddressInput.setDisable(true);
-            msgInput.setDisable(false);
+            if (sendSettingConfig.isTextMode()){
+                msgInput.setDisable(false);
+            }
             connectButton.setDisable(true);
             disconnectButton.setDisable(false);
             sendMsgButton.setDisable(false);
@@ -284,6 +299,8 @@ public abstract class BaseClientController<T extends BaseClient> extends CommonU
         // 多格式设置
         setupSendFormatBtn();
         setupRecvFormatBtn();
+
+        setupMsgList();
 
         // 消息上下文菜单
         msgList.setContextMenu(getMsgListMenu(msgList));
@@ -317,10 +334,10 @@ public abstract class BaseClientController<T extends BaseClient> extends CommonU
 
         // 发送模式改变时的回调
         sendSettingConfig.setOnModeChange(() -> {
-            if (sendSettingConfig.isTextMode()) {
+            if (sendSettingConfig.isTextMode()  && client.isActive()) {
                 Platform.runLater(() -> msgInput.setDisable(false));
             }
-            if (sendSettingConfig.isCustomMode()) {
+            if (sendSettingConfig.isCustomMode() || sendSettingConfig.isJSMode()) {
                 Platform.runLater(() -> msgInput.setDisable(true));
             }
         });
@@ -352,12 +369,13 @@ public abstract class BaseClientController<T extends BaseClient> extends CommonU
     public void init() {
 
     }
+
     @Override
     public void init(ClientSessionConfig config) {
         ConfigStore.controllers.add(this);
         if (config == null) {
             clientConfig = (ClientSessionConfig) ConfigStore.createConfig(ConfigType.CLIENT);
-        }else {
+        } else {
             clientConfig = config;
             tabTitle.setText(config.getTabName());
             remoteAddressInput.setText(config.getServerAddr());
@@ -413,7 +431,7 @@ public abstract class BaseClientController<T extends BaseClient> extends CommonU
      * 3.发送设置.
      * </p>
      *
-     *  @date 2023-07-05 20:15
+     * @date 2023-07-05 20:15
      */
     @Override
     public void save() {

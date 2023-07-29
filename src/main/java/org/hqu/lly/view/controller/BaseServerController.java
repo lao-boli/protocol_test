@@ -27,9 +27,7 @@ import org.hqu.lly.service.MyInitialize;
 import org.hqu.lly.service.ScheduledTaskService;
 import org.hqu.lly.service.impl.ScheduledSendService;
 import org.hqu.lly.service.impl.ServerService;
-import org.hqu.lly.utils.DataUtil;
-import org.hqu.lly.utils.MsgUtil;
-import org.hqu.lly.utils.UIUtil;
+import org.hqu.lly.utils.*;
 
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -188,6 +186,12 @@ public abstract class BaseServerController<T> extends CommonUIContorller impleme
 
     @FXML
     void startServer(MouseEvent event) {
+        try {
+            ValidateUtil.checkPort(serverPort.getText());
+        } catch (IllegalArgumentException e) {
+            errorMsgLabel.setText(e.getMessage());
+            return;
+        }
         int port = Integer.parseInt(serverPort.getText());
         server.setPort(port);
         server.setService(serverService);
@@ -199,7 +203,7 @@ public abstract class BaseServerController<T> extends CommonUIContorller impleme
 
     @FXML
     void closeServer(MouseEvent event) {
-        destroy();
+        destroyTask();
         setInactiveUI();
     }
 
@@ -224,7 +228,9 @@ public abstract class BaseServerController<T> extends CommonUIContorller impleme
     protected void setActiveUI() {
         Platform.runLater(() -> {
             serverPort.setDisable(true);
-            msgInput.setDisable(false);
+            if (sendSettingConfig.isTextMode()){
+                msgInput.setDisable(false);
+            }
             confirmButton.setDisable(true);
             closeServerButton.setDisable(false);
         });
@@ -233,7 +239,9 @@ public abstract class BaseServerController<T> extends CommonUIContorller impleme
     protected void setInactiveUI() {
         Platform.runLater(() -> {
             serverPort.setDisable(false);
-            msgInput.setDisable(true);
+            if (!server.isActive()){
+                msgInput.setDisable(true);
+            }
             confirmButton.setDisable(false);
             closeServerButton.setDisable(true);
             sendMsgButton.setDisable(true);
@@ -253,6 +261,7 @@ public abstract class BaseServerController<T> extends CommonUIContorller impleme
         }
 
         if (!targetClientSet.isEmpty()) {
+            // text mode
             targetClientSet.forEach((client) -> {
                 String text = msgInput.getText();
                 if (sendSettingConfig.isTextMode()) {
@@ -263,20 +272,31 @@ public abstract class BaseServerController<T> extends CommonUIContorller impleme
                     }
                 }
 
+                // custom mode
                 try {
                     if (sendSettingConfig.isCustomMode()) {
                         CustomDataConfig customDataConfig = sendSettingConfig.getCustomDataConfig();
                         String msg = DataUtil.createMsg(customDataConfig.getCustomDataPattern(), customDataConfig.getBoundList());
                         if (sendMsgType == HEX) {
-                            server.sendMessage(MsgUtil.convertText(HEX, PLAIN_TEXT, text), client);
+                            server.sendMessage(MsgUtil.convertText(HEX, PLAIN_TEXT, msg), client);
                         } else {
-                            server.sendMessage(text, client);
+                            server.sendMessage(msg, client);
                         }
-                        server.sendMessage(msg, client);
                     }
                 } catch (UnSetBoundException e) {
                     log.warn(e.getMessage());
                     Platform.runLater(() -> errorMsgLabel.setText("未定义数据边界!"));
+                }
+
+                // js mode
+                if (sendSettingConfig.isJSMode()) {
+                    Object res = JSParser.evalScript(sendSettingConfig.getJsCodeConfig().getEngine(),sendSettingConfig.getJsCodeConfig().getScript());
+                    String msg = res == null ? "" : res.toString();
+                    if (sendMsgType == HEX) {
+                        server.sendMessage(MsgUtil.convertText(HEX, PLAIN_TEXT, msg),client);
+                    } else {
+                        server.sendMessage(msg,client);
+                    }
                 }
             });
         }
@@ -307,6 +327,18 @@ public abstract class BaseServerController<T> extends CommonUIContorller impleme
     }
 
     /**
+     * 销毁server并在做一些清理工作
+     *  @date 2023-07-12 20:16
+     */
+    public void destroyTask() {
+        // 如果有定时任务正在执行,则取消
+        if (scheduledService != null && scheduledService.isRunning()) {
+            scheduledService.cancel();
+            scheduleSendBtn.setSelected(false);
+        }
+        server.destroy();
+    }
+    /**
      * <p>
      * 标签页关闭前的回调函数。<br>
      * 负责取消定时任务以及关闭服务端连接。
@@ -315,15 +347,9 @@ public abstract class BaseServerController<T> extends CommonUIContorller impleme
      * @date 2023-02-06 12:27:58 <br>
      */
     public void destroy() {
-        // 如果有定时任务正在执行,则取消
-        if (scheduledService != null && scheduledService.isRunning()) {
-            scheduledService.cancel();
-            scheduleSendBtn.setSelected(false);
-        }
-        server.destroy();
+        destroyTask();
         ConfigStore.controllers.remove(this);
         ConfigStore.removeSessionConfig(serverConfig.getId());
-        destroyed = true;
     }
 
 
@@ -337,6 +363,7 @@ public abstract class BaseServerController<T> extends CommonUIContorller impleme
         // 多格式设置
         setupSendFormatBtn();
         setupRecvFormatBtn();
+        setupMsgList();
         // 消息上下文菜单
         msgList.setContextMenu(UIUtil.getMsgListMenu(msgList));
         clientListBox.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
@@ -395,10 +422,10 @@ public abstract class BaseServerController<T> extends CommonUIContorller impleme
         sendSettingConfig.getScheduledSendConfig().setTaskFactory(new SendTaskFactory(this::sendMsg));
 
         sendSettingConfig.setOnModeChange(() -> {
-            if (sendSettingConfig.isTextMode()) {
+            if (sendSettingConfig.isTextMode() && server.isActive()) {
                 Platform.runLater(() -> msgInput.setDisable(false));
             }
-            if (sendSettingConfig.isCustomMode()) {
+            if (sendSettingConfig.isCustomMode() || sendSettingConfig.isJSMode()) {
                 Platform.runLater(() -> msgInput.setDisable(true));
             }
         });
@@ -423,6 +450,7 @@ public abstract class BaseServerController<T> extends CommonUIContorller impleme
         serverConfig.setTabName(tabTitle.getText());
         serverConfig.setMsgInput(msgInput.getText());
         serverConfig.setPort(serverPort.getText());
+        serverConfig.setSendSettingConfig(sendSettingConfig);
     }
 
     /**

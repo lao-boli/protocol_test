@@ -1,12 +1,14 @@
 package org.hqu.lly.view.controller;
 
-import javafx.application.Platform;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
 import javafx.geometry.Side;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Region;
 import lombok.extern.slf4j.Slf4j;
 import org.hqu.lly.domain.component.MessagePopup;
 import org.hqu.lly.domain.component.MsgLabel;
@@ -15,7 +17,6 @@ import org.hqu.lly.utils.MsgUtil;
 import org.hqu.lly.utils.UIUtil;
 
 import static org.hqu.lly.enums.DataType.*;
-import static org.hqu.lly.utils.UIUtil.getFixMsgLabelWidth;
 
 /**
  * <p>
@@ -32,7 +33,7 @@ public abstract class CommonUIContorller extends BaseController {
     /**
      * 接收消息的格式类型
      */
-    protected DataType recvMsgType = PLAIN_TEXT;
+    protected ObjectProperty<DataType> recvMsgType = new SimpleObjectProperty<>(PLAIN_TEXT);
 
     protected DataType sendMsgType = PLAIN_TEXT;
 
@@ -52,7 +53,7 @@ public abstract class CommonUIContorller extends BaseController {
     /**
      * 长文本是否换行flag
      */
-    protected boolean softWrap = false;
+    protected BooleanProperty softWrap = new SimpleBooleanProperty(false);
     @FXML
     protected Button recvFormatBtn;
     @FXML
@@ -83,19 +84,15 @@ public abstract class CommonUIContorller extends BaseController {
     protected void setupDisplaySetting() {
         RadioMenuItem time = new RadioMenuItem("时间");
         time.setSelected(true);
-        time.setOnAction(event -> msgList.getItems().forEach(item -> item.showTime(time.isSelected())));
 
         RadioMenuItem host = new RadioMenuItem("主机");
         host.setSelected(true);
-        host.setOnAction(event -> msgList.getItems().forEach(item -> item.showHost(host.isSelected())));
 
         RadioMenuItem length = new RadioMenuItem("消息长度");
         length.setSelected(true);
-        length.setOnAction(event -> msgList.getItems().forEach(item -> item.showLength(length.isSelected())));
 
         RadioMenuItem msg = new RadioMenuItem("消息内容");
         msg.setSelected(true);
-        msg.setOnAction(event -> msgList.getItems().forEach(item -> item.showMsg(msg.isSelected())));
 
         ContextMenu contextMenu = new ContextMenu(time, host, length, msg);
         displaySettingBtn.setContextMenu(contextMenu);
@@ -103,26 +100,12 @@ public abstract class CommonUIContorller extends BaseController {
             contextMenu.show(displaySettingBtn, Side.BOTTOM, 0, 0);
         });
 
-        msgList.widthProperty().addListener((observable, oldValue, newValue) -> {
-            if (softWrap) {
-                Platform.runLater(() -> msgList.getItems().forEach(msgLabel -> msgLabel.setPrefWidth(getFixMsgLabelWidth(newValue.doubleValue()))));
-            }
-        });
-
         msgList.getItems().addListener((ListChangeListener<MsgLabel>) c -> {
             while (c.next()) {
                 if (c.wasAdded()) {
                     c.getAddedSubList().forEach(label -> {
-                        label.showTime(time.isSelected());
-                        label.showHost(host.isSelected());
-                        label.showLength(length.isSelected());
-                        label.showMsg(msg.isSelected());
-
-                        if (softWrap) {
-                            label.setPrefWidth(getFixMsgLabelWidth(msgList.getWidth()));
-                        }
-
-                        label.convertTo(recvMsgType);
+                        label.bindFlag(time.selectedProperty(),host.selectedProperty(),length.selectedProperty(),msg.selectedProperty());
+                        label.getToType().bind(recvMsgType);
                     });
                 }
             }
@@ -144,8 +127,8 @@ public abstract class CommonUIContorller extends BaseController {
             }
             DataType from = (DataType) oldValue.getUserData();
             DataType to = (DataType) newValue.getUserData();
-            msgList.getItems().forEach(msgLabel -> msgLabel.convertTo(to));
-            recvMsgType = to;
+            // msgList.getItems().forEach(msgLabel -> msgLabel.convertTo(to));
+            recvMsgType.setValue(to);
         });
         setupFormatBtn(toggleGroup, recvFormatBtn);
     }
@@ -175,11 +158,42 @@ public abstract class CommonUIContorller extends BaseController {
                 toggleGroup.selectToggle(oldValue);
                 sendMsgType = from;
 
-                new MessagePopup(e.toString()).showPopup();
+                new MessagePopup(MessagePopup.Type.ERROR,e.toString()).showPopup();
             }
             msgInput.setText(converted);
         });
         setupFormatBtn(toggleGroup, sendFormatBtn);
+    }
+
+
+    protected void setupMsgList() {
+
+        msgList.setCellFactory(param -> new ListCell<>() {
+            @Override
+            protected void updateItem(MsgLabel item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setGraphic(null);
+                    setText(null);
+                } else {
+                    wrapTextProperty().bind(softWrap);
+                    wrapTextProperty().addListener((observable, oldValue, newValue) -> {
+                        if (newValue) {
+                            setMinWidth(100);
+                            setMaxWidth(100);
+                            setPrefWidth(100);
+                        } else {
+                            setMinWidth(-1);
+                            setMaxWidth(-1);
+                            setPrefWidth(-1);
+                        }
+
+                    });
+                    item.setCell(this);
+                    setText(item.getText());
+                }
+            }
+        });
     }
 
 
@@ -218,9 +232,7 @@ public abstract class CommonUIContorller extends BaseController {
 
     @FXML
     protected void handleSoftWrap(MouseEvent event) {
-        softWrap = !softWrap;
-        double labelWidth = softWrap ? getFixMsgLabelWidth(msgList.getWidth()) : Region.USE_COMPUTED_SIZE;
-        Platform.runLater(() -> msgList.getItems().forEach(msgLabel -> msgLabel.setPrefWidth(labelWidth)));
+        softWrap.setValue(!softWrap.get());
     }
 
 }

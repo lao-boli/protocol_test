@@ -9,6 +9,19 @@
     -fx-padding: 4 0 4 0;
 }
 
+.icon-close-bold {
+    -fx-background-color: #a9a9a9;
+}
+.icon-close-bold:hover {
+    -fx-background-color: #828282;
+}
+.icon-close {
+    -fx-background-color: #a9a9a9;
+}
+.icon-close:hover {
+    -fx-background-color: #828282;
+}
+
 .tooltip {
     -fx-text-fill: #bbbbbb;
     -fx-background-color: #4b4d4d;

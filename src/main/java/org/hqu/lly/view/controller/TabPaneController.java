@@ -65,8 +65,6 @@ public class TabPaneController extends BaseController implements Initializable {
         }
     }
 
-    // XXX 待优化两个创建新标签页的方法实现
-
     /**
      * <p>
      * 创建一个默认的新标签页
@@ -75,12 +73,7 @@ public class TabPaneController extends BaseController implements Initializable {
      * @date 2023-02-05 20:09:11 <br>
      */
     public void createNewTab() {
-        Tab tab = tabFactory.create(null);
-
-        mainTabPane.getTabs().add(mainTabPane.getTabs().size() - 1, tab);
-
-        // 切换到新添加的标签页
-        mainTabPane.getSelectionModel().select(tab);
+        createNewTab((SessionConfig)null);
     }
 
     /**
