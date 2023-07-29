@@ -2,13 +2,9 @@ package org.hqu.lly;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
-import javafx.scene.text.Text;
-import javafx.scene.text.TextFlow;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.hqu.lly.constant.ResLoc;
@@ -33,54 +29,20 @@ public class App extends Application {
 
         Scene scene = UIUtil.getShadowScene(root, 660, 400);
 
+        // set app logo
+        primaryStage.getIcons().addAll(
+                new Image(ResLoc.APP_ICON_16.toExternalForm()),
+                new Image(ResLoc.APP_ICON_32.toExternalForm()),
+                new Image(ResLoc.APP_ICON_64.toExternalForm()),
+                new Image(ResLoc.APP_ICON_128.toExternalForm()),
+                new Image(ResLoc.APP_ICON_256.toExternalForm())
+        );
+
         ThemeUtil.applyStyle(scene);
         primaryStage.initStyle(StageStyle.TRANSPARENT);
         primaryStage.setScene(scene);
         DragUtil.setDrag(primaryStage, scene.getRoot());
         primaryStage.show();
-        // example(primaryStage);
-
-    }
-
-    public void example(Stage stage) {
-
-        ListView<Node> lv = new ListView<>();
-        for (int i = 0; i < 10; i++) {
-            TextFlow tf = new TextFlow(new Text("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"));
-            // lv.getItems().add("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
-            lv.getItems().add(tf);
-        }
-        lv.setMaxWidth(100);
-        setCellFactory(lv);
-
-        stage.setScene(new Scene(lv,600,400));
-        stage.show();
-    }
-
-    public void setCellFactory(ListView lv) {
-        lv.setCellFactory(param -> {
-            return new ListCell<TextFlow>() {
-                @Override
-                protected void updateItem(TextFlow item, boolean empty) {
-                    super.updateItem(item, empty);
-                    if (empty || item == null) {
-                        setGraphic(null);
-                        setText(null);
-                        // other stuff to do...
-                    } else {
-                        setMinWidth(100);
-                        setMaxWidth(100);
-                        setPrefWidth(100);
-                        System.out.println("update");
-                        // allow wrapping
-                        setWrapText(true);
-                        setText(item.getChildren().get(0).toString());
-                        setGraphic(item);
-
-                    }
-                }
-            };
-        });
 
     }
 

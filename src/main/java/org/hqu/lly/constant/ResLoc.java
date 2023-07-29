@@ -40,6 +40,17 @@ public class ResLoc {
 
     public static final URL STAGING_AREA_CSS = realPath("css/StagingArea.css");
 
+
+    public static final URL APP_ICON_16 = realPath("icon/app/16x16.png");
+    public static final URL APP_ICON_32 = realPath("icon/app/32x32.png");
+    public static final URL APP_ICON_48 = realPath("icon/app/48x48.png");
+
+    public static final URL APP_ICON_64 = realPath("icon/app/64x64.png");
+    public static final URL APP_ICON_96 = realPath("icon/app/96x96.png");
+    public static final URL APP_ICON_128 = realPath("icon/app/128x128.png");
+    public static final URL APP_ICON_256 = realPath("icon/app/256x256.png");
+    public static final URL APP_ICON_512 = realPath("icon/app/512x512.png");
+
     public static final URL ICON = realPath("icon/icon.css");
 
     // region theme
