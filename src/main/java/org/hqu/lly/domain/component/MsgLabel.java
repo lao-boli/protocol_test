@@ -308,9 +308,11 @@ public class MsgLabel extends TextFlow {
 
         curType = to;
         msgText.setText(result);
-        if (cell != null){
-            cell.setText(getText());
-        }
+
+        // no need to call cell.setText(getText());
+        // after converted, cell text will be set
+        // by the call to the updateItem(MsgLabel item, boolean empty) method
+        // caused by the call to msgList.refresh()
     }
 
 }

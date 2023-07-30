@@ -140,7 +140,6 @@ public abstract class CommonUIContorller extends BaseController {
             }
             DataType from = (DataType) oldValue.getUserData();
             DataType to = (DataType) newValue.getUserData();
-            // msgList.getItems().forEach(msgLabel -> msgLabel.convertTo(to));
             recvMsgType.setValue(to);
         });
         setupFormatBtn(toggleGroup, recvFormatBtn);
@@ -183,11 +182,6 @@ public abstract class CommonUIContorller extends BaseController {
 
         msgList.setCellFactory(param -> new ListCell<>() {
             @Override
-            protected void layoutChildren() {
-                super.layoutChildren();
-            }
-
-            @Override
             protected void updateItem(MsgLabel item, boolean empty) {
                 super.updateItem(item, empty);
                 if (empty || item == null) {
@@ -197,10 +191,12 @@ public abstract class CommonUIContorller extends BaseController {
                     wrapTextProperty().bind(softWrap);
                     wrapTextProperty().addListener((observable, oldValue, newValue) -> {
                         if (newValue) {
+                            // set fix width, it will autofill listview, I don't know why,but it works well.
                             setMinWidth(100);
                             setMaxWidth(100);
                             setPrefWidth(100);
                         } else {
+                            // set computed width
                             setMinWidth(-1);
                             setMaxWidth(-1);
                             setPrefWidth(-1);
