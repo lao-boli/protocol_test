@@ -10,10 +10,10 @@
  目前支持udp、tcp、websocket的协议测试。
 ## 预览
 * 服务端预览
-<img src="https://github.com/lao-boli/protocol_test/blob/master/assets/image/preview.png" width="600px">
+<img src="assets/image/prview-server.png" width="600px">
 
 * 客户端预览
-<img src="https://github.com/lao-boli/protocol_test/blob/master/assets/image/preview-client.png" width="600px">
+<img src="assets/image/preview-client.png" width="600px">
 
 ## 项目架构
 * 采用netty框架作为协议的服务端和客户端
@@ -87,7 +87,9 @@ javaw -jar protocol_test-0.1.0-beta.jar
 退出程序时将会弹出保存对话框，点击确认后即可保存配置(收发的历史消息将不会被保存)。  
 下次启动程序时将会自动加载配置。
 #### 工作流预览
-![workflow](https://github.com/lao-boli/protocol_test/blob/master/assets/image/workflow.gif)  
+
+ https://github.com/lao-boli/protocol_test/assets/66947448/3764c423-b5b0-459c-9f5c-6798a8275bcf
+ 
 ## 预计开发功能
 * mqtt协议测试
 * 环境变量配置
