@@ -1,4 +1,7 @@
-# 网络协议测试工具
+<img src="assets/logo/logo.svg" width="80" height="80" alt="icon" align="left"/>
+
+网络协议测试工具
+===
 ## 简介
  简单、易用、快速的多网络协议集成测试工具。  
 本软件为每种协议分别提供服务端支持和客户端支持。旨在为物联网行业系统开发者提供快速的数据传输验证。  
@@ -7,17 +10,18 @@
  目前支持udp、tcp、websocket的协议测试。
 ## 预览
 * 服务端预览
-<img src="https://github.com/lao-boli/protocol_test/blob/master/assets/image/preview.png" width="600px">
+<img src="assets/image/prview-server.png" width="600px">
 
 * 客户端预览
-<img src="https://github.com/lao-boli/protocol_test/blob/master/assets/image/preview-client.png" width="600px">
+<img src="assets/image/preview-client.png" width="600px">
 
 ## 项目架构
 * 采用netty框架作为协议的服务端和客户端
 * 采用javafx编写GUI界面
 ## 功能介绍
 * 支持数据定时发送、按次数发送。
-* 支持自定义格式生成随机数据。
+* 支持自定义格式以及使用JavaScript生成随机数据。
+* 支持JSON,HEX,Base64的编码转换发送和显示。
 * 支持历史记录保存。
 ## 安装说明
 本项目基于jdk15编写，运行本项目请先安装jdk15。
@@ -29,10 +33,10 @@
 下载release中的压缩包，并解压。  
 解压后将会看到 **run.bat，protocol_test[版本号].jar** 两个文件以及一个 **lib** 文件夹。
 ### 运行
-#### windows用户
+#### windows
 点击run.bat即可运行。
-#### mac用户和linux用户
-在安装目录执行以下命令启动本软件。
+#### mac和linux
+由于javafx是非跨平台的,所以在mac和linux下需要clone源代码后编译成jar包,执行以下命令启动.
 ```
 javaw -jar filename.jar
 ```
@@ -83,10 +87,10 @@ javaw -jar protocol_test-0.1.0-beta.jar
 退出程序时将会弹出保存对话框，点击确认后即可保存配置(收发的历史消息将不会被保存)。  
 下次启动程序时将会自动加载配置。
 #### 工作流预览
-![workflow](https://github.com/lao-boli/protocol_test/blob/master/assets/image/workflow.gif)  
+
+ https://github.com/lao-boli/protocol_test/assets/66947448/3764c423-b5b0-459c-9f5c-6798a8275bcf
+ 
 ## 预计开发功能
-* 对json(格式化)，hex，base64等数据传输格式支持(目前仅支持字符串)
-* 自定义的数据随机规则
 * mqtt协议测试
 * 环境变量配置
 * wss协议测试
