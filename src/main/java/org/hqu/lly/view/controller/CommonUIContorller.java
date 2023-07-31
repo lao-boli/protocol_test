@@ -4,6 +4,7 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ChangeListener;
 import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
 import javafx.geometry.Side;
@@ -82,22 +83,34 @@ public abstract class CommonUIContorller extends BaseController {
      * @date 2023-03-27 19:25
      */
     protected void setupDisplaySetting() {
+        // 修改msgList中的内容时要刷新列表,否则会导致奇怪的显示问题.
+        ChangeListener<Boolean> refreshList = (observable, oldValue, newValue) -> msgList.refresh();
+
         RadioMenuItem time = new RadioMenuItem("时间");
         time.setSelected(true);
+        time.selectedProperty().addListener(refreshList);
 
         RadioMenuItem host = new RadioMenuItem("主机");
         host.setSelected(true);
+        host.selectedProperty().addListener(refreshList);
 
         RadioMenuItem length = new RadioMenuItem("消息长度");
         length.setSelected(true);
+        length.selectedProperty().addListener(refreshList);
 
         RadioMenuItem msg = new RadioMenuItem("消息内容");
         msg.setSelected(true);
+        msg.selectedProperty().addListener(refreshList);
 
         ContextMenu contextMenu = new ContextMenu(time, host, length, msg);
         displaySettingBtn.setContextMenu(contextMenu);
         displaySettingBtn.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
             contextMenu.show(displaySettingBtn, Side.BOTTOM, 0, 0);
+        });
+
+        // 进行消息类型转换时要刷新列表,否则会导致奇怪的显示问题.
+        recvMsgType.addListener((observable, oldValue, newValue) -> {
+            msgList.refresh();
         });
 
         msgList.getItems().addListener((ListChangeListener<MsgLabel>) c -> {
@@ -127,7 +140,6 @@ public abstract class CommonUIContorller extends BaseController {
             }
             DataType from = (DataType) oldValue.getUserData();
             DataType to = (DataType) newValue.getUserData();
-            // msgList.getItems().forEach(msgLabel -> msgLabel.convertTo(to));
             recvMsgType.setValue(to);
         });
         setupFormatBtn(toggleGroup, recvFormatBtn);
@@ -179,10 +191,12 @@ public abstract class CommonUIContorller extends BaseController {
                     wrapTextProperty().bind(softWrap);
                     wrapTextProperty().addListener((observable, oldValue, newValue) -> {
                         if (newValue) {
+                            // set fix width, it will autofill listview, I don't know why,but it works well.
                             setMinWidth(100);
                             setMaxWidth(100);
                             setPrefWidth(100);
                         } else {
+                            // set computed width
                             setMinWidth(-1);
                             setMaxWidth(-1);
                             setPrefWidth(-1);
