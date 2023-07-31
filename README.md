@@ -1,4 +1,7 @@
-# 网络协议测试工具
+<img src="assets/logo/logo.svg" width="80" height="80" alt="icon" align="left"/>
+
+网络协议测试工具
+===
 ## 简介
  简单、易用、快速的多网络协议集成测试工具。  
 本软件为每种协议分别提供服务端支持和客户端支持。旨在为物联网行业系统开发者提供快速的数据传输验证。  
@@ -17,7 +20,8 @@
 * 采用javafx编写GUI界面
 ## 功能介绍
 * 支持数据定时发送、按次数发送。
-* 支持自定义格式生成随机数据。
+* 支持自定义格式以及使用JavaScript生成随机数据。
+* 支持JSON,HEX,Base64的编码转换发送和显示。
 * 支持历史记录保存。
 ## 安装说明
 本项目基于jdk15编写，运行本项目请先安装jdk15。
@@ -29,10 +33,10 @@
 下载release中的压缩包，并解压。  
 解压后将会看到 **run.bat，protocol_test[版本号].jar** 两个文件以及一个 **lib** 文件夹。
 ### 运行
-#### windows用户
+#### windows
 点击run.bat即可运行。
-#### mac用户和linux用户
-在安装目录执行以下命令启动本软件。
+#### mac和linux
+由于javafx是非跨平台的,所以在mac和linux下需要clone源代码后编译成jar包,执行以下命令启动.
 ```
 javaw -jar filename.jar
 ```
@@ -85,8 +89,6 @@ javaw -jar protocol_test-0.1.0-beta.jar
 #### 工作流预览
 ![workflow](https://github.com/lao-boli/protocol_test/blob/master/assets/image/workflow.gif)  
 ## 预计开发功能
-* 对json(格式化)，hex，base64等数据传输格式支持(目前仅支持字符串)
-* 自定义的数据随机规则
 * mqtt协议测试
 * 环境变量配置
 * wss协议测试
