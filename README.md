@@ -90,11 +90,11 @@ If it is confirmed that the UDP client has been shut down, please manually clear
 #### Save
 When exiting the program, a save dialog box will pop up. Click OK to save the configuration (historical messages sent and received will not be saved).
 The configuration will be automatically loaded the next time the program is started.
-#### workflow preview
+#### Workflow Preview
 
  https://github.com/lao-boli/protocol_test/assets/66947448/3764c423-b5b0-459c-9f5c-6798a8275bcf
  
-## future
+## Future
 * environment variables config
 * mqtt protocol test
 * wss protocol test
