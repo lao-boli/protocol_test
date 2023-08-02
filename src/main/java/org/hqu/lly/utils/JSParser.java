@@ -38,9 +38,12 @@ public class JSParser {
     public static void preheat() {
         nashorn.eval("1");
         nashorn.eval("load('" + ResLoc.RANDOM_UTIL + "')");
+        nashorn.eval("load('" + ResLoc.GLOBE_VARIABLE + "')");
         graalCtx.eval("js", "1");
-        Source source = Source.newBuilder("js", ResLoc.RANDOM_UTIL).build();
-        graalCtx.eval(source);
+        Source randomUtil = Source.newBuilder("js", ResLoc.RANDOM_UTIL).build();
+        Source globeVariable = Source.newBuilder("js", ResLoc.GLOBE_VARIABLE).build();
+        graalCtx.eval(randomUtil);
+        graalCtx.eval(globeVariable);
     }
 
 

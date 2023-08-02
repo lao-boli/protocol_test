@@ -57,9 +57,10 @@ public class ResLoc {
     public static final URL IDEA = realPath("css/IdeaDarkStyle.css");
     // endregion
 
-    // js lab
-
+    // js lib
     public static final URL RANDOM_UTIL = realPath("js/random-util.js");
+
+    public static final URL GLOBE_VARIABLE = realPath("js/globe-variable.js");
 
     /**
      * <p>
