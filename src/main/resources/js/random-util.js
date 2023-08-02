@@ -14,7 +14,7 @@ function randInt(low, high, radix) {
 }
 
 /**
- * generate a double number within the specified range
+ * generate a Floating-point arithmetic number of double type within the specified range
  * @param low low bound
  * @param high high bound
  * @returns {*} generated double number
