@@ -24,4 +24,9 @@ public class ClientSessionConfig extends SessionConfig{
         type = ConfigType.CLIENT;
     }
 
+    public String toString() {
+        return this.id;
+
+    }
+
 }

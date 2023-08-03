@@ -40,6 +40,10 @@ public class SessionConfig extends Config {
 
     protected String tabName;
 
+    protected Integer tabOrder;
+
+    protected Boolean tabSelected;
+
     /**
      * 消息框中输入的消息
      */

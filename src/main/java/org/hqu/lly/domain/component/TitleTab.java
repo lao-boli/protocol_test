@@ -44,6 +44,12 @@ public class TitleTab extends Tab {
      * tab页标题
      */
     private String tabTitle;
+
+    /**
+     * 标签页所在顺序
+     */
+    private Integer order;
+
     /**
      * tab页标题输入框
      */

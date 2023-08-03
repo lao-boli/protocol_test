@@ -12,6 +12,7 @@ import javafx.stage.Stage;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.hqu.lly.domain.base.BaseServer;
+import org.hqu.lly.domain.component.TitleTab;
 import org.hqu.lly.domain.config.ConfigStore;
 import org.hqu.lly.domain.config.CustomDataConfig;
 import org.hqu.lly.domain.config.SendSettingConfig;
@@ -73,6 +74,9 @@ public abstract class BaseServerController<T> extends CommonUIContorller impleme
      */
     @Setter
     protected TextField tabTitle;
+
+    @Setter
+    protected TitleTab tab;
     /**
      * netty服务端。<br>
      * 应为 {@link TCPServer}、{@link UDPServer}、{@link WebSocketServer}
@@ -451,6 +455,8 @@ public abstract class BaseServerController<T> extends CommonUIContorller impleme
         serverConfig.setMsgInput(msgInput.getText());
         serverConfig.setPort(serverPort.getText());
         serverConfig.setSendSettingConfig(sendSettingConfig);
+        serverConfig.setTabOrder(tab.getTabPane().getTabs().indexOf(tab));
+        serverConfig.setTabSelected(tab.isSelected());
     }
 
     /**

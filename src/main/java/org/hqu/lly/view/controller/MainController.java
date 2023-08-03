@@ -74,7 +74,7 @@ public class MainController implements Initializable {
             myAlert.initOwner(UIUtil.getPrimaryStage());
             Optional<ButtonType> result = myAlert.showAndWait();
 
-            if(result.get().equals(ButtonType.OK)){
+            if (result.get().equals(ButtonType.OK)) {
                 ConfigStore.save();
             }
 
@@ -129,16 +129,30 @@ public class MainController implements Initializable {
      */
     private void initByConfig() {
         Map<String, SessionConfig> configs = ConfigStore.getSessionConfigs();
-        configs.values().forEach(c -> {
-            switch (c.getPaneType()) {
-                case TCP_SERVER -> managerMap.get(TCP_SERVER).initAndCreateTab(c);
-                case TCP_CLIENT -> managerMap.get(TCP_CLIENT).initAndCreateTab(c);
-                case UDP_SERVER -> managerMap.get(UDP_SERVER).initAndCreateTab(c);
-                case UDP_CLIENT -> managerMap.get(UDP_CLIENT).initAndCreateTab(c);
-                case WS_SERVER -> managerMap.get(WS_SERVER).initAndCreateTab(c);
-                case WS_CLIENT -> managerMap.get(WS_CLIENT).initAndCreateTab(c);
-            }
-        });
+        configs.values().stream()
+                .sorted((o1, o2) -> o1.getTabOrder() - o2.getTabOrder())
+                .forEachOrdered(c -> {
+                    log.info(c.toString());
+                    switch (c.getPaneType()) {
+                        case TCP_SERVER -> managerMap.get(TCP_SERVER).initAndCreateTab(c);
+                        case TCP_CLIENT -> managerMap.get(TCP_CLIENT).initAndCreateTab(c);
+                        case UDP_SERVER -> managerMap.get(UDP_SERVER).initAndCreateTab(c);
+                        case UDP_CLIENT -> managerMap.get(UDP_CLIENT).initAndCreateTab(c);
+                        case WS_SERVER -> managerMap.get(WS_SERVER).initAndCreateTab(c);
+                        case WS_CLIENT -> managerMap.get(WS_CLIENT).initAndCreateTab(c);
+                    }
+                });
+        // configs.values().forEach(c -> {
+        //     log.info(c.toString());
+        //     switch (c.getPaneType()) {
+        //         case TCP_SERVER -> managerMap.get(TCP_SERVER).initAndCreateTab(c);
+        //         case TCP_CLIENT -> managerMap.get(TCP_CLIENT).initAndCreateTab(c);
+        //         case UDP_SERVER -> managerMap.get(UDP_SERVER).initAndCreateTab(c);
+        //         case UDP_CLIENT -> managerMap.get(UDP_CLIENT).initAndCreateTab(c);
+        //         case WS_SERVER -> managerMap.get(WS_SERVER).initAndCreateTab(c);
+        //         case WS_CLIENT -> managerMap.get(WS_CLIENT).initAndCreateTab(c);
+        //     }
+        // });
         log.info("init pane successful");
 
     }

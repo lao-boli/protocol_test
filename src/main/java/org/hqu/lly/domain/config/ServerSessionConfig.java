@@ -26,4 +26,8 @@ public class ServerSessionConfig extends  SessionConfig{
         type = ConfigType.SERVER;
     }
 
+    public String toString() {
+        return this.id;
+    }
+
 }

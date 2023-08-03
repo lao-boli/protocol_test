@@ -48,6 +48,7 @@ public class BaseServerTabFactory<T extends BaseServerController<?>> extends Bas
 
             T controller = loader.getController();
             controller.setTabTitle(tab.getTabTitleField());
+            controller.setTab(tab);
             controller.init((ServerSessionConfig) config);
 
             tab.setContent(contentPane);

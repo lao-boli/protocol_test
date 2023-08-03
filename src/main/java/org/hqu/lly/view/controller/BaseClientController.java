@@ -13,6 +13,7 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.hqu.lly.domain.base.BaseClient;
 import org.hqu.lly.domain.component.MsgLabel;
+import org.hqu.lly.domain.component.TitleTab;
 import org.hqu.lly.domain.config.*;
 import org.hqu.lly.enums.ConfigType;
 import org.hqu.lly.exception.UnSetBoundException;
@@ -90,6 +91,9 @@ public abstract class BaseClientController<T extends BaseClient> extends CommonU
      */
     @Setter
     protected TextField tabTitle;
+
+    @Setter
+    protected TitleTab tab;
 
     @FXML
     private TextField remoteAddressInput;
@@ -439,6 +443,8 @@ public abstract class BaseClientController<T extends BaseClient> extends CommonU
         clientConfig.setTabName(tabTitle.getText());
         clientConfig.setServerAddr(remoteAddressInput.getText());
         clientConfig.setSendSettingConfig(sendSettingConfig);
+        clientConfig.setTabOrder(tab.getTabPane().getTabs().indexOf(tab));
+        clientConfig.setTabSelected(tab.isSelected());
     }
 
 }
