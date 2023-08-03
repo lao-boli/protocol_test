@@ -60,4 +60,18 @@ public class SessionConfig extends Config {
         this.sendSettingConfig = sendSettingConfig;
     }
 
+    public Integer getTabOrder() {
+        if (tabOrder == null){
+            return 0;
+        }
+        return tabOrder;
+    }
+
+    public Boolean getTabSelected() {
+        if (tabSelected == null){
+            return false;
+        }
+        return tabSelected;
+    }
+
 }
