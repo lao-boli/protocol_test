@@ -87,7 +87,12 @@ public class TabPaneController extends BaseController implements Initializable {
         Tab tab = tabFactory.create(config);
 
         mainTabPane.getTabs().add(mainTabPane.getTabs().size() - 1, tab);
-
+        if (config != null){
+            if (config.getTabSelected()){
+                mainTabPane.getSelectionModel().select(tab);
+            }
+            return;
+        }
         // 切换到新添加的标签页
         mainTabPane.getSelectionModel().select(tab);
     }
