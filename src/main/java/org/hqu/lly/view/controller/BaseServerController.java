@@ -17,6 +17,7 @@ import org.hqu.lly.domain.config.ConfigStore;
 import org.hqu.lly.domain.config.CustomDataConfig;
 import org.hqu.lly.domain.config.SendSettingConfig;
 import org.hqu.lly.domain.config.ServerSessionConfig;
+import org.hqu.lly.domain.egg.Egg;
 import org.hqu.lly.enums.ConfigType;
 import org.hqu.lly.exception.UnSetBoundException;
 import org.hqu.lly.factory.SendSettingPaneFactory;
@@ -190,6 +191,7 @@ public abstract class BaseServerController<T> extends CommonUIContorller impleme
 
     @FXML
     void startServer(MouseEvent event) {
+        Egg.egg(serverPort.getText());
         try {
             ValidateUtil.checkPort(serverPort.getText());
         } catch (IllegalArgumentException e) {
