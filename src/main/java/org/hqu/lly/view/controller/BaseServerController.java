@@ -70,12 +70,6 @@ public abstract class BaseServerController<T> extends CommonUIContorller impleme
     @FXML
     protected Button removeClientBtn;
 
-    /**
-     * 当前标签页的标题
-     */
-    @Setter
-    protected TextField tabTitle;
-
     @Setter
     protected TitleTab tab;
     /**
@@ -143,22 +137,6 @@ public abstract class BaseServerController<T> extends CommonUIContorller impleme
         sendSettingConfig = serverConfig.getSendSettingConfig();
     }
 
-    /**
-     * <p>
-     * 通过本地配置文件初始化加载数据
-     * </p>
-     *
-     * @param config 服务端配置文件类
-     * @date 2023-02-06 11:34:25 <br>
-     */
-    public void initByConfig(ServerSessionConfig config) {
-        serverConfig = config;
-        sendSettingConfig = config.getSendSettingConfig();
-        tabTitle.setText(config.getTabName());
-        serverPort.setText(config.getPort());
-        msgInput.setText(config.getMsgInput());
-        initSendSetting();
-    }
 
     /**
      * <p>
@@ -453,10 +431,10 @@ public abstract class BaseServerController<T> extends CommonUIContorller impleme
      */
     @Override
     public void save() {
-        serverConfig.setTabName(tabTitle.getText());
         serverConfig.setMsgInput(msgInput.getText());
         serverConfig.setPort(serverPort.getText());
         serverConfig.setSendSettingConfig(sendSettingConfig);
+        serverConfig.setTabName(tab.getTitle());
         serverConfig.setTabOrder(tab.getTabPane().getTabs().indexOf(tab));
         serverConfig.setTabSelected(tab.isSelected());
     }
@@ -498,7 +476,7 @@ public abstract class BaseServerController<T> extends CommonUIContorller impleme
         } else {
             serverConfig = config;
             sendSettingConfig = config.getSendSettingConfig();
-            tabTitle.setText(config.getTabName());
+            tab.setTitle(config.getTabName());
             serverPort.setText(config.getPort());
             msgInput.setText(config.getMsgInput());
         }

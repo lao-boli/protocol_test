@@ -48,7 +48,6 @@ public class BaseClientTabFactory<T extends BaseClientController<?>> extends Bas
             Parent contentPane = loader.load();
 
             T controller = loader.getController();
-            controller.setTabTitle(tab.getTabTitleField());
             controller.setTab(tab);
             controller.init((ClientSessionConfig) config);
 

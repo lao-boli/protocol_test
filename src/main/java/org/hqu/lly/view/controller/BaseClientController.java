@@ -89,8 +89,6 @@ public abstract class BaseClientController<T extends BaseClient> extends CommonU
     /**
      * 当前标签页的标题
      */
-    @Setter
-    protected TextField tabTitle;
 
     @Setter
     protected TitleTab tab;
@@ -381,7 +379,7 @@ public abstract class BaseClientController<T extends BaseClient> extends CommonU
             clientConfig = (ClientSessionConfig) ConfigStore.createConfig(ConfigType.CLIENT);
         } else {
             clientConfig = config;
-            tabTitle.setText(config.getTabName());
+            tab.setTitle(config.getTabName());
             remoteAddressInput.setText(config.getServerAddr());
             msgInput.setText(config.getMsgInput());
         }
@@ -440,9 +438,9 @@ public abstract class BaseClientController<T extends BaseClient> extends CommonU
     @Override
     public void save() {
         clientConfig.setMsgInput(msgInput.getText());
-        clientConfig.setTabName(tabTitle.getText());
         clientConfig.setServerAddr(remoteAddressInput.getText());
         clientConfig.setSendSettingConfig(sendSettingConfig);
+        clientConfig.setTabName(tab.getTitle());
         clientConfig.setTabOrder(tab.getTabPane().getTabs().indexOf(tab));
         clientConfig.setTabSelected(tab.isSelected());
     }
