@@ -20,9 +20,25 @@
                                     </Label>
                                     <TextField fx:id="remoteAddressInput" prefHeight="23.0" prefWidth="210.0" text="127.0.0.1:10250" HBox.hgrow="ALWAYS">
                                         <HBox.margin>
-                                            <Insets right="10.0" />
+                                            <Insets />
                                         </HBox.margin>
                                     </TextField>
+                              <Button fx:id="addrHistoryBtn" mnemonicParsing="false" onMouseClicked="#addHistory" prefHeight="26.0" prefWidth="26.0" styleClass="icon-button">
+                                 <padding>
+                                    <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
+                                 </padding>
+                                 <graphic>
+                                    <Region prefHeight="200.0" prefWidth="200.0" styleClass="icon-add" />
+                                 </graphic>
+                              </Button>
+                              <Button fx:id="showHistoryBtn" mnemonicParsing="false" onMouseClicked="#showHistory" prefHeight="26.0" prefWidth="26.0" styleClass="icon-button">
+                                 <padding>
+                                    <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
+                                 </padding>
+                                 <graphic>
+                                    <Region prefHeight="200.0" prefWidth="200.0" styleClass="icon-history" />
+                                 </graphic>
+                              </Button>
                                     <Button fx:id="connectButton" mnemonicParsing="false" onMouseClicked="#confirmAddr" text="确定">
                                         <HBox.margin>
                                             <Insets left="10.0" />
@@ -37,7 +53,7 @@
                             </HBox>
                             <Label fx:id="errorMsgLabel" text="" textFill="#c65551">
                                 <VBox.margin>
-                                    <Insets left="30.0" top="5.0" bottom="5.0" />
+                                    <Insets bottom="5.0" left="30.0" top="5.0" />
                                 </VBox.margin>
                             </Label>
                         </children>

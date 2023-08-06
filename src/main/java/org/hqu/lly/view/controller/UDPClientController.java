@@ -17,6 +17,7 @@ import org.hqu.lly.protocol.udp.client.UDPClient;
 @Slf4j
 public class UDPClientController extends BaseClientController<UDPClient> {
 
+
     @Override
     protected void setProtocol() {
        protocol = ProtocolConsts.UDP;

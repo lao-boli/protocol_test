@@ -9,7 +9,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
+import javafx.stage.Window;
 import lombok.val;
 import org.hqu.lly.constant.ResLoc;
 
@@ -77,7 +77,7 @@ public class MyAlert extends MyDialog<MyAlert.ContentPane>{
      * @param contentText 弹窗内容文本
      * @param owner 所属stage
      */
-    public MyAlert(Alert.AlertType alertType, String title, String contentText,Stage owner) {
+    public MyAlert(Alert.AlertType alertType, String title, String contentText, Window owner) {
         this(alertType,title,contentText);
         initOwner(owner);
     }

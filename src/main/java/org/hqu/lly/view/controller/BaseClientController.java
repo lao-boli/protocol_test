@@ -12,6 +12,7 @@ import javafx.stage.Stage;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.hqu.lly.domain.base.BaseClient;
+import org.hqu.lly.domain.component.ListItemPopup;
 import org.hqu.lly.domain.component.MsgLabel;
 import org.hqu.lly.domain.component.TitleTab;
 import org.hqu.lly.domain.config.*;
@@ -95,12 +96,19 @@ public abstract class BaseClientController<T extends BaseClient> extends CommonU
 
     @FXML
     private TextField remoteAddressInput;
+
+    @FXML
+    public Button addrHistoryBtn;
+
+    @FXML
+    public Button showHistoryBtn;
     @FXML
     private Button connectButton;
     @FXML
     private Button disconnectButton;
     @FXML
     private Label errorMsgLabel;
+    private ListItemPopup historyPopup;
 
     public BaseClientController() {
     }
@@ -142,6 +150,28 @@ public abstract class BaseClientController<T extends BaseClient> extends CommonU
             errorMsgLabel.setText("连接中...");
         });
     }
+
+    @FXML
+    public void addHistory(MouseEvent mouseEvent) {
+        if (historyPopup == null){
+            setUpHistory();
+        }
+        historyPopup.addData(remoteAddressInput.getText());
+    }
+
+    @FXML
+    public void showHistory(MouseEvent mouseEvent) {
+        if (historyPopup == null){
+            setUpHistory();
+        }
+        historyPopup.showPopup();
+    }
+
+    public void setUpHistory() {
+        historyPopup = new ListItemPopup();
+        historyPopup.setOnItemClicked(s -> remoteAddressInput.setText(s));
+    }
+
 
     @FXML
     void disconnect(MouseEvent event) {
