@@ -173,12 +173,13 @@ public abstract class BaseClientController<T extends BaseClient> extends CommonU
         if (!remoteAddressInput.isFocused()) {
             remoteAddressInput.requestFocus();
         }
-        historyPopup.showPopup();
+        historyPopup.showPopup(2,remoteAddressInput);
 
     }
 
     private void setUpHistory() {
         historyPopup = new ListItemPopup();
+        historyPopup.getDataListView().prefWidthProperty().bind(remoteAddressInput.widthProperty());
         historyPopup.setOwner(remoteAddressInput);
         historyPopup.setOnItemClicked(s -> remoteAddressInput.setText(s));
         remoteAddressInput.focusedProperty().addListener((observable, oldValue, newValue) -> {

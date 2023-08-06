@@ -10,13 +10,12 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Popup;
-import javafx.stage.Stage;
 import javafx.util.Duration;
+import lombok.Getter;
 import lombok.Setter;
 import lombok.val;
 import org.hqu.lly.constant.ResLoc;
 import org.hqu.lly.icon.CloseIcon;
-import org.hqu.lly.utils.UIUtil;
 
 import java.util.List;
 import java.util.Optional;
@@ -45,6 +44,7 @@ public class ListItemPopup extends Popup {
     }
 
 
+    @Getter
     private ListView<Label> dataListView;
 
     private List<HBox> dataList;
@@ -81,10 +81,10 @@ public class ListItemPopup extends Popup {
         closeIcon.setIconWidth(10);
         Label label = new Label(data, closeIcon);
         closeIcon.setOnMousePressed(e -> {
-            Optional<ButtonType> result = new MyAlert(Alert.AlertType.CONFIRMATION, "提示", "是否删除本条目?",this).showAndWait();
-           if (result.isPresent() && result.get().equals(ButtonType.OK)){
-               dataListView.getItems().remove(label);
-           }
+            Optional<ButtonType> result = new MyAlert(Alert.AlertType.CONFIRMATION, "提示", "是否删除本条目?", this).showAndWait();
+            if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+                dataListView.getItems().remove(label);
+            }
         });
         dataListView.getItems().add(label);
     }
@@ -125,7 +125,10 @@ public class ListItemPopup extends Popup {
                     setGraphic(graphic);
                     setText(item.getText());
                     val _this = this;
-                    setOnMouseClicked(event -> {onItemClicked.accept(item.getText());popup.close();});
+                    setOnMouseClicked(event -> {
+                        onItemClicked.accept(item.getText());
+                        popup.close();
+                    });
                     setOnMouseExited((e) -> {
                         _this.setWrapText(false);
                     });
@@ -135,63 +138,39 @@ public class ListItemPopup extends Popup {
     }
 
 
-    public void showPopup() {
-        showPopup(80);
-    }
-
-    public void showPopup(int yOffset) {
-        showPopup(yOffset, Direction.DOWN_TO_UP, 3);
-    }
-
-    public void showPopup(int yOffset, double pauseDuration) {
-        showPopup(yOffset, Direction.DOWN_TO_UP, pauseDuration);
-    }
-
-    public void showPopup(int yOffset, Direction direction, double pauseDuration) {
+    public void showPopup(double yOffset, Node node) {
         Platform.runLater(() -> {
-            Stage primaryStage = UIUtil.getPrimaryStage();
-            double windowX = primaryStage.getX();
-            double windowY = primaryStage.getY();
-            double windowWidth = primaryStage.getWidth();
+            double anchorX = node.localToScreen(node.getBoundsInLocal()).getMinX();
+            double anchorY = yOffset + node.localToScreen(node.getBoundsInLocal()).getMaxY();
 
-            // 计算提示框应该显示的位置
-            double popupX = windowX + (windowWidth - dataListView.getWidth()) / 2;
-            double popupY = windowY + yOffset;
-
-            setupAnimation(this, owner, popupX, popupY, direction, pauseDuration);
+            setupAnimation(owner, anchorX, anchorY, Direction.DOWN_TO_UP);
         });
-    }
-
-    private void setupAnimation(ListItemPopup popup, Stage primaryStage, double popupX, double popupY) {
-        setupAnimation(popup, owner, popupX, popupY, Direction.UP_TO_DOWN, 3);
     }
 
     /**
      * 为消息提示框设置动画效果
      *
-     * @param popup         本对象
-     * @param node
+     * @param node          owner 节点
      * @param popupX        显示x坐标
      * @param popupY        显示y坐标
      * @param direction     消息框出现的方向
-     * @param pauseDuration 消息框显示时间
      */
-    private void setupAnimation(ListItemPopup popup, Node node, double popupX, double popupY, Direction direction, double pauseDuration) {
+    private void setupAnimation(Node node, double popupX, double popupY, Direction direction) {
         // 从下向上移动显示
         TranslateTransition transIn = new TranslateTransition(Duration.seconds(0.2), dataListView);
         switch (direction) {
             case DOWN_TO_UP -> {
-                // 初始位置向下偏移 30px
-                transIn.setFromY(30);
+                // 初始位置向下偏移 20px
+                transIn.setFromY(20);
                 // 移动到初始位置
                 transIn.setToY(0);
             }
             case UP_TO_DOWN -> {
                 transIn.setFromY(0);
-                // 移动到初始位置向下偏移30px
-                transIn.setToY(30);
+                // 移动到初始位置向下偏移20px
+                transIn.setToY(20);
                 // 修正出现位置
-                popupY = popupY - 30;
+                popupY = popupY - 20;
             }
         }
         transIn.play();
@@ -203,6 +182,7 @@ public class ListItemPopup extends Popup {
         fadeIn.play();
         this.show(node, popupX, popupY);
     }
+
     public void close() {
         // 淡出
         FadeTransition fadeOut = new FadeTransition(Duration.seconds(0.2), dataListView);
