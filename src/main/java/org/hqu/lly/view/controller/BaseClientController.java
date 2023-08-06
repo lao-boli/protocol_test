@@ -186,7 +186,7 @@ public abstract class BaseClientController<T extends BaseClient> extends CommonU
             // if only judge remoteAddressInput if lost focus,
             // it will cause popup to appear and disappear immediately
             // so judge showHistoryBtn.isFocused() is require
-            if (!newValue && !showHistoryBtn.isFocused()) {
+            if (!newValue && !showHistoryBtn.isFocused() && !historyPopup.onWorking.get()) {
                 historyPopup.close();
             }
         });

@@ -3,6 +3,8 @@ package org.hqu.lly.domain.component;
 import javafx.animation.FadeTransition;
 import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.ListChangeListener;
 import javafx.scene.Node;
 import javafx.scene.control.*;
@@ -56,6 +58,8 @@ public class ListItemPopup extends Popup {
 
     private Pane contentWrapper;
 
+    public BooleanProperty onWorking = new SimpleBooleanProperty(false);
+
 
     public ListItemPopup() {
         super();
@@ -81,10 +85,12 @@ public class ListItemPopup extends Popup {
         closeIcon.setIconWidth(10);
         Label label = new Label(data, closeIcon);
         closeIcon.setOnMousePressed(e -> {
+            onWorking.setValue(true);
             Optional<ButtonType> result = new MyAlert(Alert.AlertType.CONFIRMATION, "提示", "是否删除本条目?", this).showAndWait();
             if (result.isPresent() && result.get().equals(ButtonType.OK)) {
                 dataListView.getItems().remove(label);
             }
+            onWorking.setValue(false);
         });
         dataListView.getItems().add(label);
     }
@@ -95,11 +101,13 @@ public class ListItemPopup extends Popup {
 
     private void setupListView() {
         val popup = this;
-        // dataListView.addEventFilter(MouseEvent.MOUSE_EXITED, e -> close());
+        dataListView.setPrefHeight(24);
 
         dataListView.getItems().addListener((ListChangeListener<Label>) c -> {
-            // 24px is the default item height
-            dataListView.setMaxHeight(24 * c.getList().size());
+            if (c.getList().size() <= 5){
+                // 24px is the default item height
+                dataListView.setPrefHeight(24 * c.getList().size());
+            }
         });
 
         dataListView.setCellFactory(param -> new ListCell<>() {
