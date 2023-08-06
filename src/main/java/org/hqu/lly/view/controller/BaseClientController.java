@@ -2,12 +2,15 @@ package org.hqu.lly.view.controller;
 
 import io.netty.channel.Channel;
 import javafx.application.Platform;
+import javafx.event.EventTarget;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -95,6 +98,9 @@ public abstract class BaseClientController<T extends BaseClient> extends CommonU
     protected TitleTab tab;
 
     @FXML
+    public VBox tabContainer;
+
+    @FXML
     private TextField remoteAddressInput;
 
     @FXML
@@ -153,7 +159,7 @@ public abstract class BaseClientController<T extends BaseClient> extends CommonU
 
     @FXML
     public void addHistory(MouseEvent mouseEvent) {
-        if (historyPopup == null){
+        if (historyPopup == null) {
             setUpHistory();
         }
         historyPopup.addData(remoteAddressInput.getText());
@@ -161,15 +167,28 @@ public abstract class BaseClientController<T extends BaseClient> extends CommonU
 
     @FXML
     public void showHistory(MouseEvent mouseEvent) {
-        if (historyPopup == null){
+        if (historyPopup == null) {
             setUpHistory();
         }
+        if (!remoteAddressInput.isFocused()) {
+            remoteAddressInput.requestFocus();
+        }
         historyPopup.showPopup();
+
     }
 
-    public void setUpHistory() {
+    private void setUpHistory() {
         historyPopup = new ListItemPopup();
+        historyPopup.setOwner(remoteAddressInput);
         historyPopup.setOnItemClicked(s -> remoteAddressInput.setText(s));
+        remoteAddressInput.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            // if only judge remoteAddressInput if lost focus,
+            // it will cause popup to appear and disappear immediately
+            // so judge showHistoryBtn.isFocused() is require
+            if (!newValue && !showHistoryBtn.isFocused()) {
+                historyPopup.close();
+            }
+        });
     }
 
 
@@ -302,7 +321,7 @@ public abstract class BaseClientController<T extends BaseClient> extends CommonU
     protected void setActiveUI() {
         Platform.runLater(() -> {
             remoteAddressInput.setDisable(true);
-            if (sendSettingConfig.isTextMode()){
+            if (sendSettingConfig.isTextMode()) {
                 msgInput.setDisable(false);
             }
             connectButton.setDisable(true);
@@ -325,6 +344,18 @@ public abstract class BaseClientController<T extends BaseClient> extends CommonU
 
     @FXML
     public void initialize() {
+        tabContainer.addEventFilter(MouseEvent.MOUSE_CLICKED, event -> {
+            EventTarget target = event.getTarget();
+            // target type isn't a control but a pane,
+            // indicates clicking on the container background,
+            // make every control lost focus.
+            // and I don't know why when click on an area without text in textField,
+            // the target type is pane rather then textfield
+            // so make a parent node validate
+            if (target instanceof Pane && !(((Pane) target).getParent() instanceof TextField)) {
+                tabContainer.requestFocus();
+            }
+        });
         // 功能按钮悬浮tip提示
         initMsgSideBar();
         setupDisplaySetting();
@@ -366,7 +397,7 @@ public abstract class BaseClientController<T extends BaseClient> extends CommonU
 
         // 发送模式改变时的回调
         sendSettingConfig.setOnModeChange(() -> {
-            if (sendSettingConfig.isTextMode()  && client.isActive()) {
+            if (sendSettingConfig.isTextMode() && client.isActive()) {
                 Platform.runLater(() -> msgInput.setDisable(false));
             }
             if (sendSettingConfig.isCustomMode() || sendSettingConfig.isJSMode()) {

@@ -3,7 +3,7 @@
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<VBox spacing="10.0" stylesheets="@../css/TabPane.css" xmlns="http://javafx.com/javafx/17"
+<VBox fx:id="tabContainer" spacing="10.0" stylesheets="@../css/TabPane.css" xmlns="http://javafx.com/javafx/17"
       xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.hqu.lly.view.controller.TCPClientController">
     <children>
         <SplitPane dividerPositions="0.7" orientation="VERTICAL" prefHeight="367.0" prefWidth="546.0" VBox.vgrow="ALWAYS">

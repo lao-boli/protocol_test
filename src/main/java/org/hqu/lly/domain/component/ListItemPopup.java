@@ -1,18 +1,18 @@
 package org.hqu.lly.domain.component;
 
 import javafx.animation.FadeTransition;
-import javafx.animation.PauseTransition;
 import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
 import javafx.collections.ListChangeListener;
+import javafx.scene.Node;
 import javafx.scene.control.*;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Popup;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import lombok.Setter;
 import lombok.val;
 import org.hqu.lly.constant.ResLoc;
 import org.hqu.lly.icon.CloseIcon;
@@ -50,6 +50,9 @@ public class ListItemPopup extends Popup {
     private List<HBox> dataList;
 
     private Consumer<String> onItemClicked;
+
+    @Setter
+    private Node owner;
 
     private Pane contentWrapper;
 
@@ -92,6 +95,8 @@ public class ListItemPopup extends Popup {
 
     private void setupListView() {
         val popup = this;
+        // dataListView.addEventFilter(MouseEvent.MOUSE_EXITED, e -> close());
+
         dataListView.getItems().addListener((ListChangeListener<Label>) c -> {
             // 24px is the default item height
             dataListView.setMaxHeight(24 * c.getList().size());
@@ -153,25 +158,25 @@ public class ListItemPopup extends Popup {
             double popupX = windowX + (windowWidth - dataListView.getWidth()) / 2;
             double popupY = windowY + yOffset;
 
-            setupAnimation(this, primaryStage, popupX, popupY, direction, pauseDuration);
+            setupAnimation(this, owner, popupX, popupY, direction, pauseDuration);
         });
     }
 
     private void setupAnimation(ListItemPopup popup, Stage primaryStage, double popupX, double popupY) {
-        setupAnimation(popup, primaryStage, popupX, popupY, Direction.UP_TO_DOWN, 3);
+        setupAnimation(popup, owner, popupX, popupY, Direction.UP_TO_DOWN, 3);
     }
 
     /**
      * 为消息提示框设置动画效果
      *
      * @param popup         本对象
-     * @param primaryStage  应用程序主窗口
+     * @param node
      * @param popupX        显示x坐标
      * @param popupY        显示y坐标
      * @param direction     消息框出现的方向
      * @param pauseDuration 消息框显示时间
      */
-    private void setupAnimation(ListItemPopup popup, Stage primaryStage, double popupX, double popupY, Direction direction, double pauseDuration) {
+    private void setupAnimation(ListItemPopup popup, Node node, double popupX, double popupY, Direction direction, double pauseDuration) {
         // 从下向上移动显示
         TranslateTransition transIn = new TranslateTransition(Duration.seconds(0.2), dataListView);
         switch (direction) {
@@ -196,15 +201,7 @@ public class ListItemPopup extends Popup {
         fadeIn.setFromValue(0.0);
         fadeIn.setToValue(1.0);
         fadeIn.play();
-        this.show(primaryStage, popupX, popupY);
-
-        // 悬浮框显示3s
-        PauseTransition pauseTransition = new PauseTransition(Duration.seconds(pauseDuration));
-
-        // 鼠标悬浮在popup的时候暂停动画
-        dataListView.addEventFilter(MouseEvent.MOUSE_ENTERED, e -> pauseTransition.pause());
-        dataListView.addEventFilter(MouseEvent.MOUSE_EXITED, e -> pauseTransition.play());
-
+        this.show(node, popupX, popupY);
     }
     public void close() {
         // 淡出
