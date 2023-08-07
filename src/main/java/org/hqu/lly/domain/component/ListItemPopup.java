@@ -36,6 +36,16 @@ import java.util.stream.Collectors;
  */
 public class ListItemPopup extends Popup {
 
+    /**
+     * 24px is the default single item height
+     */
+    public static final int ITEM_HEIGHT = 24;
+    public static final int MAX_ROW = 5;
+    /**
+     * data listView max height
+     */
+    public static final int MAX_HEIGHT = MAX_ROW * ITEM_HEIGHT;
+
     public enum Direction {
         /**
          * 由下至上
@@ -82,7 +92,7 @@ public class ListItemPopup extends Popup {
     }
 
     public void addDataList(List<String> items) {
-        if (items == null || items.size() == 0){
+        if (items == null || items.size() == 0) {
             return;
         }
         dataListView.getItems().addAll(items.stream().map(this::createDataLabel).collect(Collectors.toList()));
@@ -111,21 +121,23 @@ public class ListItemPopup extends Popup {
     }
 
     public List<String> getDataList() {
-       return dataListView.getItems().stream().map(Labeled::getText).collect(Collectors.toList());
+        return dataListView.getItems().stream().map(Labeled::getText).collect(Collectors.toList());
     }
+
     public void setOnItemClicked(Consumer<String> onItemClicked) {
         this.onItemClicked = onItemClicked;
     }
 
     private void setupListView() {
-        dataListView.setPrefHeight(24);
+        dataListView.setPrefHeight(ITEM_HEIGHT);
 
         dataListView.getItems().addListener((ListChangeListener<Label>) c -> {
-            if (c.getList().size() <= 5) {
-                // 24px is the default item height
-                dataListView.setPrefHeight(24 * c.getList().size());
-            }else if(dataListView.getPrefHeight() < 5 * 24) {
-                dataListView.setPrefHeight(5 * 24);
+            if (c.getList().size() <= MAX_ROW) {
+                dataListView.setPrefHeight(ITEM_HEIGHT * c.getList().size());
+
+            } else if (dataListView.getPrefHeight() < MAX_HEIGHT) {
+                // handle height computation when call addDataList(List<String> items) method
+                dataListView.setPrefHeight(MAX_HEIGHT);
             }
         });
 
