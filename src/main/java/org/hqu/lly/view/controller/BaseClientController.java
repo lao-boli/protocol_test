@@ -16,6 +16,7 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.hqu.lly.domain.base.BaseClient;
 import org.hqu.lly.domain.component.ListItemPopup;
+import org.hqu.lly.domain.component.MessagePopup;
 import org.hqu.lly.domain.component.MsgLabel;
 import org.hqu.lly.domain.component.TitleTab;
 import org.hqu.lly.domain.config.*;
@@ -164,6 +165,7 @@ public abstract class BaseClientController<T extends BaseClient> extends CommonU
             setUpHistory();
         }
         historyPopup.addData(remoteAddressInput.getText());
+        new MessagePopup("已添加到历史记录").showPopup(30,0.8);
     }
 
     @FXML
