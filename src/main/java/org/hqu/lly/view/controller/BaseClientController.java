@@ -357,10 +357,10 @@ public abstract class BaseClientController<T extends BaseClient> extends CommonU
             EventTarget target = event.getTarget();
             // target type isn't a control but a pane,
             // indicates clicking on the container background,
-            // make every control lost focus.
+            // it should make every control lost focus.
             // and I don't know why when click on an area without text in textField,
-            // the target type is pane rather then textfield
-            // so make a parent node validate
+            // the target type is pane rather than textfield
+            // so need make a parent node validate
             if (target instanceof Pane && !(((Pane) target).getParent() instanceof TextField)) {
                 tabContainer.requestFocus();
             }
