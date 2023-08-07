@@ -18,6 +18,7 @@ import lombok.Setter;
 import lombok.val;
 import org.hqu.lly.constant.ResLoc;
 import org.hqu.lly.icon.CloseIcon;
+import org.hqu.lly.utils.CommonUtil;
 
 import java.util.List;
 import java.util.Optional;
@@ -100,16 +101,16 @@ public class ListItemPopup extends Popup {
     }
 
     private void setupListView() {
-        val popup = this;
         dataListView.setPrefHeight(24);
 
         dataListView.getItems().addListener((ListChangeListener<Label>) c -> {
-            if (c.getList().size() <= 5){
+            if (c.getList().size() <= 5) {
                 // 24px is the default item height
                 dataListView.setPrefHeight(24 * c.getList().size());
             }
         });
 
+        // cell factory
         dataListView.setCellFactory(param -> new ListCell<>() {
             @Override
             protected void updateItem(Label item, boolean empty) {
@@ -122,24 +123,37 @@ public class ListItemPopup extends Popup {
                     setMaxWidth(100);
                     setPrefWidth(100);
 
+                    setText(item.getText());
+
+                    // keep the close icon always on top
                     VBox graphic = new VBox(item.getGraphic());
                     heightProperty().addListener((observable, oldValue, newValue) -> {
                         if (wrapTextProperty().get()) {
                             graphic.setPrefHeight(newValue.doubleValue() - 12);
                         } else {
+                            // use compute size
                             graphic.setPrefHeight(-1);
                         }
                     });
                     setGraphic(graphic);
-                    setText(item.getText());
+
+                    // event callbacks
                     val _this = this;
                     setOnMouseClicked(event -> {
                         onItemClicked.accept(item.getText());
-                        popup.close();
+                        close();
                     });
-                    setOnMouseExited((e) -> {
-                        _this.setWrapText(false);
+                    setOnMouseEntered(event -> {
+                        if (CommonUtil.isLabeledTextOverflow(_this)) {
+                            setWrapText(true);
+                        }
                     });
+                    setOnMouseExited(event -> {
+                        if (wrapTextProperty().get()) {
+                            setWrapText(false);
+                        }
+                    });
+
                 }
             }
         });
@@ -158,10 +172,10 @@ public class ListItemPopup extends Popup {
     /**
      * 为消息提示框设置动画效果
      *
-     * @param node          owner 节点
-     * @param popupX        显示x坐标
-     * @param popupY        显示y坐标
-     * @param direction     消息框出现的方向
+     * @param node      owner 节点
+     * @param popupX    显示x坐标
+     * @param popupY    显示y坐标
+     * @param direction 消息框出现的方向
      */
     private void setupAnimation(Node node, double popupX, double popupY, Direction direction) {
         // 从下向上移动显示
