@@ -178,6 +178,7 @@ public abstract class BaseClientController<T extends BaseClient> extends CommonU
     }
 
     private void setUpHistory() {
+
         historyPopup = new ListItemPopup();
         historyPopup.getDataListView().prefWidthProperty().bind(remoteAddressInput.widthProperty());
         historyPopup.setOwner(remoteAddressInput);
@@ -358,7 +359,7 @@ public abstract class BaseClientController<T extends BaseClient> extends CommonU
             }
         });
         // 功能按钮悬浮tip提示
-        initMsgSideBar();
+        initControlToolTip();
         setupDisplaySetting();
         // 多格式设置
         setupSendFormatBtn();
@@ -413,20 +414,20 @@ public abstract class BaseClientController<T extends BaseClient> extends CommonU
 
     /**
      * <p>
-     * 为消息框的侧边栏按钮添加提示文字 {@link Tooltip}。<br>
-     * 包括：<br>
-     * &emsp 1.长文本换行; <br>
-     * &emsp 2.清空列表; <br>
-     * &emsp 3.发送设置。<br>
-     * </p>
+     * 为控件添加提示文字 {@link Tooltip}。<br>
      *
      * @date 2023-02-06 11:02:46 <br>
      */
-    protected void initMsgSideBar() {
+    protected void initControlToolTip() {
+        // msg sidebar
         softWrapBtn.setTooltip(getTooltip("长文本换行"));
         clearBtn.setTooltip(getTooltip("清空列表"));
         sendSettingBtn.setTooltip(getTooltip("发送设置"));
         displaySettingBtn.setTooltip(getTooltip("显示设置"));
+
+        // XXX custom show position
+        addrHistoryBtn.setTooltip(getTooltip("添加到历史记录"));
+        showHistoryBtn.setTooltip(getTooltip("显示历史记录"));
     }
 
     @Override
