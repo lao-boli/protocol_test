@@ -23,6 +23,7 @@ import org.hqu.lly.utils.CommonUtil;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -80,7 +81,20 @@ public class ListItemPopup extends Popup {
 
     }
 
+    public void addDataList(List<String> items) {
+        if (items == null || items.size() == 0){
+            return;
+        }
+        dataListView.getItems().addAll(items.stream().map(this::createDataLabel).collect(Collectors.toList()));
+    }
+
+
     public void addData(String data) {
+        Label label = createDataLabel(data);
+        dataListView.getItems().add(label);
+    }
+
+    private Label createDataLabel(String data) {
         CloseIcon closeIcon = new CloseIcon();
         closeIcon.setIconHeight(10);
         closeIcon.setIconWidth(10);
@@ -93,9 +107,12 @@ public class ListItemPopup extends Popup {
             }
             onWorking.setValue(false);
         });
-        dataListView.getItems().add(label);
+        return label;
     }
 
+    public List<String> getDataList() {
+       return dataListView.getItems().stream().map(Labeled::getText).collect(Collectors.toList());
+    }
     public void setOnItemClicked(Consumer<String> onItemClicked) {
         this.onItemClicked = onItemClicked;
     }
@@ -107,6 +124,8 @@ public class ListItemPopup extends Popup {
             if (c.getList().size() <= 5) {
                 // 24px is the default item height
                 dataListView.setPrefHeight(24 * c.getList().size());
+            }else if(dataListView.getPrefHeight() < 5 * 24) {
+                dataListView.setPrefHeight(5 * 24);
             }
         });
 

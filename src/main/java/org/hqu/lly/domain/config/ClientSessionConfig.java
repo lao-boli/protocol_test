@@ -4,6 +4,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.hqu.lly.enums.ConfigType;
 
+import java.util.List;
+
 /**
  * <p>
  * client session config
@@ -18,6 +20,8 @@ import org.hqu.lly.enums.ConfigType;
 public class ClientSessionConfig extends SessionConfig{
 
     String serverAddr;
+
+    List<String> addrHistoryList;
 
     public ClientSessionConfig() {
         super();

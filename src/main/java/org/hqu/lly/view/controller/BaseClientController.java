@@ -32,6 +32,7 @@ import org.hqu.lly.utils.JSParser;
 import org.hqu.lly.utils.MsgUtil;
 
 import java.net.URI;
+import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
@@ -191,6 +192,12 @@ public abstract class BaseClientController<T extends BaseClient> extends CommonU
                 historyPopup.close();
             }
         });
+    }
+
+    private void setUpHistory(List<String> historyList) {
+        setUpHistory();
+        historyPopup.addDataList(historyList);
+
     }
 
 
@@ -445,6 +452,7 @@ public abstract class BaseClientController<T extends BaseClient> extends CommonU
             tab.setTitle(config.getTabName());
             remoteAddressInput.setText(config.getServerAddr());
             msgInput.setText(config.getMsgInput());
+            setUpHistory(config.getAddrHistoryList());
         }
         setProtocol();
         setClient();
@@ -502,6 +510,7 @@ public abstract class BaseClientController<T extends BaseClient> extends CommonU
     public void save() {
         clientConfig.setMsgInput(msgInput.getText());
         clientConfig.setServerAddr(remoteAddressInput.getText());
+        clientConfig.setAddrHistoryList(historyPopup.getDataList());
         clientConfig.setSendSettingConfig(sendSettingConfig);
         clientConfig.setTabName(tab.getTitle());
         clientConfig.setTabOrder(tab.getTabPane().getTabs().indexOf(tab));
