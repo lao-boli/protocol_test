@@ -37,8 +37,10 @@ public class UDPServerHandler extends SimpleChannelInboundHandler<DatagramPacket
         String receiveText = dpk.content().toString(CharsetUtil.UTF_8);
         serverService.updateMsgList(new MsgLabel(MsgLabel.Type.RECEIVE, sender.toString(), receiveText));
 
-        ctx.channel().writeAndFlush(new DatagramPacket(Unpooled.copiedBuffer(receiveText, CharsetUtil.UTF_8), sender));
-        serverService.updateMsgList(new MsgLabel(MsgLabel.Type.SEND, sender.toString(), receiveText));
+        if (!serverService.isMuteReq()){
+            ctx.channel().writeAndFlush(new DatagramPacket(Unpooled.copiedBuffer(receiveText, CharsetUtil.UTF_8), sender));
+            serverService.updateMsgList(new MsgLabel(MsgLabel.Type.SEND, sender.toString(), receiveText));
+        }
 
         serverService.addInetSocketAddress(sender);
     }

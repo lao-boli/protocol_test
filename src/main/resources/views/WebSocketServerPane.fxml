@@ -107,6 +107,14 @@
                                            </StackPane>
                                        </graphic>
                                    </Button>
+                                   <ToggleButton fx:id="muteResBtn" contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" maxHeight="20.0" maxWidth="20.0" mnemonicParsing="false" onMouseClicked="#handleMuteRes" prefHeight="17.0" prefWidth="18.0">
+                                 <graphic>
+                                    <Region prefHeight="20.0" prefWidth="20.0" styleClass="icon-mute-req" />
+                                 </graphic>
+                                 <padding>
+                                    <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
+                                 </padding>
+                              </ToggleButton>
                                </children>
                                <padding>
                                    <Insets top="-1.0" />
