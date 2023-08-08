@@ -1,10 +1,13 @@
 package org.hqu.lly.domain.component;
 
-import javafx.animation.FadeTransition;
-import javafx.animation.TranslateTransition;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.collections.ListChangeListener;
 import javafx.scene.Node;
 import javafx.scene.control.*;
@@ -36,6 +39,19 @@ import java.util.stream.Collectors;
  */
 public class ListItemPopup extends Popup {
 
+    private DoubleProperty transition;
+    private final void setTransition(double value) { transitionProperty().set(value); }
+    private final double getTransition() { return transition == null ? 0.0 : transition.get(); }
+    private final DoubleProperty transitionProperty() {
+        if (transition == null) {
+            transition = new SimpleDoubleProperty(this, "transition", 0.0) {
+                @Override protected void invalidated() {
+                }
+            };
+        }
+        return transition;
+    }
+
     /**
      * 24px is the default single item height
      */
@@ -45,6 +61,12 @@ public class ListItemPopup extends Popup {
      * data listView max height
      */
     public static final int MAX_HEIGHT = MAX_ROW * ITEM_HEIGHT;
+
+    /**
+     * as a reference height when play in and out anim.
+     * only can be set when {@link #dataListView} items change.
+     */
+    private double curListViewPerfHeight = 0;
 
     public enum Direction {
         /**
@@ -133,10 +155,12 @@ public class ListItemPopup extends Popup {
 
         dataListView.getItems().addListener((ListChangeListener<Label>) c -> {
             if (c.getList().size() <= MAX_ROW) {
-                dataListView.setPrefHeight(ITEM_HEIGHT * c.getList().size());
+                curListViewPerfHeight = ITEM_HEIGHT * c.getList().size();
+                dataListView.setPrefHeight(curListViewPerfHeight);
 
             } else if (dataListView.getPrefHeight() < MAX_HEIGHT) {
                 // handle height computation when call addDataList(List<String> items) method
+                curListViewPerfHeight = MAX_HEIGHT;
                 dataListView.setPrefHeight(MAX_HEIGHT);
             }
         });
@@ -196,7 +220,7 @@ public class ListItemPopup extends Popup {
             double anchorX = node.localToScreen(node.getBoundsInLocal()).getMinX();
             double anchorY = yOffset + node.localToScreen(node.getBoundsInLocal()).getMaxY();
 
-            setupAnimation(owner, anchorX, anchorY, Direction.DOWN_TO_UP);
+            setupAnimation(owner, anchorX, anchorY);
         });
     }
 
@@ -206,43 +230,45 @@ public class ListItemPopup extends Popup {
      * @param node      owner 节点
      * @param popupX    显示x坐标
      * @param popupY    显示y坐标
-     * @param direction 消息框出现的方向
      */
-    private void setupAnimation(Node node, double popupX, double popupY, Direction direction) {
-        // 从下向上移动显示
-        TranslateTransition transIn = new TranslateTransition(Duration.seconds(0.2), dataListView);
-        switch (direction) {
-            case DOWN_TO_UP -> {
-                // 初始位置向下偏移 20px
-                transIn.setFromY(20);
-                // 移动到初始位置
-                transIn.setToY(0);
-            }
-            case UP_TO_DOWN -> {
-                transIn.setFromY(0);
-                // 移动到初始位置向下偏移20px
-                transIn.setToY(20);
-                // 修正出现位置
-                popupY = popupY - 20;
-            }
-        }
-        transIn.play();
+    private void setupAnimation(Node node, double popupX, double popupY) {
 
-        // 淡入
-        FadeTransition fadeIn = new FadeTransition(Duration.seconds(0.2), dataListView);
-        fadeIn.setFromValue(0.0);
-        fadeIn.setToValue(1.0);
-        fadeIn.play();
+        // XXX optimize anim implementation
+        dataListView.setPrefHeight(0);
+
+        Duration animDuration = Duration.seconds(0.1);
+        Timeline timeline = new Timeline(
+                new KeyFrame(Duration.ZERO, new KeyValue(dataListView.translateYProperty(), -curListViewPerfHeight)),
+                new KeyFrame(animDuration, new KeyValue(dataListView.translateYProperty(), 0))
+        );
+
+        timeline.setAutoReverse(false);
+        timeline.setCycleCount(1);
+        // 动态地改变 Popup 内容的高度
+        timeline.currentTimeProperty().addListener((observable, oldValue, newValue) -> {
+            double progress = newValue.toMillis() / animDuration.toMillis();
+            dataListView.setPrefHeight(progress * curListViewPerfHeight);
+        });
+
         this.show(node, popupX, popupY);
+        timeline.play();
     }
 
     public void close() {
-        // 淡出
-        FadeTransition fadeOut = new FadeTransition(Duration.seconds(0.2), dataListView);
-        fadeOut.setFromValue(1.0);
-        fadeOut.setToValue(0.0);
-        fadeOut.setOnFinished(e -> this.hide());
-        fadeOut.play();
+        Duration animDuration = Duration.seconds(0.1);
+        Timeline timeline = new Timeline(
+                new KeyFrame(Duration.ZERO, new KeyValue(dataListView.translateYProperty(), 0)),
+                new KeyFrame(animDuration, new KeyValue(dataListView.translateYProperty(), -curListViewPerfHeight))
+        );
+
+        timeline.currentTimeProperty().addListener((observable, oldValue, newValue) -> {
+            double progress = newValue.toMillis() / animDuration.toMillis();
+            dataListView.setPrefHeight(curListViewPerfHeight - progress * curListViewPerfHeight);
+        });
+        timeline.setAutoReverse(false);
+        timeline.setCycleCount(1);
+        timeline.setOnFinished(e -> hide());
+        timeline.play();
     }
 
 
