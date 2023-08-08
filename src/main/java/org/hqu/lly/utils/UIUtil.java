@@ -129,6 +129,14 @@ public class UIUtil {
         });
     }
 
+    public static void setTooltip(Control control, Tooltip tooltip,double showDelay) {
+        setTooltip(control, tooltip, event -> {
+            // 设置提示显示位置
+            Bounds bounds = control.localToScreen(control.getBoundsInLocal());
+            tooltip.show(control, bounds.getMinX(), bounds.getMinY() - 30);
+        },e -> tooltip.hide(),new Duration(showDelay));
+    }
+
     /**
      *
      * 为控件设置鼠标移出控件时隐藏的tooltip
@@ -158,7 +166,11 @@ public class UIUtil {
     public static void setTooltip(Control control, Tooltip tooltip, EventHandler<? super MouseEvent> onEnter, EventHandler<MouseEvent> onExited) {
         // 生成提示框，出现时间设为极大，
         // 不让其自动出现，而是通过函数手动控制。
-        tooltip.setShowDelay(new Duration(Integer.MAX_VALUE));
+        setTooltip(control, tooltip, onEnter, onExited, new Duration(Integer.MAX_VALUE));
+    }
+
+    public static void setTooltip(Control control, Tooltip tooltip, EventHandler<? super MouseEvent> onEnter, EventHandler<MouseEvent> onExited, Duration showDelay) {
+        tooltip.setShowDelay(showDelay);
         control.addEventFilter(MouseEvent.MOUSE_ENTERED, onEnter);
         control.addEventFilter(MouseEvent.MOUSE_EXITED, onExited);
         control.setTooltip(tooltip);

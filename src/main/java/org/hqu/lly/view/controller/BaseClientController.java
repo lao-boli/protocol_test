@@ -2,17 +2,23 @@ package org.hqu.lly.view.controller;
 
 import io.netty.channel.Channel;
 import javafx.application.Platform;
+import javafx.event.EventTarget;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.hqu.lly.domain.base.BaseClient;
+import org.hqu.lly.domain.component.ListItemPopup;
+import org.hqu.lly.domain.component.MessagePopup;
 import org.hqu.lly.domain.component.MsgLabel;
+import org.hqu.lly.domain.component.TitleTab;
 import org.hqu.lly.domain.config.*;
 import org.hqu.lly.enums.ConfigType;
 import org.hqu.lly.exception.UnSetBoundException;
@@ -27,6 +33,7 @@ import org.hqu.lly.utils.JSParser;
 import org.hqu.lly.utils.MsgUtil;
 
 import java.net.URI;
+import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
@@ -88,17 +95,28 @@ public abstract class BaseClientController<T extends BaseClient> extends CommonU
     /**
      * 当前标签页的标题
      */
+
     @Setter
-    protected TextField tabTitle;
+    protected TitleTab tab;
+
+    @FXML
+    public VBox tabContainer;
 
     @FXML
     private TextField remoteAddressInput;
+
+    @FXML
+    public Button addrHistoryBtn;
+
+    @FXML
+    public Button showHistoryBtn;
     @FXML
     private Button connectButton;
     @FXML
     private Button disconnectButton;
     @FXML
     private Label errorMsgLabel;
+    private ListItemPopup historyPopup;
 
     public BaseClientController() {
     }
@@ -140,6 +158,49 @@ public abstract class BaseClientController<T extends BaseClient> extends CommonU
             errorMsgLabel.setText("连接中...");
         });
     }
+
+    @FXML
+    public void addHistory(MouseEvent mouseEvent) {
+        if (historyPopup == null) {
+            setUpHistory();
+        }
+        historyPopup.addData(remoteAddressInput.getText());
+        new MessagePopup("已添加到历史记录").showPopup(30,0.8);
+    }
+
+    @FXML
+    public void showHistory(MouseEvent mouseEvent) {
+        if (historyPopup == null) {
+            setUpHistory();
+        }
+        if (!remoteAddressInput.isFocused()) {
+            remoteAddressInput.requestFocus();
+        }
+        historyPopup.showPopup(2,remoteAddressInput);
+
+    }
+
+    private void setUpHistory() {
+
+        historyPopup = new ListItemPopup();
+        historyPopup.getDataListView().prefWidthProperty().bind(remoteAddressInput.widthProperty());
+        historyPopup.setOnItemClicked(s -> remoteAddressInput.setText(s));
+        remoteAddressInput.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            // if only judge remoteAddressInput if lost focus,
+            // it will cause popup to appear and disappear immediately
+            // so judge showHistoryBtn.isFocused() is require
+            if (!newValue && !showHistoryBtn.isFocused() && !historyPopup.onWorking.get()) {
+                historyPopup.close();
+            }
+        });
+    }
+
+    private void setUpHistory(List<String> historyList) {
+        setUpHistory();
+        historyPopup.addDataList(historyList);
+
+    }
+
 
     @FXML
     void disconnect(MouseEvent event) {
@@ -270,7 +331,9 @@ public abstract class BaseClientController<T extends BaseClient> extends CommonU
     protected void setActiveUI() {
         Platform.runLater(() -> {
             remoteAddressInput.setDisable(true);
-            if (sendSettingConfig.isTextMode()){
+            addrHistoryBtn.setDisable(true);
+            showHistoryBtn.setDisable(true);
+            if (sendSettingConfig.isTextMode()) {
                 msgInput.setDisable(false);
             }
             connectButton.setDisable(true);
@@ -283,6 +346,8 @@ public abstract class BaseClientController<T extends BaseClient> extends CommonU
     protected void setInactiveUI() {
         Platform.runLater(() -> {
             remoteAddressInput.setDisable(false);
+            addrHistoryBtn.setDisable(false);
+            showHistoryBtn.setDisable(false);
             msgInput.setDisable(true);
             connectButton.setDisable(false);
             disconnectButton.setDisable(true);
@@ -293,8 +358,20 @@ public abstract class BaseClientController<T extends BaseClient> extends CommonU
 
     @FXML
     public void initialize() {
+        tabContainer.addEventFilter(MouseEvent.MOUSE_CLICKED, event -> {
+            EventTarget target = event.getTarget();
+            // target type isn't a control but a pane,
+            // indicates clicking on the container background,
+            // it should make every control lost focus.
+            // and I don't know why when click on an area without text in textField,
+            // the target type is pane rather than textfield
+            // so need make a parent node validate
+            if (target instanceof Pane && !(((Pane) target).getParent() instanceof TextField)) {
+                tabContainer.requestFocus();
+            }
+        });
         // 功能按钮悬浮tip提示
-        initMsgSideBar();
+        initControlToolTip();
         setupDisplaySetting();
         // 多格式设置
         setupSendFormatBtn();
@@ -334,7 +411,7 @@ public abstract class BaseClientController<T extends BaseClient> extends CommonU
 
         // 发送模式改变时的回调
         sendSettingConfig.setOnModeChange(() -> {
-            if (sendSettingConfig.isTextMode()  && client.isActive()) {
+            if (sendSettingConfig.isTextMode() && client.isActive()) {
                 Platform.runLater(() -> msgInput.setDisable(false));
             }
             if (sendSettingConfig.isCustomMode() || sendSettingConfig.isJSMode()) {
@@ -349,20 +426,20 @@ public abstract class BaseClientController<T extends BaseClient> extends CommonU
 
     /**
      * <p>
-     * 为消息框的侧边栏按钮添加提示文字 {@link Tooltip}。<br>
-     * 包括：<br>
-     * &emsp 1.长文本换行; <br>
-     * &emsp 2.清空列表; <br>
-     * &emsp 3.发送设置。<br>
-     * </p>
+     * 为控件添加提示文字 {@link Tooltip}。<br>
      *
      * @date 2023-02-06 11:02:46 <br>
      */
-    protected void initMsgSideBar() {
+    protected void initControlToolTip() {
+        // msg sidebar
         softWrapBtn.setTooltip(getTooltip("长文本换行"));
         clearBtn.setTooltip(getTooltip("清空列表"));
         sendSettingBtn.setTooltip(getTooltip("发送设置"));
         displaySettingBtn.setTooltip(getTooltip("显示设置"));
+
+        // XXX custom show position
+        addrHistoryBtn.setTooltip(getTooltip("添加到历史记录"));
+        showHistoryBtn.setTooltip(getTooltip("显示历史记录"));
     }
 
     @Override
@@ -377,9 +454,10 @@ public abstract class BaseClientController<T extends BaseClient> extends CommonU
             clientConfig = (ClientSessionConfig) ConfigStore.createConfig(ConfigType.CLIENT);
         } else {
             clientConfig = config;
-            tabTitle.setText(config.getTabName());
+            tab.setTitle(config.getTabName());
             remoteAddressInput.setText(config.getServerAddr());
             msgInput.setText(config.getMsgInput());
+            setUpHistory(config.getAddrHistoryList());
         }
         setProtocol();
         setClient();
@@ -436,9 +514,12 @@ public abstract class BaseClientController<T extends BaseClient> extends CommonU
     @Override
     public void save() {
         clientConfig.setMsgInput(msgInput.getText());
-        clientConfig.setTabName(tabTitle.getText());
         clientConfig.setServerAddr(remoteAddressInput.getText());
+        clientConfig.setAddrHistoryList(historyPopup.getDataList());
         clientConfig.setSendSettingConfig(sendSettingConfig);
+        clientConfig.setTabName(tab.getTitle());
+        clientConfig.setTabOrder(tab.getTabPane().getTabs().indexOf(tab));
+        clientConfig.setTabSelected(tab.isSelected());
     }
 
 }

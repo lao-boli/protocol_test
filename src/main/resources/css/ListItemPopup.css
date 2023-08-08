@@ -1,0 +1,36 @@
+.icon-close-bold {
+    -fx-background-color: #a9a9a9;
+}
+.icon-close-bold:hover {
+    -fx-background-color: #828282;
+}
+
+.scroll-bar {
+    -fx-pref-width: 7;
+}
+.scroll-bar:vertical .increment-button,
+.scroll-bar .decrement-button
+{
+    -fx-padding: 0;
+    visibility: false;
+}
+.scroll-bar:vertical .increment-button .increment-arrow,
+.scroll-bar:vertical .decrement-button .decrement-arrow
+{
+    visibility: false;
+}
+
+.scroll-bar:vertical > .thumb {
+    -fx-background-radius: 5px;
+
+}
+
+.list-view .list-cell,
+.list-view .list-cell:selected
+{
+    -fx-background-color: #3c3f41;
+}
+.list-view .list-cell:hover {
+    -fx-cursor: hand;
+    -fx-background-color: #464a4d;
+}

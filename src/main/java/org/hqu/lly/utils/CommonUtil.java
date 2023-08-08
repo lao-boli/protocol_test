@@ -1,5 +1,12 @@
 package org.hqu.lly.utils;
 
+import com.sun.javafx.scene.control.skin.Utils;
+import com.sun.javafx.scene.text.FontHelper;
+import com.sun.javafx.scene.text.TextLayout;
+import com.sun.javafx.tk.Toolkit;
+import javafx.geometry.Bounds;
+import javafx.scene.control.Labeled;
+import javafx.scene.text.Font;
 import lombok.SneakyThrows;
 
 import java.net.InetAddress;
@@ -18,6 +25,41 @@ import java.util.List;
  * @date 2023/2/4 16:55
  */
 public class CommonUtil {
+
+    static final TextLayout layout = Toolkit.getToolkit().getTextLayoutFactory().createLayout();
+
+    /**
+     * copy from {@link Utils#computeTextWidth(Font, String, double)}
+     * @param font labeled font
+     * @param text labeled text
+     * @param wrappingWidth use 0 is ok
+     * @return labeled text width
+     */
+    public static double computeTextWidth(Font font, String text, double wrappingWidth) {
+        layout.setContent(text != null ? text : "", FontHelper.getNativeFont(font));
+        layout.setWrapWidth((float)wrappingWidth);
+        return layout.getBounds().getWidth();
+    }
+
+    /**
+     * judge a {@link Labeled} text if overflow
+     * @param labeled labeled
+     * @return if overflow return true otherwise false
+     */
+    public static Boolean isLabeledTextOverflow(Labeled labeled) {
+        // 获取 Label 的布局边界
+        Bounds labelBounds = labeled.getLayoutBounds();
+        // 获取纯文本显示区域宽度
+        double textLayoutWidth = labelBounds.getWidth() - labeled.getPadding().getLeft() - labeled.getPadding().getRight();
+        // 若graphic存在,需要减去graphic的宽度
+        if (labeled.getGraphic() != null){
+            double graphicW = (labeled.getGraphic().getLayoutBounds().getWidth() + labeled.getGraphicTextGap());
+            textLayoutWidth -= graphicW;
+        }
+        double textWidth = computeTextWidth(labeled.getFont(), labeled.getText(), 0);
+        boolean isOverflow = textWidth > textLayoutWidth;
+        return isOverflow;
+    }
 
     /**
      * <p>

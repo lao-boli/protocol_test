@@ -44,6 +44,12 @@ public class TitleTab extends Tab {
      * tab页标题
      */
     private String tabTitle;
+
+    /**
+     * 标签页所在顺序
+     */
+    private Integer order;
+
     /**
      * tab页标题输入框
      */
@@ -120,6 +126,12 @@ public class TitleTab extends Tab {
         this.setText(tabTitle);
     }
 
+    public String getTitle() {
+        return tabTitleField.getText();
+    }
+    public void setTitle(String title) {
+        tabTitleField.setText(title);
+    }
     /**
      * 初始化关闭图标 <br>
      *

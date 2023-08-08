@@ -40,6 +40,10 @@ public class SessionConfig extends Config {
 
     protected String tabName;
 
+    protected Integer tabOrder;
+
+    protected Boolean tabSelected;
+
     /**
      * 消息框中输入的消息
      */
@@ -54,6 +58,20 @@ public class SessionConfig extends Config {
 
     public SessionConfig(SendSettingConfig sendSettingConfig) {
         this.sendSettingConfig = sendSettingConfig;
+    }
+
+    public Integer getTabOrder() {
+        if (tabOrder == null){
+            return 0;
+        }
+        return tabOrder;
+    }
+
+    public Boolean getTabSelected() {
+        if (tabSelected == null){
+            return false;
+        }
+        return tabSelected;
     }
 
 }
