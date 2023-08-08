@@ -331,6 +331,8 @@ public abstract class BaseClientController<T extends BaseClient> extends CommonU
     protected void setActiveUI() {
         Platform.runLater(() -> {
             remoteAddressInput.setDisable(true);
+            addrHistoryBtn.setDisable(true);
+            showHistoryBtn.setDisable(true);
             if (sendSettingConfig.isTextMode()) {
                 msgInput.setDisable(false);
             }
@@ -344,6 +346,8 @@ public abstract class BaseClientController<T extends BaseClient> extends CommonU
     protected void setInactiveUI() {
         Platform.runLater(() -> {
             remoteAddressInput.setDisable(false);
+            addrHistoryBtn.setDisable(false);
+            showHistoryBtn.setDisable(false);
             msgInput.setDisable(true);
             connectButton.setDisable(false);
             disconnectButton.setDisable(true);
