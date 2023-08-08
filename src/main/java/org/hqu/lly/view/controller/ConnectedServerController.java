@@ -82,6 +82,11 @@ public abstract class ConnectedServerController extends BaseServerController<Cha
             public void updateMsgList(MsgLabel msgLabel) {
                 Platform.runLater(() -> msgList.getItems().add(msgLabel));
             }
+
+            @Override
+            public boolean isMuteReq() {
+                return muteRes;
+            }
         };
     }
 

@@ -70,8 +70,14 @@ public abstract class BaseServerController<T> extends CommonUIContorller impleme
     @FXML
     protected Button removeClientBtn;
 
+    @FXML
+    public ToggleButton muteResBtn;
+
     @Setter
     protected TitleTab tab;
+
+    protected boolean muteRes = false;
+
     /**
      * netty服务端。<br>
      * 应为 {@link TCPServer}、{@link UDPServer}、{@link WebSocketServer}
@@ -91,9 +97,7 @@ public abstract class BaseServerController<T> extends CommonUIContorller impleme
      * 是否全选客户端flag
      */
     protected boolean selectAll = true;
-    /**
-     * 用于将netty接收的消息或发生的异常显示在GUI面板上
-     */
+
     protected ServerService serverService;
 
     // region config
@@ -232,6 +236,15 @@ public abstract class BaseServerController<T> extends CommonUIContorller impleme
             scheduleSendBtn.setDisable(true);
         });
     }
+
+    @FXML
+    public void handleMuteRes(MouseEvent event) {
+        // the muteRes default value is false
+        // and muteResBtn default value is unselected
+        // so no need to judge if muteResBtn was being selected.
+        muteRes = !muteRes;
+    }
+
 
     @FXML
     void sendMsg(MouseEvent event) {
@@ -458,6 +471,8 @@ public abstract class BaseServerController<T> extends CommonUIContorller impleme
         softWrapBtn.setTooltip(UIUtil.getTooltip("长文本换行"));
         clearBtn.setTooltip(UIUtil.getTooltip("清空列表"));
         sendSettingBtn.setTooltip(UIUtil.getTooltip("发送设置"));
+        displaySettingBtn.setTooltip(UIUtil.getTooltip("显示设置"));
+        muteResBtn.setTooltip(UIUtil.getTooltip("禁用回复"));
 
         selectAllBtn.setTooltip(UIUtil.getTooltip("全选/取消全选"));
         removeClientBtn.setTooltip(UIUtil.getTooltip("删除客户端"));

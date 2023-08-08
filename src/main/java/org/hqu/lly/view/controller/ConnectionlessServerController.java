@@ -74,7 +74,13 @@ public abstract class ConnectionlessServerController extends BaseServerControlle
                     msgList.getItems().add(msg);
                 });
             }
+
+            @Override
+            public boolean isMuteReq() {
+                return muteRes;
+            }
         };
+
 
     }
 
