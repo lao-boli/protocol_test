@@ -40,12 +40,22 @@ import java.util.stream.Collectors;
 public class ListItemPopup extends Popup {
 
     private DoubleProperty transition;
-    private final void setTransition(double value) { transitionProperty().set(value); }
-    private final double getTransition() { return transition == null ? 0.0 : transition.get(); }
+    private Timeline inAnim;
+    private Timeline outAnim;
+
+    private final void setTransition(double value) {
+        transitionProperty().set(value);
+    }
+
+    private final double getTransition() {
+        return transition == null ? 0.0 : transition.get();
+    }
+
     private final DoubleProperty transitionProperty() {
         if (transition == null) {
             transition = new SimpleDoubleProperty(this, "transition", 0.0) {
-                @Override protected void invalidated() {
+                @Override
+                protected void invalidated() {
                 }
             };
         }
@@ -102,6 +112,8 @@ public class ListItemPopup extends Popup {
         // setup css
         dataListView.getStylesheets().add(ResLoc.LIST_ITEM_POPUP_CSS.toString());
         setupListView();
+        setupInAnim();
+        setupOutAnim();
 
 
         // wrapper 让消息框显示前就能获取到宽度,
@@ -220,55 +232,52 @@ public class ListItemPopup extends Popup {
             double anchorX = node.localToScreen(node.getBoundsInLocal()).getMinX();
             double anchorY = yOffset + node.localToScreen(node.getBoundsInLocal()).getMaxY();
 
-            setupAnimation(owner, anchorX, anchorY);
+            dataListView.setPrefHeight(0);
+            this.show(node, anchorX, anchorY);
+            outAnim.stop();
+            inAnim.play();
         });
     }
 
-    /**
-     * 为消息提示框设置动画效果
-     *
-     * @param node      owner 节点
-     * @param popupX    显示x坐标
-     * @param popupY    显示y坐标
-     */
-    private void setupAnimation(Node node, double popupX, double popupY) {
+    public void close() {
+        inAnim.stop();
+        outAnim.play();
+    }
 
+    private void setupInAnim() {
         // XXX optimize anim implementation
-        dataListView.setPrefHeight(0);
-
         Duration animDuration = Duration.seconds(0.1);
-        Timeline timeline = new Timeline(
+        inAnim = new Timeline(
                 new KeyFrame(Duration.ZERO, new KeyValue(dataListView.translateYProperty(), -curListViewPerfHeight)),
                 new KeyFrame(animDuration, new KeyValue(dataListView.translateYProperty(), 0))
         );
 
-        timeline.setAutoReverse(false);
-        timeline.setCycleCount(1);
+        inAnim.setAutoReverse(false);
+        inAnim.setCycleCount(1);
         // 动态地改变 Popup 内容的高度
-        timeline.currentTimeProperty().addListener((observable, oldValue, newValue) -> {
+        inAnim.currentTimeProperty().addListener((observable, oldValue, newValue) -> {
             double progress = newValue.toMillis() / animDuration.toMillis();
             dataListView.setPrefHeight(progress * curListViewPerfHeight);
         });
-
-        this.show(node, popupX, popupY);
-        timeline.play();
     }
 
-    public void close() {
+
+    private Timeline setupOutAnim() {
+        // XXX optimize anim implementation
         Duration animDuration = Duration.seconds(0.1);
-        Timeline timeline = new Timeline(
+        outAnim = new Timeline(
                 new KeyFrame(Duration.ZERO, new KeyValue(dataListView.translateYProperty(), 0)),
                 new KeyFrame(animDuration, new KeyValue(dataListView.translateYProperty(), -curListViewPerfHeight))
         );
 
-        timeline.currentTimeProperty().addListener((observable, oldValue, newValue) -> {
+        outAnim.currentTimeProperty().addListener((observable, oldValue, newValue) -> {
             double progress = newValue.toMillis() / animDuration.toMillis();
             dataListView.setPrefHeight(curListViewPerfHeight - progress * curListViewPerfHeight);
         });
-        timeline.setAutoReverse(false);
-        timeline.setCycleCount(1);
-        timeline.setOnFinished(e -> hide());
-        timeline.play();
+        outAnim.setAutoReverse(false);
+        outAnim.setCycleCount(1);
+        outAnim.setOnFinished(e -> hide());
+        return outAnim;
     }
 
 
