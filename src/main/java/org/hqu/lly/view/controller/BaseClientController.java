@@ -184,7 +184,6 @@ public abstract class BaseClientController<T extends BaseClient> extends CommonU
 
         historyPopup = new ListItemPopup();
         historyPopup.getDataListView().prefWidthProperty().bind(remoteAddressInput.widthProperty());
-        historyPopup.setOwner(remoteAddressInput);
         historyPopup.setOnItemClicked(s -> remoteAddressInput.setText(s));
         remoteAddressInput.focusedProperty().addListener((observable, oldValue, newValue) -> {
             // if only judge remoteAddressInput if lost focus,

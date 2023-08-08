@@ -5,19 +5,15 @@ import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleDoubleProperty;
 import javafx.collections.ListChangeListener;
 import javafx.scene.Node;
 import javafx.scene.control.*;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Popup;
 import javafx.util.Duration;
 import lombok.Getter;
-import lombok.Setter;
 import lombok.val;
 import org.hqu.lly.constant.ResLoc;
 import org.hqu.lly.icon.CloseIcon;
@@ -39,28 +35,8 @@ import java.util.stream.Collectors;
  */
 public class ListItemPopup extends Popup {
 
-    private DoubleProperty transition;
     private Timeline inAnim;
     private Timeline outAnim;
-
-    private final void setTransition(double value) {
-        transitionProperty().set(value);
-    }
-
-    private final double getTransition() {
-        return transition == null ? 0.0 : transition.get();
-    }
-
-    private final DoubleProperty transitionProperty() {
-        if (transition == null) {
-            transition = new SimpleDoubleProperty(this, "transition", 0.0) {
-                @Override
-                protected void invalidated() {
-                }
-            };
-        }
-        return transition;
-    }
 
     /**
      * 24px is the default single item height
@@ -78,27 +54,11 @@ public class ListItemPopup extends Popup {
      */
     private double curListViewPerfHeight = 0;
 
-    public enum Direction {
-        /**
-         * 由下至上
-         */
-        DOWN_TO_UP,
-        /**
-         * 由上至下
-         */
-        UP_TO_DOWN,
-    }
-
-
     @Getter
     private ListView<Label> dataListView;
 
-    private List<HBox> dataList;
 
     private Consumer<String> onItemClicked;
-
-    @Setter
-    private Node owner;
 
     private Pane contentWrapper;
 
