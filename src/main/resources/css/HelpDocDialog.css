@@ -1,0 +1,56 @@
+.help-doc-dialog {
+    -fx-background-color: #3c3f41;
+    -fx-padding: 5;
+}
+
+.content-pane {
+    -fx-background-color: #3c3f41;
+    -fx-padding: 5;
+    -fx-pref-width: 400;
+    -fx-pref-height: 400;
+}
+
+.container {
+    -fx-background-color: green;
+}
+
+.header {
+    -fx-spacing: 5;
+    -fx-alignment: top-left;
+    -fx-padding: 0 15 0 0;
+}
+
+.btn-group {
+    -fx-spacing: 5;
+    -fx-alignment: top-right;
+    -fx-padding: 0 15 0 0;
+}
+.header .button {
+    -fx-background-color: #3c3f41;
+    -fx-background-insets: 0;
+    -fx-background-radius: 3px, 3px;
+    -fx-padding: 3;
+}
+.header .button:disabled {
+    -fx-background-color: #3c3f41;
+}
+.header .button:hover {
+    -fx-background-color: #4c5052;
+}
+.header .button:pressed {
+    -fx-background-color: #5c6164;
+}
+
+.text-area {
+
+}
+
+.scroll-pane {
+    /*保证字体不模糊.
+    see also: https://stackoverflow.com/questions/23728517/blurred-text-in-javafx-textarea*/
+    -fx-padding: 0;
+    -fx-hbar-policy: never;
+}
+
+
+
