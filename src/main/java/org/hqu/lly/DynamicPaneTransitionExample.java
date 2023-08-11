@@ -15,6 +15,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import org.hqu.lly.domain.component.HelpDocDialog;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,10 +46,13 @@ public class DynamicPaneTransitionExample extends Application {
         HBox buttonBox = new HBox(prevButton, nextButton);
         ;
 
-        root = new VBox(buttonBox, new StackPane(rectangle1, rectangle2, rectangle3));
+        root = new VBox(buttonBox, new StackPane(panes.get(0), panes.get(1),panes.get(2)));
+        // rectangle2.setVisible(false);
+        // rectangle1.setVisible(false);
         Scene scene = new Scene(root, 300, 200);
         primaryStage.setScene(scene);
         primaryStage.show();
+        new HelpDocDialog(primaryStage).show();
     }
 
     private void switchToPreviousPane() {
@@ -64,12 +68,15 @@ public class DynamicPaneTransitionExample extends Application {
     private void switchPane(int newIndex, double targetTranslateX) {
         Pane currentPane = panes.get(currentIndex);
         Pane newPane = panes.get(newIndex);
+        // newPane.setVisible(false);
+        currentPane.setVisible(true);
+        newPane.setVisible(true);
 
         newPane.setTranslateX(targetTranslateX);
 
         Timeline timeline = new Timeline(
-                new KeyFrame(Duration.ZERO,e -> currentPane.setVisible(false), new KeyValue(currentPane.translateXProperty(), 0)),
-                new KeyFrame(Duration.ZERO,e -> newPane.setVisible(true), new KeyValue(newPane.translateXProperty(), targetTranslateX)),
+                new KeyFrame(Duration.ZERO, new KeyValue(currentPane.translateXProperty(), 0)),
+                new KeyFrame(Duration.ZERO, new KeyValue(newPane.translateXProperty(), targetTranslateX)),
                 new KeyFrame(Duration.seconds(0.5), new KeyValue(currentPane.translateXProperty(), -targetTranslateX, Interpolator.EASE_BOTH)),
                 new KeyFrame(Duration.seconds(0.5), new KeyValue(newPane.translateXProperty(), 0, Interpolator.EASE_BOTH))
         );
@@ -77,7 +84,11 @@ public class DynamicPaneTransitionExample extends Application {
         timeline.setAutoReverse(false);
         timeline.setCycleCount(1);
 
-        timeline.setOnFinished(event -> currentIndex = newIndex);
+        timeline.setOnFinished(event -> {
+            currentIndex = newIndex;
+            currentPane.setVisible(false);
+            newPane.setVisible(true);
+        });
 
         timeline.play();
         // System.out.println(root.getChildren());
