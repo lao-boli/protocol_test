@@ -4,14 +4,13 @@ import javafx.animation.Interpolator;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import org.hqu.lly.constant.ResLoc;
@@ -86,6 +85,7 @@ public class HelpDocDialog extends MyDialog<HelpDocDialog.ContentPane> {
 
             this.getStyleClass().add("content-pane");
             this.getChildren().addAll(header, container, btnGroup);
+            clipRegion(this);
         }
 
 
@@ -168,6 +168,20 @@ public class HelpDocDialog extends MyDialog<HelpDocDialog.ContentPane> {
             });
 
             timeline.play();
+        }
+
+        /**
+         * 裁剪容器(避免显示的部分超出容器的范围)
+         * @param region this
+         */
+        private void clipRegion(Region region) {
+            Rectangle rectClip = new Rectangle();
+            region.setClip(rectClip);
+            Platform.runLater(() -> {
+                rectClip.widthProperty().bind(region.widthProperty());
+                rectClip.heightProperty().bind(region.heightProperty());
+            });
+
         }
 
         void initAnim() {
