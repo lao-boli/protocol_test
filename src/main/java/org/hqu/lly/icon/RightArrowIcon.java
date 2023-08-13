@@ -12,8 +12,10 @@ package org.hqu.lly.icon;
 public class RightArrowIcon extends BaseIcon {
 
     public RightArrowIcon() {
-        super("#afb1b3");
+        // super("#afb1b3");
+        super();
         setStyleClass("icon-right-arrow");
+
     }
 
     public RightArrowIcon(String color) {

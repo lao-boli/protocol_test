@@ -12,7 +12,7 @@ package org.hqu.lly.icon;
 public class LeftArrowIcon extends BaseIcon {
 
     public LeftArrowIcon() {
-        super("#afb1b3");
+        super();
         setStyleClass("icon-left-arrow");
     }
 

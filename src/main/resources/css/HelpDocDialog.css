@@ -22,7 +22,7 @@
 .btn-group {
     -fx-spacing: 5;
     -fx-alignment: top-right;
-    -fx-padding: 0 15 0 0;
+    -fx-padding: 0 0 0 0;
 }
 
 .header .button {
@@ -31,9 +31,19 @@
     -fx-background-radius: 3px, 3px;
     -fx-padding: 3;
 }
+.header .button .icon-right-arrow,
+.header .button .icon-left-arrow
+{
+    -fx-background-color: #afb1b3;
+}
 
 .header .button:disabled {
     -fx-background-color: #3c3f41;
+}
+.header .button:disabled .icon-right-arrow,
+.header .button:disabled .icon-left-arrow
+{
+    -fx-background-color: #5a5a5a;
 }
 
 .header .button:hover {
