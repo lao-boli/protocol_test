@@ -452,6 +452,8 @@ public abstract class BaseClientController<T extends BaseClient> extends CommonU
         ConfigStore.controllers.add(this);
         if (config == null) {
             clientConfig = (ClientSessionConfig) ConfigStore.createConfig(ConfigType.CLIENT);
+            // 防止空指针
+            setUpHistory();
         } else {
             clientConfig = config;
             tab.setTitle(config.getTabName());
