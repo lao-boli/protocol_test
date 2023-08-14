@@ -77,6 +77,7 @@ public abstract class BaseServerController<T> extends CommonUIContorller impleme
     protected TitleTab tab;
 
     protected boolean muteRes = false;
+
     /**
      * netty服务端。<br>
      * 应为 {@link TCPServer}、{@link UDPServer}、{@link WebSocketServer}
