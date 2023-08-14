@@ -1,0 +1,101 @@
+.help-doc-dialog {
+    -fx-background-color: #3c3f41;
+    -fx-padding: 5;
+}
+
+.content-pane {
+    -fx-background-color: #3c3f41;
+    -fx-padding: 5;
+    -fx-pref-width: 400;
+    -fx-pref-height: 400;
+}
+
+.container {
+}
+
+.header {
+    -fx-spacing: 5;
+    -fx-alignment: top-left;
+    -fx-padding: 0 15 0 0;
+}
+
+.btn-group {
+    -fx-spacing: 5;
+    -fx-alignment: top-right;
+    -fx-padding: 0 0 0 0;
+}
+
+.header .button {
+    -fx-background-color: #3c3f41;
+    -fx-background-insets: 0;
+    -fx-background-radius: 3px, 3px;
+    -fx-padding: 3;
+}
+.header .button .icon-right-arrow,
+.header .button .icon-left-arrow
+{
+    -fx-background-color: #afb1b3;
+}
+
+.header .button:disabled {
+    -fx-background-color: #3c3f41;
+}
+.header .button:disabled .icon-right-arrow,
+.header .button:disabled .icon-left-arrow
+{
+    -fx-background-color: #5a5a5a;
+}
+
+.header .button:hover {
+    -fx-background-color: #4c5052;
+}
+
+.header .button:pressed {
+    -fx-background-color: #5c6164;
+}
+
+.text-area .scroll-pane:fitToWidth .viewport .content{
+    -fx-padding: 0 -1 0 2;
+}
+.text-area > .scroll-pane * {
+    /*-fx-background-color: transparent;*/
+    /*-fx-border-width: 0;*/
+}
+.text-area {
+     -fx-background-insets: 0;
+}
+.text-area:focused {
+    -fx-background-insets: 0;
+    -fx-focus-color: transparent;
+}
+
+
+.scroll-bar {
+    -fx-pref-width: 10;
+}
+.scroll-bar:vertical .increment-button,
+.scroll-bar .decrement-button
+{
+    -fx-padding: -5;
+    visibility: false;
+}
+.scroll-bar:vertical .increment-button .increment-arrow,
+.scroll-bar:vertical .decrement-button .decrement-arrow
+{
+    visibility: false;
+}
+
+.scroll-bar:vertical > .thumb {
+    -fx-background-radius: 5px;
+}
+
+
+.scroll-pane {
+    /*保证字体不模糊.
+    see also: https://stackoverflow.com/questions/23728517/blurred-text-in-javafx-textarea*/
+    -fx-padding: 0;
+    -fx-hbar-policy: never;
+}
+
+
+
