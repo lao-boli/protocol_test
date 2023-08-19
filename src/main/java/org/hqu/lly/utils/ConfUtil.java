@@ -36,7 +36,7 @@ public class ConfUtil {
     /**
      * 配置文件名称
      */
-    private static final String latest = "\\config2.json";
+    private static final String latest = "\\config.json";
     /**
      * 配置文件备份名称
      */
