@@ -25,6 +25,16 @@
 
 }
 
+.tooltip {
+    -fx-text-fill: #bbbbbb;
+    -fx-background-color: #4b4d4d;
+    -fx-font-size: 12px;
+    -fx-effect: none;
+    -fx-border-style: solid;
+    -fx-border-color: #636569;
+    -fx-padding: 4;
+}
+
 /*.icon-button {*/
 /*    -fx-pref-width: 26;*/
 /*    -fx-max-width: 26;*/
