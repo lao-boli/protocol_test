@@ -1,6 +1,7 @@
 .text-area > .scroll-pane {
     -fx-padding: 0;
 }
+
 .tooltip {
     -fx-text-fill: #bbbbbb;
     -fx-background-color: #4b4d4d;
@@ -11,13 +12,14 @@
     -fx-padding: 4;
 }
 
-.tab-pane > .tab-header-area > .headers-region > .tab:top > .tab-container > .tab-label{
+.tab-pane > .tab-header-area > .headers-region > .tab:top > .tab-container > .tab-label {
     -fx-content-display: graphic-only;
 }
 
 .split-pane {
     -fx-padding: 5 5 10 5;
 }
+
 .split-pane > .split-pane-divider {
     -fx-background-color: transparent;
 }
@@ -34,7 +36,7 @@
     -fx-pref-width: 14px;
     -fx-max-width: 14px;
     -fx-max-height: 14px;
-    -fx-background-color: #a9a9a9;
+    -fx-background-color: -icon-color;
 }
 
 .icon-history {
@@ -52,7 +54,7 @@
     -fx-pref-width: 16px;
     -fx-max-width: 16px;
     -fx-max-height: 16px;
-    -fx-background-color: #a9a9a9;
+    -fx-background-color: -icon-color;
 }
 
 .icon-clear {
@@ -61,7 +63,7 @@
     -fx-pref-width: 14px;
     -fx-max-width: 14px;
     -fx-max-height: 16px;
-    -fx-background-color: #a9a9a9;
+    -fx-background-color: -icon-color;
 }
 
 .icon-display-setting {
@@ -70,7 +72,7 @@
     -fx-pref-width: 16px;
     -fx-max-width: 16px;
     -fx-max-height: 16px;
-    -fx-background-color: #a9a9a9;
+    -fx-background-color: -icon-color;
 }
 
 .icon-encode-setting {
@@ -82,7 +84,7 @@
     -fx-max-height: 16px;
     -fx-min-width: 18px;
     -fx-min-height: 16px;
-    -fx-background-color: #a9a9a9;
+    -fx-background-color: -icon-color;
 }
 
 .icon-mute-req {
@@ -94,7 +96,7 @@
     -fx-max-height: 16px;
     -fx-min-width: 18px;
     -fx-min-height: 16px;
-    -fx-background-color: #a9a9a9;
+    -fx-background-color: -icon-color;
 }
 
 .icon-send-setting {
@@ -106,7 +108,7 @@
     -fx-max-height: 18px;
     -fx-min-width: 18px;
     -fx-min-height: 18px;
-    -fx-background-color: #a9a9a9;
+    -fx-background-color: -icon-color;
 }
 
 /*client group relate in server pane*/
@@ -119,7 +121,7 @@
     -fx-max-height: 16px;
     -fx-min-width: 16px;
     -fx-min-height: 16px;
-    -fx-background-color: #a9a9a9;
+    -fx-background-color: -icon-color;
 }
 
 .icon-delete {
@@ -131,7 +133,7 @@
     -fx-max-height: 16px;
     -fx-min-width: 16px;
     -fx-min-height: 16px;
-    -fx-background-color: #a9a9a9;
+    -fx-background-color: -icon-color;
 }
 
 .sidebar .toggle-button,
@@ -140,7 +142,7 @@
     -fx-max-width: 26;
     -fx-pref-height: 26;
     -fx-max-height: 26;
-    -fx-background-color: #3c3f41;
+    -fx-background-color: -app-base;
     -fx-background-insets: 0;
     -fx-background-radius: 3px, 3px;
     -fx-padding: 3;
@@ -153,49 +155,41 @@
     -fx-pref-height: 20;
     -fx-max-width: 20;
     -fx-max-height: 20;
-    -fx-background-color: #3c3f41;
+    -fx-background-color: -app-base;
     -fx-background-insets: 0;
     -fx-background-radius: 3px, 3px;
     -fx-padding: 3;
 }
+
 .addr-icon-button:disabled {
-    -fx-background-color: #3c3f41;
+    -fx-background-color: -app-base;
 }
 
 .addr-icon-button:disabled .icon-add,
 .addr-icon-button:disabled .icon-history {
-    -fx-background-color: #5a5a5a;
-}
-
-.sidebar .toggle-button:hover,
-.icon-button:hover,
-.addr-icon-button:hover
-{
-    -fx-background-color: #4c5052;
+    -fx-background-color: -btn-disable-icon;
 }
 
 .sidebar .toggle-button:focused,
 .icon-button:focused,
-.addr-icon-button:focused
-{
-    -fx-background-color: #3c3f41;
+.addr-icon-button:focused {
+    -fx-background-color: -app-base;
 }
 
 .sidebar .toggle-button:focused:hover,
 .icon-button:hover,
-.addr-icon-button:hover
-{
-    -fx-background-color: #4c5052;
+.addr-icon-button:hover {
+    -fx-background-color: -btn-hover;
 }
 
 .sidebar .toggle-button:selected {
-    -fx-background-color: #3c3f41, #5c6164;
+    -fx-background-color: -app-base, -btn-highlight;
 }
 
 .sidebar .toggle-button:selected:focused {
-    -fx-background-color: #3c3f41, #5c6164;
+    -fx-background-color: -app-base, -btn-highlight;
 }
 
 .icon-button:pressed {
-    -fx-background-color: #5c6164;
+    -fx-background-color: -btn-highlight;
 }

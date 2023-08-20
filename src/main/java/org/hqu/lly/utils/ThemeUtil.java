@@ -16,6 +16,7 @@ import org.hqu.lly.constant.ResLoc;
 public class ThemeUtil {
 
     public static void applyStyle(Scene scene) {
+        scene.getStylesheets().add(ResLoc.GLOBE_CSS.toExternalForm());
         scene.getStylesheets().add(ResLoc.IDEA.toExternalForm());
     }
 

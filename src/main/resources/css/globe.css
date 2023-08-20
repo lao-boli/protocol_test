@@ -1,0 +1,54 @@
+.root {
+    -app-base: #3c3f41; /*60 63 65*/
+    -darcula-focus-color: #4b6eaf; /*75 110 175*/
+    -darcula-background-darkest: #2b2b2b; /*43 43 43*/
+    -darcula-border-color: #646464;
+
+    -darcula-text: #bbbbbb;
+    -darcula-text-input-background: #45494a; /*69 73 74*/
+    -darcula-text-highlight: #4b6baf;
+    -darcula-text-disabled: #777777;
+
+    -darcula-accent: #808080;
+
+    -icon-color: #a9a9a9;
+
+    -btn-highlight: #5c6164;
+    -btn-hover: #4c5052;
+    -btn-disable-icon: #5a5a5a;
+    -btn-focused: -app-base;
+
+}
+
+/*.icon-button {*/
+/*    -fx-pref-width: 26;*/
+/*    -fx-max-width: 26;*/
+/*    -fx-pref-height: 26;*/
+/*    -fx-max-height: 26;*/
+/*    -fx-background-color: -app-base;*/
+/*    -fx-background-insets: 0;*/
+/*    -fx-background-radius: 3px, 3px;*/
+/*    -fx-padding: 3;*/
+/*}*/
+
+
+/*.icon-button:hover {*/
+/*    -fx-background-color: -btn-hover;*/
+/*}*/
+
+/*.icon-button:focused {*/
+/*    -fx-background-color: -app-base;*/
+/*}*/
+
+/*.icon-button:pressed {*/
+/*    -fx-background-color: -btn-highlight;*/
+/*}*/
+
+
+/*.icon-toggle-button:selected {*/
+/*    -fx-background-color: -app-base, -btn-highlight;*/
+/*}*/
+
+/*.icon-toggle-button:selected:focused {*/
+/*    -fx-background-color: -app-base, -btn-highlight;*/
+/*}*/
