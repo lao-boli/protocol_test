@@ -122,6 +122,13 @@
     -fx-background-color: -btn-disable-icon;
 }
 
+.sidebar .toggle-button:hover,
+.icon-button:hover,
+.addr-icon-button:hover
+{
+    -fx-background-color: -btn-hover;
+}
+
 .sidebar .toggle-button:focused,
 .icon-button:focused,
 .addr-icon-button:focused {
