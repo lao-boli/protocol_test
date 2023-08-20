@@ -1,12 +1,12 @@
 .alert-title-bar {
-    -fx-background-color: #3c3f41;
-    -fx-border-color: #a9a9a9;
+    -fx-background-color: -app-base;
+    -fx-border-color: -icon-color;
     -fx-border-style: solid;
     -fx-border-width: 0 0 0.2 0;
 }
 .title {
     -fx-padding: 0 0 0 10;
-    -fx-text-fill: #a9a9a9;
+    -fx-text-fill: -icon-color;
     -fx-pref-height: 25;
     -fx-alignment: center-left;
     -fx-text-alignment: center;
@@ -23,15 +23,15 @@
 .maximize,
 .minimize,
 .pin-label {
-    -fx-background-color: #3c3f41;
-    -fx-text-fill: #a9a9a9;
+    -fx-background-color: -app-base;
+    -fx-text-fill: -icon-color;
     -fx-content-display: graphic-only;
 }
 .maximize:hover,
 .minimize:hover,
 .pin-label:hover{
     -fx-background-color: #4f5254;
-    -fx-text-fill: #a9a9a9;
+    -fx-text-fill: -icon-color;
 
 }
 
@@ -45,5 +45,5 @@
     -fx-pref-width: 12px;
     -fx-max-width: 12px;
     -fx-max-height: 12px;
-    -fx-background-color: #a9a9a9;
+    -fx-background-color: -icon-color;
 }

@@ -1,10 +1,10 @@
 .data-setting-pane {
-    -fx-background-color: #3c3f41;
+    -fx-background-color: -app-base;
     -fx-padding: 5;
 }
 
 .content-pane {
-    -fx-background-color: #3c3f41;
+    -fx-background-color: -app-base;
     -fx-padding: 5;
     -fx-pref-width: 400;
     -fx-pref-height: 400;

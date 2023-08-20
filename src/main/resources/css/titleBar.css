@@ -1,12 +1,12 @@
 .root {
-    -fx-background-color: #3C3F41;
-    -fx-border-color: #a9a9a9;
+    -fx-background-color: -app-base;
+    -fx-border-color: -icon-color;
     -fx-border-style: solid;
     -fx-border-width: 0 0 0.2 0;
 }
 .title {
     -fx-padding: 0 0 0 10;
-    -fx-text-fill: #a9a9a9;
+    -fx-text-fill: -icon-color;
 }
 
 .icon-pin {
@@ -18,7 +18,7 @@
     -fx-max-height: 16px;
     -fx-min-width: 16px;
     -fx-min-height: 16px;
-    -fx-background-color: #a9a9a9;
+    -fx-background-color: -icon-color;
 }
 
 .icon-close {
@@ -30,7 +30,7 @@
     -fx-max-height: 12px;
     -fx-min-width: 12px;
     -fx-min-height: 12px;
-    -fx-background-color: #a9a9a9;
+    -fx-background-color: -icon-color;
 }
 
 .icon-restore {
@@ -42,7 +42,7 @@
     -fx-max-height: 12px;
     -fx-min-width: 12px;
     -fx-min-height: 12px;
-    -fx-background-color: #a9a9a9;
+    -fx-background-color: -icon-color;
 }
 
 .icon-max {
@@ -54,7 +54,7 @@
     -fx-max-height: 12px;
     -fx-min-width: 12px;
     -fx-min-height: 12px;
-    -fx-background-color: #a9a9a9;
+    -fx-background-color: -icon-color;
 }
 
 .icon-min {
@@ -66,24 +66,24 @@
     -fx-max-height: 2px;
     -fx-min-width: 14px;
     -fx-min-height: 2px;
-    -fx-background-color: #a9a9a9;
+    -fx-background-color: -icon-color;
 }
 .max-label,
 .min-label,
 .pin-label {
-    -fx-background-color: #3c3f41;
-    -fx-text-fill: #a9a9a9;
+    -fx-background-color: -app-base;
+    -fx-text-fill: -icon-color;
 }
 
 .max-label:hover,
 .min-label:hover,
 .pin-label:hover{
-    -fx-background-color: #4f5254;
-    -fx-text-fill: #a9a9a9;
+    -fx-background-color: -btn-hover-2;
+    -fx-text-fill: -icon-color;
 }
 .close-button {
     -fx-text-background-color: -darcula-text-disabled;
-    -fx-text-fill: #a9a9a9;
+    -fx-text-fill: -icon-color;
     -fx-prompt-text-fill: -darcula-text-disabled;
     -fx-opacity: 1.0;
 }

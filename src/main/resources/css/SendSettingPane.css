@@ -16,7 +16,7 @@
     -fx-pref-width: 16px;
     -fx-max-width: 16px;
     -fx-max-height: 16px;
-    -fx-background-color: #a9a9a9;
+    -fx-background-color: -icon-color;
     -fx-cursor: hand;
 }
 .icon-help{

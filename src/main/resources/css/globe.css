@@ -11,10 +11,15 @@
 
     -darcula-accent: #808080;
 
-    -icon-color: #a9a9a9;
+    -list-item-hover: #464a4d;
+
+    -icon-color: #afb1b3;
+    -icon-hover: #828282;
 
     -btn-highlight: #5c6164;
     -btn-hover: #4c5052;
+    /*hover style 2, now only for titlebar icon btn*/
+    -btn-hover-2: #4f5254;
     -btn-disable-icon: #5a5a5a;
     -btn-focused: -app-base;
 
