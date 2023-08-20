@@ -51,20 +51,20 @@
 }
 
 .icon-encode-setting {
-    -fx-pref-height: 16px;
+    -fx-pref-height: 18px;
     -fx-pref-width: 18px;
     -fx-max-width: 18px;
-    -fx-max-height: 16px;
+    -fx-max-height: 18px;
     -fx-min-width: 18px;
-    -fx-min-height: 16px;
+    -fx-min-height: 18px;
 }
 
 .icon-mute-req {
     -fx-pref-height: 16px;
-    -fx-pref-width: 18px;
-    -fx-max-width: 18px;
+    -fx-pref-width: 16px;
+    -fx-max-width: 16px;
     -fx-max-height: 16px;
-    -fx-min-width: 18px;
+    -fx-min-width: 16px;
     -fx-min-height: 16px;
 }
 
@@ -78,15 +78,7 @@
 }
 
 /*client group relate in server pane*/
-.icon-select-all {
-    -fx-pref-height: 16px;
-    -fx-pref-width: 16px;
-    -fx-max-width: 16px;
-    -fx-max-height: 16px;
-    -fx-min-width: 16px;
-    -fx-min-height: 16px;
-}
-
+.icon-select-all,
 .icon-delete {
     -fx-pref-height: 16px;
     -fx-pref-width: 16px;
