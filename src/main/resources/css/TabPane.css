@@ -133,6 +133,10 @@
 .icon-button:focused,
 .addr-icon-button:focused {
     -fx-background-color: -app-base;
+    /*fixed display error*/
+    -fx-background-insets: 0;
+    -fx-background-radius: 3px, 3px;
+    -fx-padding: 3;
 }
 
 .sidebar .toggle-button:focused:hover,
@@ -149,6 +153,8 @@
     -fx-background-color: -app-base, -btn-highlight;
 }
 
-.icon-button:pressed {
+.icon-button:pressed,
+.addr-icon-button:pressed
+{
     -fx-background-color: -btn-highlight;
 }
