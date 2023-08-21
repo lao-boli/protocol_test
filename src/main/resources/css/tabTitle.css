@@ -4,31 +4,18 @@
     -fx-max-width: 40px;
     -fx-cursor: default;
 }
+
 .text-field:focused {
     -fx-background-color: transparent;
     -fx-padding: 4 0 4 0;
 }
 
-.icon-close-bold {
-    -fx-background-color: #a9a9a9;
-}
-.icon-close-bold:hover {
-    -fx-background-color: #828282;
-}
+.icon-close-bold,
 .icon-close {
-    -fx-background-color: #a9a9a9;
+    -fx-background-color: -icon-color;
 }
+
+.icon-close-bold:hover,
 .icon-close:hover {
-    -fx-background-color: #828282;
+    -fx-background-color: -icon-hover;
 }
-
-.tooltip {
-    -fx-text-fill: #bbbbbb;
-    -fx-background-color: #4b4d4d;
-    -fx-font-size: 12px;
-    -fx-effect: none;
-    -fx-border-style: solid;
-    -fx-border-color: #636569;
-    -fx-padding: 4;
-}
-

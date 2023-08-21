@@ -56,6 +56,7 @@ public class ResLoc {
 
     public static final URL ICON = realPath("icon/icon.css");
 
+    public static final URL GLOBE_CSS = realPath("css/globe.css");
     // region theme
     public static final URL IDEA = realPath("css/IdeaDarkStyle.css");
     // endregion

@@ -8,7 +8,6 @@ import org.hqu.lly.view.controller.BaseController;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -31,8 +30,9 @@ public class ConfigStore {
      */
     public static Boolean isLoad = false;
 
+    private static ConfigSummary configSummary = new ConfigSummary();
     @Getter
-    private static Map<String,SessionConfig> sessionConfigs = new HashMap<>();
+    private static Map<String,SessionConfig> sessionConfigs = configSummary.getSessionConfigs();
 
     public static void addSessionConfig(SessionConfig config){
         sessionConfigs.put(config.id, config);
@@ -63,11 +63,14 @@ public class ConfigStore {
     public static void save(){
         controllers.forEach(BaseController::save);
         log.debug("save {}",sessionConfigs);
-        ConfUtil.saveConf(sessionConfigs);
+        ConfUtil.saveConf(configSummary);
     }
 
     public static void load() throws FileNotFoundException {
-        sessionConfigs = ConfUtil.load();
+        configSummary = ConfUtil.load();
+        if (configSummary != null){
+            sessionConfigs = configSummary.getSessionConfigs();
+        }
         isLoad = true;
     }
 

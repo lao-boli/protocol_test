@@ -1,10 +1,10 @@
 .help-doc-dialog {
-    -fx-background-color: #3c3f41;
+    -fx-background-color: -app-base;
     -fx-padding: 5;
 }
 
 .content-pane {
-    -fx-background-color: #3c3f41;
+    -fx-background-color: -app-base;
     -fx-padding: 5;
     -fx-pref-width: 400;
     -fx-pref-height: 400;
@@ -26,7 +26,7 @@
 }
 
 .header .button {
-    -fx-background-color: #3c3f41;
+    -fx-background-color: -app-base;
     -fx-background-insets: 0;
     -fx-background-radius: 3px, 3px;
     -fx-padding: 3;
@@ -34,24 +34,24 @@
 .header .button .icon-right-arrow,
 .header .button .icon-left-arrow
 {
-    -fx-background-color: #afb1b3;
+    -fx-background-color: -icon-color;
 }
 
 .header .button:disabled {
-    -fx-background-color: #3c3f41;
+    -fx-background-color: -app-base;
 }
 .header .button:disabled .icon-right-arrow,
 .header .button:disabled .icon-left-arrow
 {
-    -fx-background-color: #5a5a5a;
+    -fx-background-color: -btn-disable-icon;
 }
 
 .header .button:hover {
-    -fx-background-color: #4c5052;
+    -fx-background-color: -btn-hover;
 }
 
 .header .button:pressed {
-    -fx-background-color: #5c6164;
+    -fx-background-color: -btn-highlight;
 }
 
 .text-area .scroll-pane:fitToWidth .viewport .content{

@@ -6,15 +6,6 @@
     -fx-spacing: 5.0;
     -fx-alignment: bottom-left;
 }
-.tooltip {
-    -fx-text-fill: #bbbbbb;
-    -fx-background-color: #4b4d4d;
-    -fx-font-size: 12px;
-    -fx-effect: none;
-    -fx-border-style: solid;
-    -fx-border-color: #636569;
-    -fx-padding: 4;
-}
 
 .tab-pane > .tab-header-area > .headers-region > .tab:top > .tab-container > .tab-label{
     -fx-content-display: graphic-only;

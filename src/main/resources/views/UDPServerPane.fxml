@@ -35,7 +35,7 @@
                                </children>
                            </VBox>
                            <ListView fx:id="clientListBox" prefHeight="57.0" prefWidth="189.0" HBox.hgrow="ALWAYS" />
-                           <VBox fx:id="clientBoxToolBar" prefHeight="57.0" prefWidth="24.0" spacing="3.0" styleClass="sidebar">
+                           <VBox fx:id="clientBoxToolBar" prefHeight="57.0" prefWidth="26.0" spacing="3.0" styleClass="sidebar">
                                <children>
                                    <Button fx:id="selectAllBtn" mnemonicParsing="false" onMouseClicked="#selectAllClient" prefHeight="20.0" prefWidth="20.0" styleClass="icon-button">
                                        <padding>

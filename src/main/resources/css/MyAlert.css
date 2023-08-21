@@ -1,5 +1,5 @@
 .alert-content-pane {
-    -fx-background-color: #3c3f41;
+    -fx-background-color: -app-base;
     -fx-padding: 5;
 }
 

@@ -1,11 +1,10 @@
 package org.hqu.lly.utils;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.hqu.lly.domain.config.ConfigStore;
-import org.hqu.lly.domain.config.SessionConfig;
+import org.hqu.lly.domain.config.ConfigSummary;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -13,7 +12,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
-import java.util.HashMap;
 
 /**
  * <p>
@@ -89,11 +87,10 @@ public class ConfUtil {
      * @return {@link ConfigStore#sessionConfigs} 全局配置文件
      * @throws FileNotFoundException 未读取到本地配置文件
      */
-    public static HashMap<String, SessionConfig> load() throws FileNotFoundException {
+    public static ConfigSummary load() throws FileNotFoundException{
         try {
             FileInputStream fileInputStream = new FileInputStream(path + latest);
-            HashMap<String, SessionConfig> config = mapper.readValue(fileInputStream, new TypeReference<HashMap<String, SessionConfig>>() {
-            });
+            ConfigSummary config = mapper.readValue(fileInputStream, ConfigSummary.class);
             return config;
 
         } catch (FileNotFoundException e) {
