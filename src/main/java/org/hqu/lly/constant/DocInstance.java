@@ -22,13 +22,16 @@ public class DocInstance {
 
     static {
         jsTip = """
-                JS执行时间应小于发送间隔, 可先执行几次JS脚本进行预热, 以减少后续执行时间
+                JS执行时间应小于发送间隔, 可先执行几次JS脚本进行预热, 以减少后续执行时间。
                 
-                js引擎分为nashorn和graal.
+                js引擎分为nashorn和graal。
                 
                 nashorn引擎仅支持es5语法,但在本应用程序中脚本执行速度比graal快。
                 graal支持es6语法,但在本应用程序中脚本执行速度比nashorn慢。
                 请跟据需求选择对应的js引擎。
+                
+                脚本生成的数据应以 return 返回。
+                i.e. return Math.random();
                 """;
         jsLibFun = """
                 内置库函数

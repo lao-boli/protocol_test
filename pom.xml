@@ -6,7 +6,7 @@
 
     <groupId>org.hqu.lly</groupId>
     <artifactId>protocol_test</artifactId>
-    <version>0.3.0-beta</version>
+    <version>0.3.1-beta</version>
 
     <properties>
         <maven.compiler.source>15</maven.compiler.source>
