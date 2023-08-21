@@ -173,12 +173,12 @@ public class SendSettingController {
 
     @FXML
     void showDataRangeSettingPane(MouseEvent event) {
-        String dataPattern = customFormTextArea.getText();
+        // prevent npe
+        String dataPattern =  "" + customFormTextArea.getText();
         String customDataPattern = customDataConfig.getCustomDataPattern();
 
         // 若配置中的自定义数据格式与当前输入框中的相同
-        if (customDataPattern != null
-                && dataPattern.equals(customDataPattern)) {
+        if (dataPattern.equals(customDataPattern)) {
             // 直接显示面板
             dataSettingPane.show();
         } else {
