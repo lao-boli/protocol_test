@@ -159,6 +159,8 @@ public abstract class BaseClientController<T extends BaseClient> extends CommonU
         });
     }
 
+
+    //region history
     @FXML
     public void addHistory(MouseEvent mouseEvent) {
         if (historyPopup == null) {
@@ -201,6 +203,7 @@ public abstract class BaseClientController<T extends BaseClient> extends CommonU
 
     }
 
+    //endregion
 
     @FXML
     void disconnect(MouseEvent event) {
@@ -209,6 +212,7 @@ public abstract class BaseClientController<T extends BaseClient> extends CommonU
     }
 
 
+    //region message
     @FXML
     void sendMsg(MouseEvent event) {
         sendMsg();
@@ -288,6 +292,8 @@ public abstract class BaseClientController<T extends BaseClient> extends CommonU
             scheduledService.cancel();
         }
     }
+    //endregion
+
 
     @FXML
     void showSendSetting(MouseEvent event) {
@@ -297,6 +303,7 @@ public abstract class BaseClientController<T extends BaseClient> extends CommonU
         sendSettingPane.show();
     }
 
+    //region destroy
     /**
      * <p>
      * 标签页关闭前的回调函数。<br>
@@ -327,35 +334,9 @@ public abstract class BaseClientController<T extends BaseClient> extends CommonU
         }
         client.destroy();
     }
+    //endregion
 
-    protected void setActiveUI() {
-        Platform.runLater(() -> {
-            remoteAddressInput.setDisable(true);
-            addrHistoryBtn.setDisable(true);
-            showHistoryBtn.setDisable(true);
-            if (sendSettingConfig.isTextMode()) {
-                msgInput.setDisable(false);
-            }
-            connectButton.setDisable(true);
-            disconnectButton.setDisable(false);
-            sendMsgButton.setDisable(false);
-            scheduleSendBtn.setDisable(false);
-        });
-    }
-
-    protected void setInactiveUI() {
-        Platform.runLater(() -> {
-            remoteAddressInput.setDisable(false);
-            addrHistoryBtn.setDisable(false);
-            showHistoryBtn.setDisable(false);
-            msgInput.setDisable(true);
-            connectButton.setDisable(false);
-            disconnectButton.setDisable(true);
-            sendMsgButton.setDisable(true);
-            scheduleSendBtn.setDisable(true);
-        });
-    }
-
+    //region init
     @FXML
     public void initialize() {
         tabContainer.addEventFilter(MouseEvent.MOUSE_CLICKED, event -> {
@@ -465,6 +446,36 @@ public abstract class BaseClientController<T extends BaseClient> extends CommonU
         setClient();
         sendSettingConfig = clientConfig.getSendSettingConfig();
         initSendSetting();
+    }
+    //endregion
+
+
+    protected void setActiveUI() {
+        Platform.runLater(() -> {
+            remoteAddressInput.setDisable(true);
+            addrHistoryBtn.setDisable(true);
+            showHistoryBtn.setDisable(true);
+            if (sendSettingConfig.isTextMode()) {
+                msgInput.setDisable(false);
+            }
+            connectButton.setDisable(true);
+            disconnectButton.setDisable(false);
+            sendMsgButton.setDisable(false);
+            scheduleSendBtn.setDisable(false);
+        });
+    }
+
+    protected void setInactiveUI() {
+        Platform.runLater(() -> {
+            remoteAddressInput.setDisable(false);
+            addrHistoryBtn.setDisable(false);
+            showHistoryBtn.setDisable(false);
+            msgInput.setDisable(true);
+            connectButton.setDisable(false);
+            disconnectButton.setDisable(true);
+            sendMsgButton.setDisable(true);
+            scheduleSendBtn.setDisable(true);
+        });
     }
 
     private class BaseClientService extends ClientService {

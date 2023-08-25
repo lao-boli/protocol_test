@@ -195,6 +195,7 @@ public abstract class BaseServerController<T> extends CommonUIContorller impleme
         setInactiveUI();
     }
 
+    //region client box
     @FXML
     void removeClient(MouseEvent event) {
         ObservableList<T> removeItems = clientListBox.getSelectionModel().getSelectedItems();
@@ -212,29 +213,14 @@ public abstract class BaseServerController<T> extends CommonUIContorller impleme
         }
         selectAll = !selectAll;
     }
+    //endregion
 
-    protected void setActiveUI() {
-        Platform.runLater(() -> {
-            serverPort.setDisable(true);
-            if (sendSettingConfig.isTextMode()){
-                msgInput.setDisable(false);
-            }
-            confirmButton.setDisable(true);
-            closeServerButton.setDisable(false);
-        });
-    }
+    //region sidebar
+    @FXML
+    void clearMsg(MouseEvent event) {
+        msgList.getItems().remove(0, msgList.getItems().size());
+        msgList.refresh();
 
-    protected void setInactiveUI() {
-        Platform.runLater(() -> {
-            serverPort.setDisable(false);
-            if (!server.isActive()){
-                msgInput.setDisable(true);
-            }
-            confirmButton.setDisable(false);
-            closeServerButton.setDisable(true);
-            sendMsgButton.setDisable(true);
-            scheduleSendBtn.setDisable(true);
-        });
     }
 
     @FXML
@@ -244,8 +230,10 @@ public abstract class BaseServerController<T> extends CommonUIContorller impleme
         // so no need to judge if muteResBtn was being selected.
         muteRes = !muteRes;
     }
+    //endregion
 
 
+    //region message
     @FXML
     void sendMsg(MouseEvent event) {
         sendMsg();
@@ -310,19 +298,16 @@ public abstract class BaseServerController<T> extends CommonUIContorller impleme
             scheduledService.cancel();
         }
     }
+    // endregion
+
 
     @FXML
     void showSendSetting(MouseEvent event) {
         sendSettingPane.show();
     }
 
-    @FXML
-    void clearMsg(MouseEvent event) {
-        msgList.getItems().remove(0, msgList.getItems().size());
-        msgList.refresh();
 
-    }
-
+    //region destroy
     /**
      * 销毁server并在做一些清理工作
      *  @date 2023-07-12 20:16
@@ -348,11 +333,12 @@ public abstract class BaseServerController<T> extends CommonUIContorller impleme
         ConfigStore.controllers.remove(this);
         ConfigStore.removeSessionConfig(serverConfig.getId());
     }
+    //endregion
 
 
+    //region init
     @FXML
     public void initialize() {
-        System.out.println(this);
         // 初始化客户端列表盒子
         setClientBox();
         // 功能按钮悬浮tip提示
@@ -499,6 +485,31 @@ public abstract class BaseServerController<T> extends CommonUIContorller impleme
         setServerService();
         initSendSetting();
 
+    }
+    //region init
+
+    protected void setActiveUI() {
+        Platform.runLater(() -> {
+            serverPort.setDisable(true);
+            if (sendSettingConfig.isTextMode()){
+                msgInput.setDisable(false);
+            }
+            confirmButton.setDisable(true);
+            closeServerButton.setDisable(false);
+        });
+    }
+
+    protected void setInactiveUI() {
+        Platform.runLater(() -> {
+            serverPort.setDisable(false);
+            if (!server.isActive()){
+                msgInput.setDisable(true);
+            }
+            confirmButton.setDisable(false);
+            closeServerButton.setDisable(true);
+            sendMsgButton.setDisable(true);
+            scheduleSendBtn.setDisable(true);
+        });
     }
 
 }
