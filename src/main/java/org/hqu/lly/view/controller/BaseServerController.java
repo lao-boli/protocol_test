@@ -246,44 +246,46 @@ public abstract class BaseServerController<T> extends CommonUIContorller impleme
         }
 
         if (!targetClientSet.isEmpty()) {
-            // text mode
             targetClientSet.forEach((client) -> {
                 String text = msgInput.getText();
+                // text mode
                 if (sendSettingConfig.isTextMode()) {
-                    if (sendMsgType == HEX) {
-                        server.sendMessage(MsgUtil.convertText(HEX, PLAIN_TEXT, text), client);
-                    } else {
-                        server.sendMessage(text, client);
-                    }
+                    handleSend(client, text);
                 }
-
                 // custom mode
-                try {
-                    if (sendSettingConfig.isCustomMode()) {
-                        CustomDataConfig customDataConfig = sendSettingConfig.getCustomDataConfig();
-                        String msg = DataUtil.createMsg(customDataConfig.getCustomDataPattern(), customDataConfig.getBoundList());
-                        if (sendMsgType == HEX) {
-                            server.sendMessage(MsgUtil.convertText(HEX, PLAIN_TEXT, msg), client);
-                        } else {
-                            server.sendMessage(msg, client);
-                        }
-                    }
-                } catch (UnSetBoundException e) {
-                    log.warn(e.getMessage());
-                    Platform.runLater(() -> errorMsgLabel.setText("未定义数据边界!"));
+                if (sendSettingConfig.isCustomMode()) {
+                    customModeSend(client);
                 }
-
                 // js mode
                 if (sendSettingConfig.isJSMode()) {
-                    Object res = JSParser.evalScript(sendSettingConfig.getJsCodeConfig().getEngine(),sendSettingConfig.getJsCodeConfig().getScript());
-                    String msg = res == null ? "" : res.toString();
-                    if (sendMsgType == HEX) {
-                        server.sendMessage(MsgUtil.convertText(HEX, PLAIN_TEXT, msg),client);
-                    } else {
-                        server.sendMessage(msg,client);
-                    }
+                    jsModeSend(client);
                 }
             });
+        }
+    }
+
+    private void customModeSend(T client) {
+        try {
+            CustomDataConfig customDataConfig = sendSettingConfig.getCustomDataConfig();
+            String msg = DataUtil.createMsg(customDataConfig.getCustomDataPattern(), customDataConfig.getBoundList());
+            handleSend(client, msg);
+        } catch (UnSetBoundException e) {
+            log.warn(e.getMessage());
+            Platform.runLater(() -> errorMsgLabel.setText("未定义数据边界!"));
+        }
+    }
+
+    private void jsModeSend(T client) {
+        Object res = JSParser.evalScript(sendSettingConfig.getJsCodeConfig().getEngine(), sendSettingConfig.getJsCodeConfig().getScript());
+        String msg = res == null ? "" : res.toString();
+        handleSend(client, msg);
+    }
+
+    private void handleSend(T client, String text) {
+        if (sendMsgType == HEX) {
+            server.sendMessage(MsgUtil.convertText(HEX, PLAIN_TEXT, text), client);
+        } else {
+            server.sendMessage(text, client);
         }
     }
 
@@ -308,9 +310,11 @@ public abstract class BaseServerController<T> extends CommonUIContorller impleme
 
 
     //region destroy
+
     /**
      * 销毁server并在做一些清理工作
-     *  @date 2023-07-12 20:16
+     *
+     * @date 2023-07-12 20:16
      */
     public void destroyTask() {
         // 如果有定时任务正在执行,则取消
@@ -320,6 +324,7 @@ public abstract class BaseServerController<T> extends CommonUIContorller impleme
         }
         server.destroy();
     }
+
     /**
      * <p>
      * 标签页关闭前的回调函数。<br>
@@ -491,7 +496,7 @@ public abstract class BaseServerController<T> extends CommonUIContorller impleme
     protected void setActiveUI() {
         Platform.runLater(() -> {
             serverPort.setDisable(true);
-            if (sendSettingConfig.isTextMode()){
+            if (sendSettingConfig.isTextMode()) {
                 msgInput.setDisable(false);
             }
             confirmButton.setDisable(true);
@@ -502,7 +507,7 @@ public abstract class BaseServerController<T> extends CommonUIContorller impleme
     protected void setInactiveUI() {
         Platform.runLater(() -> {
             serverPort.setDisable(false);
-            if (!server.isActive()){
+            if (!server.isActive()) {
                 msgInput.setDisable(true);
             }
             confirmButton.setDisable(false);

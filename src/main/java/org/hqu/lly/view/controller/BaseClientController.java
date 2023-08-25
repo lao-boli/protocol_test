@@ -167,7 +167,7 @@ public abstract class BaseClientController<T extends BaseClient> extends CommonU
             setUpHistory();
         }
         historyPopup.addData(remoteAddressInput.getText());
-        new MessagePopup("已添加到历史记录").showPopup(30,0.8);
+        new MessagePopup("已添加到历史记录").showPopup(30, 0.8);
     }
 
     @FXML
@@ -178,7 +178,7 @@ public abstract class BaseClientController<T extends BaseClient> extends CommonU
         if (!remoteAddressInput.isFocused()) {
             remoteAddressInput.requestFocus();
         }
-        historyPopup.showPopup(2,remoteAddressInput);
+        historyPopup.showPopup(2, remoteAddressInput);
 
     }
 
@@ -234,41 +234,44 @@ public abstract class BaseClientController<T extends BaseClient> extends CommonU
             errorMsgLabel.setText("");
         }
 
-        // 普通文本模式
         String text = msgInput.getText();
+        // 普通文本模式
         if (sendSettingConfig.isTextMode()) {
-            if (sendMsgType == HEX) {
-                client.sendMessage(MsgUtil.convertText(HEX, PLAIN_TEXT, text));
-            } else {
-                client.sendMessage(text);
-            }
+            handleSend(text);
         }
-
         // 自定义格式模式
+        if (sendSettingConfig.isCustomMode()) {
+            customModeSend();
+        }
+        // js mode
+        if (sendSettingConfig.isJSMode()) {
+            jsModeSend();
+        }
+    }
+
+    private void customModeSend() {
         try {
-            if (sendSettingConfig.isCustomMode()) {
-                CustomDataConfig customDataConfig = sendSettingConfig.getCustomDataConfig();
-                String msg = DataUtil.createMsg(customDataConfig.getCustomDataPattern(), customDataConfig.getBoundList());
-                if (sendMsgType == HEX) {
-                    client.sendMessage(MsgUtil.convertText(HEX, PLAIN_TEXT, msg));
-                } else {
-                    client.sendMessage(msg);
-                }
-            }
+            CustomDataConfig customDataConfig = sendSettingConfig.getCustomDataConfig();
+            String msg = DataUtil.createMsg(customDataConfig.getCustomDataPattern(), customDataConfig.getBoundList());
+            handleSend(msg);
         } catch (UnSetBoundException e) {
             log.warn(e.getMessage());
             Platform.runLater(() -> errorMsgLabel.setText("未定义数据边界!"));
         }
-        // js mode
-        if (sendSettingConfig.isJSMode()) {
-            JSCodeConfig jsCodeConfig = sendSettingConfig.getJsCodeConfig();
-            Object res = JSParser.evalScript(jsCodeConfig.getEngine(), jsCodeConfig.getScript());
-            String msg = res == null ? "" : res.toString();
-            if (sendMsgType == HEX) {
-                client.sendMessage(MsgUtil.convertText(HEX, PLAIN_TEXT, msg));
-            } else {
-                client.sendMessage(msg);
-            }
+    }
+
+    private void jsModeSend() {
+        JSCodeConfig jsCodeConfig = sendSettingConfig.getJsCodeConfig();
+        Object res = JSParser.evalScript(jsCodeConfig.getEngine(), jsCodeConfig.getScript());
+        String msg = res == null ? "" : res.toString();
+        handleSend(msg);
+    }
+
+    private void handleSend(String text) {
+        if (sendMsgType == HEX) {
+            client.sendMessage(MsgUtil.convertText(HEX, PLAIN_TEXT, text));
+        } else {
+            client.sendMessage(text);
         }
     }
 
@@ -304,6 +307,7 @@ public abstract class BaseClientController<T extends BaseClient> extends CommonU
     }
 
     //region destroy
+
     /**
      * <p>
      * 标签页关闭前的回调函数。<br>
