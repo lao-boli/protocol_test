@@ -11,7 +11,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
-import org.hqu.lly.constant.ContentPaneConsts;
 import org.hqu.lly.constant.ResLoc;
 import org.hqu.lly.domain.component.MyAlert;
 import org.hqu.lly.domain.component.ServiceItem;
@@ -212,7 +211,7 @@ public class MainController implements Initializable {
      * 获取{@link ServiceItem}
      * </p>
      *
-     * @param paneName    标签面板名称,应为 {@link ContentPaneConsts}中的值。
+     * @param paneName    标签面板名称,应为 {@link PaneType}中的值。
      * @param subPaneName 标签页名称
      * @return {@link ServiceItem}
      * @date 2023-02-06 16:08:05 <br>
