@@ -10,9 +10,9 @@ import io.netty.channel.socket.DatagramPacket;
 import io.netty.channel.socket.nio.NioDatagramChannel;
 import io.netty.util.CharsetUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.hqu.lly.domain.base.BaseClient;
 import org.hqu.lly.domain.component.MsgLabel;
 import org.hqu.lly.enums.DataType;
+import org.hqu.lly.protocol.base.BaseClient;
 import org.hqu.lly.protocol.udp.client.handler.UDPClientHandler;
 import org.hqu.lly.service.impl.ClientService;
 

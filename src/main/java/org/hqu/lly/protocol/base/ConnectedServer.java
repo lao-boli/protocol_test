@@ -1,7 +1,6 @@
-package org.hqu.lly.domain.bean;
+package org.hqu.lly.protocol.base;
 
 import io.netty.channel.Channel;
-import org.hqu.lly.domain.base.BaseServer;
 
 /**
  * <p>

@@ -3,7 +3,7 @@ package org.hqu.lly.protocol.websocket.server.handler;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.*;
-import org.hqu.lly.protocol.BaseHandler.BaseServerConnectHandler;
+import org.hqu.lly.protocol.base.handler.BaseServerConnectHandler;
 import org.hqu.lly.service.impl.ConnectedServerService;
 
 /**

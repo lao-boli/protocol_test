@@ -1,4 +1,4 @@
-package org.hqu.lly.domain.vo;
+package org.hqu.lly.domain.component;
 
 import javafx.scene.control.TreeItem;
 import lombok.Data;

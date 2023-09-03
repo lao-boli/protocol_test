@@ -5,7 +5,7 @@ import io.netty.handler.codec.http.HttpResponse;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.websocketx.WebSocketClientHandshakeException;
 import lombok.extern.slf4j.Slf4j;
-import org.hqu.lly.protocol.BaseHandler.BaseExceptionHandler;
+import org.hqu.lly.protocol.base.handler.BaseExceptionHandler;
 import org.hqu.lly.service.impl.ClientService;
 
 /**

@@ -1,4 +1,4 @@
-package org.hqu.lly.domain.base;
+package org.hqu.lly.protocol.base;
 
 import io.netty.channel.Channel;
 import org.hqu.lly.service.impl.ServerService;

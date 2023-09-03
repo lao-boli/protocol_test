@@ -14,9 +14,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.hqu.lly.constant.ContentPaneConsts;
 import org.hqu.lly.constant.ResLoc;
 import org.hqu.lly.domain.component.MyAlert;
+import org.hqu.lly.domain.component.ServiceItem;
 import org.hqu.lly.domain.config.ConfigStore;
 import org.hqu.lly.domain.config.SessionConfig;
-import org.hqu.lly.domain.vo.ServiceItem;
 import org.hqu.lly.enums.PaneType;
 import org.hqu.lly.service.impl.TabPaneManager;
 import org.hqu.lly.utils.UIUtil;
@@ -142,17 +142,6 @@ public class MainController implements Initializable {
                         case WS_CLIENT -> managerMap.get(WS_CLIENT).initAndCreateTab(c);
                     }
                 });
-        // configs.values().forEach(c -> {
-        //     log.info(c.toString());
-        //     switch (c.getPaneType()) {
-        //         case TCP_SERVER -> managerMap.get(TCP_SERVER).initAndCreateTab(c);
-        //         case TCP_CLIENT -> managerMap.get(TCP_CLIENT).initAndCreateTab(c);
-        //         case UDP_SERVER -> managerMap.get(UDP_SERVER).initAndCreateTab(c);
-        //         case UDP_CLIENT -> managerMap.get(UDP_CLIENT).initAndCreateTab(c);
-        //         case WS_SERVER -> managerMap.get(WS_SERVER).initAndCreateTab(c);
-        //         case WS_CLIENT -> managerMap.get(WS_CLIENT).initAndCreateTab(c);
-        //     }
-        // });
         log.info("init pane successful");
 
     }
