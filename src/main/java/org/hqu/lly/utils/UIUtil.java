@@ -13,7 +13,6 @@ import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -174,39 +173,6 @@ public class UIUtil {
         control.addEventFilter(MouseEvent.MOUSE_ENTERED, onEnter);
         control.addEventFilter(MouseEvent.MOUSE_EXITED, onExited);
         control.setTooltip(tooltip);
-    }
-
-    /**
-     * <p>
-     * 获取消息label
-     * </p>
-     *
-     * @param msg      消息内容
-     * @param fixWidth label宽度,用于指定在何地换行
-     * @param softWrap 长消息是否换行标识
-     * @return {@link Label} 消息label
-     * @date 2022-09-24 09:17:06 <br>
-     */
-    public static Label getMsgLabel(String msg, double fixWidth, boolean softWrap) {
-        Label msgLabel = new Label(msg);
-        msgLabel.setPadding(new Insets(0, 0, 0, 0));
-        double labelWidth = softWrap ? fixWidth : Region.USE_COMPUTED_SIZE;
-        msgLabel.setPrefWidth(labelWidth);
-        msgLabel.setWrapText(softWrap);
-        return msgLabel;
-    }
-
-    /**
-     * <p>
-     * 返回修正后的msgLabel长度
-     * </p>
-     *
-     * @param rawWidth msgLabel所在的父容器宽度
-     * @return 修正后的msgLabel长度
-     * @date 2022-10-02 19:13:08 <br>
-     */
-    public static double getFixMsgLabelWidth(double rawWidth) {
-        return rawWidth - 30;
     }
 
     /**
