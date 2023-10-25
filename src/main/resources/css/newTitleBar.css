@@ -1,0 +1,88 @@
+.title-bar {
+    -fx-background-color: -app-base;
+    -fx-border-color: -icon-color;
+    -fx-border-style: solid;
+    -fx-border-width: 0 0 0.2 0;
+}
+
+.title-label {
+    -fx-padding: 0 0 0 10;
+    -fx-text-fill: -icon-color;
+    -fx-pref-height: 25;
+}
+
+.icon-pin {
+    -fx-pref-height: 16px;
+    -fx-pref-width: 16px;
+    -fx-max-width: 16px;
+    -fx-max-height: 16px;
+    -fx-min-width: 16px;
+    -fx-min-height: 16px;
+}
+
+
+.icon-close {
+    -fx-pref-height: 12px;
+    -fx-pref-width: 12px;
+    -fx-max-width: 12px;
+    -fx-max-height: 12px;
+    -fx-min-width: 12px;
+    -fx-min-height: 12px;
+}
+
+.icon-restore {
+    -fx-pref-height: 12px;
+    -fx-pref-width: 12px;
+    -fx-max-width: 12px;
+    -fx-max-height: 12px;
+    -fx-min-width: 12px;
+    -fx-min-height: 12px;
+}
+
+.icon-max {
+    -fx-pref-height: 12px;
+    -fx-pref-width: 12px;
+    -fx-max-width: 12px;
+    -fx-max-height: 12px;
+    -fx-min-width: 12px;
+    -fx-min-height: 12px;
+}
+
+.icon-min {
+    /*-fx-padding: 4;*/
+    -fx-pref-height: 2px;
+    -fx-pref-width: 14px;
+    -fx-max-width: 14px;
+    -fx-max-height: 2px;
+    -fx-min-width: 14px;
+    -fx-min-height: 2px;
+}
+
+.window-state-pane,
+.min-pane,
+.pin-pane,
+.close-pane {
+    -fx-background-color: -app-base;
+    -fx-text-fill: -icon-color;
+    -fx-min-height: 25;
+    -fx-min-width: 25;
+    -fx-max-height: 25;
+    -fx-max-width: 25;
+}
+
+
+
+.window-state-pane:hover,
+.min-pane:hover,
+.pin-pane:hover {
+    -fx-background-color: -btn-hover-2;
+    -fx-text-fill: -icon-color;
+}
+
+.close-pane:hover {
+    -fx-background-color: #e81123;
+}
+
+.pin-pane:activated {
+    -fx-background-color: #5c6164
+}
