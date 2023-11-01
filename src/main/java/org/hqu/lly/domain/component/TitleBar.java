@@ -18,6 +18,8 @@ import javafx.stage.Stage;
 import org.hqu.lly.constant.ResLoc;
 import org.hqu.lly.view.handler.DragWindowHandler;
 
+import java.util.function.Supplier;
+
 /**
  * <p>
  * titleTar
@@ -34,7 +36,21 @@ public class TitleBar extends BorderPane {
 
     Node pane;
 
+    private Supplier<Boolean> beforeClose;
+
+    public void setBeforeClose(Supplier<Boolean> beforeClose) {
+        this.beforeClose = beforeClose;
+    }
+
     public TitleBar(Node pane, String title) {
+        this(pane, title, null, true, true, true, true);
+    }
+
+    public TitleBar(Node pane, String title, Node graphic) {
+        this(pane, title, graphic, true, true, true, true);
+    }
+
+    public TitleBar(Node pane, String title, Node graphic, boolean pin, boolean mini, boolean windowState, boolean close) {
         this.pane = pane;
         this.getStyleClass().add("title-bar");
         this.getStylesheets().addAll(ResLoc.NEW_TITLE_BAR_CSS.toExternalForm(), ResLoc.ICON.toExternalForm());
@@ -45,8 +61,8 @@ public class TitleBar extends BorderPane {
             setOnMousePressed(dragWindowHandler);
             setOnMouseDragged(dragWindowHandler);
 
-            setupTitle(title);
-            setupBtnGroup();
+            setupTitle(title, graphic);
+            setupBtnGroup(pin, mini, windowState, close);
         });
 
 
@@ -56,13 +72,29 @@ public class TitleBar extends BorderPane {
         titleLabel.setText(title);
     }
 
-    private void setupTitle(String title) {
-        titleLabel = new TitleLabel(title);
+    private void setupTitle(String title, Node graphic) {
+        if (graphic == null) {
+            titleLabel = new TitleLabel(title);
+        } else {
+            titleLabel = new TitleLabel(title, graphic);
+        }
         setLeft(titleLabel);
     }
 
-    void setupBtnGroup() {
-        HBox btnGroup = new HBox(new PinPane(), new MiniPane(), new WindowStatePane(), new ClosePane());
+    void setupBtnGroup(boolean pin, boolean mini, boolean windowState, boolean close) {
+        HBox btnGroup = new HBox();
+        if (pin) {
+            btnGroup.getChildren().add(new PinPane());
+        }
+        if (mini) {
+            btnGroup.getChildren().add(new MiniPane());
+        }
+        if (windowState) {
+            btnGroup.getChildren().add(new WindowStatePane());
+        }
+        if (close) {
+            btnGroup.getChildren().add(new ClosePane());
+        }
         setRight(btnGroup);
     }
 
@@ -70,6 +102,11 @@ public class TitleBar extends BorderPane {
 
         public TitleLabel(String title) {
             super(title);
+            getStyleClass().add("title-label");
+        }
+
+        public TitleLabel(String title, Node graphic) {
+            super(title, graphic);
             getStyleClass().add("title-label");
         }
 
@@ -111,7 +148,11 @@ public class TitleBar extends BorderPane {
             closeIcon.getStyleClass().add("icon-close");
             getChildren().add(closeIcon);
             getStyleClass().add("close-pane");
-            addEventFilter(MouseEvent.MOUSE_CLICKED, event -> stage.close());
+            addEventFilter(MouseEvent.MOUSE_CLICKED, event -> {
+                if (beforeClose == null || beforeClose.get()) {
+                    stage.close();
+                }
+            });
         }
 
     }
@@ -139,17 +180,12 @@ public class TitleBar extends BorderPane {
 
         void switchSize(MouseEvent event) {
             BorderPane back = (BorderPane) stage.getScene().getRoot();
+            if (back != null) {
+                back.setPadding(isMax.get() ? new Insets(0): new Insets(5));
+            }
+            stage.setMaximized(isMax.get());
             if (isMax.get()) {
-                if (back != null) {
-                    back.setPadding(new Insets(0));
-                }
-                stage.setMaximized(isMax.get());
                 correctSize(stage);
-            } else {
-                if (back != null) {
-                    back.setPadding(new Insets(5));
-                }
-                stage.setMaximized(isMax.get());
             }
             isMax.setValue(!isMax.get());
         }
