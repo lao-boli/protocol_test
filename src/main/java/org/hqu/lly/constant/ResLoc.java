@@ -36,6 +36,8 @@ public class ResLoc {
 
     public static final URL HELP_DOC_DIALOG_CSS = realPath("css/HelpDocDialog.css");
 
+    public static final URL PROGRESS_BAR_DIALOG_CSS = realPath("css/ProgressBarDialog.css");
+
     public static final URL ALERT_TITLE_BAR_CSS = realPath("css/alertTitleBar.css");
     public static final URL NEW_TITLE_BAR_CSS = realPath("css/newTitleBar.css");
 
