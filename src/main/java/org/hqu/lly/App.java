@@ -37,6 +37,8 @@ public class App extends Application {
             }
             controller.setProgressBarDialog(progressBarDialog);
             controller.loadConfig();
+            MainController finalController = controller;
+            primaryStage.setOnShown(e -> finalController.setupSpiltPane());
         });
         progressBarDialog.stage.setOnHidden(event -> primaryStage.show());
         progressBarDialog.show();
@@ -47,7 +49,6 @@ public class App extends Application {
                 new Image(ResLoc.APP_ICON_128.toExternalForm()),
                 new Image(ResLoc.APP_ICON_256.toExternalForm())
         );
-        // primaryStage.show();
 
     }
 

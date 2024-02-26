@@ -94,9 +94,6 @@ public class MainController implements Initializable {
         titleBarController.setOnClose(() -> System.exit(0));
 
         initSideBar();
-
-        setupSpiltPane();
-
     }
 
     public void loadConfig() {
@@ -114,7 +111,7 @@ public class MainController implements Initializable {
      *
      * @date 2023-03-30 21:12
      */
-    private void setupSpiltPane() {
+    public void setupSpiltPane() {
         // 当FXML文件中的节点被加载时，它们的Skin尚未完全初始化。
         // 解决这个问题的一种方法是将对Skin的操作延迟到稍后的时间点。
         Platform.runLater(() -> {
