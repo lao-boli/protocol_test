@@ -1,5 +1,6 @@
 package org.hqu.lly.domain.component;
 
+import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -26,11 +27,11 @@ import java.util.function.Consumer;
  */
 public class ProgressBarDialog extends MyDialog<VBox> {
 
-    private ProgressBar progressBar;
+    public ProgressBar progressBar;
 
-    private DoubleProperty total = new SimpleDoubleProperty(10);
+    public DoubleProperty total = new SimpleDoubleProperty(10);
 
-    private DoubleProperty current = new SimpleDoubleProperty(0);
+    public DoubleProperty current = new SimpleDoubleProperty(0);
 
     private BooleanProperty autoClose = new SimpleBooleanProperty(true);
 
@@ -72,13 +73,12 @@ public class ProgressBarDialog extends MyDialog<VBox> {
 
         pane.setCenter(content);
         current.addListener((observable, oldValue, newValue) -> {
-            progressBar.setProgress(newValue.doubleValue() / total.getValue());
             progressText.setText(current.getValue().intValue() + "/" + total.getValue().intValue());
             if (updateCurrentLoadingText != null) {
                 updateCurrentLoadingText.accept(currentLoadingText);
             }
             if (autoClose.get() && newValue.doubleValue() == total.doubleValue()) {
-                close();
+                Platform.runLater(this::close);
             }
         });
         // test();

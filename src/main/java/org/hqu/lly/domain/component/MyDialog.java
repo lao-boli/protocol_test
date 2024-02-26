@@ -11,6 +11,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.stage.Window;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.hqu.lly.constant.ResLoc;
 import org.hqu.lly.utils.DragUtil;
@@ -27,10 +28,11 @@ import org.hqu.lly.view.handler.DragWindowHandler;
  * @version 1.0
  * @date 2023-07-15 09:32
  */
+@Slf4j
 public class MyDialog<T extends Node> {
 
     protected TitleBar titleBar;
-    protected Stage stage = new Stage();
+    public Stage stage = new Stage();
 
     protected T content;
     protected BorderPane pane = new BorderPane();

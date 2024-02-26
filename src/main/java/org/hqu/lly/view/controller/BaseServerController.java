@@ -418,7 +418,11 @@ public abstract class BaseServerController<T> extends CommonUIContorller impleme
             }
         });
 
-        sendSettingPane = SendSettingPaneFactory.create(sendSettingConfig);
+        // new a stage must be in FX app thread
+        Platform.runLater(() -> {
+            sendSettingPane = SendSettingPaneFactory.create(sendSettingConfig);
+        });
+
     }
 
     /**

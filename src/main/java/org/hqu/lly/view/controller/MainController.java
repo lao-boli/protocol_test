@@ -1,6 +1,10 @@
 package org.hqu.lly.view.controller;
 
 import javafx.application.Platform;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.concurrent.Service;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
@@ -10,9 +14,11 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.hqu.lly.constant.ResLoc;
 import org.hqu.lly.domain.component.MyAlert;
+import org.hqu.lly.domain.component.ProgressBarDialog;
 import org.hqu.lly.domain.component.ServiceItem;
 import org.hqu.lly.domain.config.ConfigStore;
 import org.hqu.lly.domain.config.SessionConfig;
@@ -62,6 +68,11 @@ public class MainController implements Initializable {
      */
     private double menuWidth;
 
+
+    private String curTab;
+    @Setter
+    private ProgressBarDialog progressBarDialog;
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
@@ -86,6 +97,10 @@ public class MainController implements Initializable {
 
         setupSpiltPane();
 
+    }
+
+    public void loadConfig() {
+        log.info("load config");
         try {
             ConfigStore.load();
             initByConfig();
@@ -107,8 +122,10 @@ public class MainController implements Initializable {
             menuWidth = menuTree.getWidth();
             // 获取分割线节点
             Node divider = mainSplitPane.lookup(".split-pane > .split-pane-divider");
-            // 在拖拽时记录宽度
-            divider.addEventFilter(MouseEvent.MOUSE_DRAGGED, (e) -> menuWidth = menuTree.getWidth());
+            if (divider != null) {
+                // 在拖拽时记录宽度
+                divider.addEventFilter(MouseEvent.MOUSE_DRAGGED, (e) -> menuWidth = menuTree.getWidth());
+            }
 
             // stage窗口改变时保持分割线位置不变
             Stage stage = UIUtil.getPrimaryStage();
@@ -128,20 +145,66 @@ public class MainController implements Initializable {
      */
     private void initByConfig() {
         Map<String, SessionConfig> configs = ConfigStore.getSessionConfigs();
-        configs.values().stream()
-                .sorted((o1, o2) -> o1.getTabOrder() - o2.getTabOrder())
-                .forEachOrdered(c -> {
-                    log.info(c.toString());
-                    switch (c.getPaneType()) {
-                        case TCP_SERVER -> managerMap.get(TCP_SERVER).initAndCreateTab(c);
-                        case TCP_CLIENT -> managerMap.get(TCP_CLIENT).initAndCreateTab(c);
-                        case UDP_SERVER -> managerMap.get(UDP_SERVER).initAndCreateTab(c);
-                        case UDP_CLIENT -> managerMap.get(UDP_CLIENT).initAndCreateTab(c);
-                        case WS_SERVER -> managerMap.get(WS_SERVER).initAndCreateTab(c);
-                        case WS_CLIENT -> managerMap.get(WS_CLIENT).initAndCreateTab(c);
-                    }
-                });
+        LoadService service = new LoadService(this, configs);
+        progressBarDialog.progressBar.progressProperty().bind(service.progressProperty());
+        progressBarDialog.setTotal(configs.size());
+        progressBarDialog.current.bind(service.countProperty);
+        service.setOnSucceeded(event -> {
+            progressBarDialog.close();
+        });
+
+        service.start();
+        // progressBarDialog = new ProgressBarDialog(UIUtil.getPrimaryStage(), configs.size(), 0);
+        // progressBarDialog.updateCurrentLoadingText = text -> text.setText(curTab);
+        // progressBarDialog.show();
         log.info("init pane successful");
+
+    }
+
+    private static class LoadService extends Service<Void> {
+
+        public DoubleProperty countProperty = new SimpleDoubleProperty(0);
+        private MainController controller;
+        private Map<String, SessionConfig> configs;
+
+        public LoadService(MainController controller, Map<String, SessionConfig> configs) {
+            this.controller = controller;
+            this.configs = configs;
+        }
+
+        @Override
+        protected Task<Void> createTask() {
+            return new Task<>() {
+
+                @Override
+                protected Void call() throws Exception {
+                    configs.values().stream()
+                            .sorted((o1, o2) -> o1.getTabOrder() - o2.getTabOrder())
+                            .forEachOrdered(config -> {
+                                log.info(config.toString());
+                                countProperty.setValue(countProperty.get() + 1);
+                                updateProgress(countProperty.get(), configs.size());
+                                switch (config.getPaneType()) {
+                                    case TCP_SERVER -> controller.createTab(TCP_SERVER, config);
+                                    case TCP_CLIENT -> controller.createTab(TCP_CLIENT, config);
+                                    case UDP_SERVER -> controller.createTab(UDP_SERVER, config);
+                                    case UDP_CLIENT -> controller.createTab(UDP_CLIENT, config);
+                                    case WS_SERVER -> controller.createTab(WS_SERVER, config);
+                                    case WS_CLIENT -> controller.createTab(WS_CLIENT, config);
+                                }
+                            });
+                    return null;
+                }
+
+            };
+        }
+
+    }
+
+    private void createTab(PaneType paneType, SessionConfig c) {
+        curTab = c.getTabName();
+        // progressBarDialog.incCurrent();
+        managerMap.get(paneType).initAndCreateTab(c);
 
     }
 

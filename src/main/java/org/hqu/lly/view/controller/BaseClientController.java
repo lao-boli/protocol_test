@@ -405,7 +405,11 @@ public abstract class BaseClientController<T extends BaseClient> extends CommonU
         });
 
         // 创建发送设置面板
-        sendSettingPane = SendSettingPaneFactory.create(sendSettingConfig);
+        // new a stage must be in FX app thread
+        Platform.runLater(() -> {
+            sendSettingPane = SendSettingPaneFactory.create(sendSettingConfig);
+        });
+
     }
 
 
