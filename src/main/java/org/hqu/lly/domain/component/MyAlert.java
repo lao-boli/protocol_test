@@ -26,7 +26,6 @@ import java.util.Optional;
  */
 public class MyAlert extends MyDialog<MyAlert.ContentPane>{
 
-    private ContentPane contentPane;
 
     private final ObjectProperty<ButtonType> resultProperty = new SimpleObjectProperty<>() {
         protected void invalidated() {
@@ -64,8 +63,8 @@ public class MyAlert extends MyDialog<MyAlert.ContentPane>{
         super();
         titleBar.setTitle(title);
 
-        contentPane = new ContentPane(this, contentText);
-        pane.setCenter(contentPane);
+        content = new ContentPane(this, contentText);
+        pane.setCenter(content);
 
         pane.getStylesheets().add(ResLoc.MY_ALERT_CSS.toExternalForm());
     }
@@ -88,6 +87,11 @@ public class MyAlert extends MyDialog<MyAlert.ContentPane>{
     }
 
     public Optional<ButtonType> showAndWait() {
+        if (!moved){
+            defaultPos();
+            stage.setX(xCache);
+            stage.setY(yCache);
+        }
         stage.showAndWait();
         return Optional.ofNullable(getResult());
     }
