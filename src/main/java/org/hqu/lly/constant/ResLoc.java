@@ -31,6 +31,7 @@ public class ResLoc {
     public static final URL COMMON_CSS = realPath("css/Common.css");
 
     public static final URL MY_ALERT_CSS = realPath("css/MyAlert.css");
+    public static final URL SEND_SETTING_PANE_CSS = realPath("css/SendSettingPane.css");
 
     public static final URL DATA_SETTING_PANE_CSS = realPath("css/DataSettingPane.css");
 
