@@ -1,5 +1,7 @@
 package org.hqu.lly.page;
 
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
@@ -30,22 +32,29 @@ public class SendSettingPane extends MyDialog<BorderPane> {
 
         content = new ContentPane();
         pane.setCenter(content);
+        pane.setPrefWidth(600);
+        pane.setPrefWidth(600);
 
         pane.getStylesheets().add(ResLoc.SEND_SETTING_PANE_CSS.toExternalForm());
     }
 
     private class ContentPane extends BorderPane {
-        private VBox main;
+
+        private VBox main = new VBox();
 
         public ContentPane() {
+            setupMain();
+            setCenter(main);
         }
 
-        void setupMain(){
+        void setupMain() {
             main.setSpacing(10);
+            main.setStyle("-fx-background-color: #3c3f41");
+            buildFirstRow();
 
         }
 
-        void buildFirstRow(){
+        void buildFirstRow() {
 
             ToggleGroup toggleGroup = new ToggleGroup();
 
@@ -54,16 +63,21 @@ public class SendSettingPane extends MyDialog<BorderPane> {
             TextField sendCountTextField = new TextField("10");
             sendCountTextField.setPrefWidth(66);
             Label times = new Label("次");
-            sendByTimesBtn.setGraphic(new HBox(5, name,sendCountTextField, times));
+            HBox box = new HBox(5, name, sendCountTextField, times);
+            box.setAlignment(Pos.CENTER);
+            sendByTimesBtn.setGraphic(box);
             sendByTimesBtn.setToggleGroup(toggleGroup);
 
-            RadioButton  manualStopBtn = new RadioButton("");
+            RadioButton manualStopBtn = new RadioButton("");
             Label name2 = new Label("手动停止");
             manualStopBtn.setSelected(true);
-            manualStopBtn.setGraphic(new HBox(5, name2,manualStopBtn));
+            manualStopBtn.setGraphic(new HBox(5, name2, manualStopBtn));
             manualStopBtn.setToggleGroup(toggleGroup);
 
-            HBox row = new HBox(5, new VBox(sendByTimesBtn, manualStopBtn));
+            Label sendLabel = new Label("发送方式");
+            sendLabel.setPadding(new Insets(3, 0, 0, 0));
+            HBox row = new HBox(5, sendLabel, new VBox(sendByTimesBtn, manualStopBtn));
+            main.getChildren().add(row);
 
         }
 
