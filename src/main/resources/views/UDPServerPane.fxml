@@ -15,7 +15,7 @@
                                <children>
                                    <HBox spacing="10.0">
                                        <children>
-                                           <Label prefHeight="22.0" prefWidth="27.0" text="port:" />
+                                           <Label prefHeight="22.0"  prefWidth="30.0" text="port:" />
                                            <TextField fx:id="serverPort" prefHeight="23.0" prefWidth="54.0" text="10250" HBox.hgrow="ALWAYS" />
                                            <Button fx:id="confirmButton" mnemonicParsing="false" onMouseClicked="#startServer" text="确定" />
                                            <Button fx:id="closeServerButton" disable="true" mnemonicParsing="false" onMouseClicked="#closeServer" text="关闭服务" />
