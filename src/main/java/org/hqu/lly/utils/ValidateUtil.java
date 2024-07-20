@@ -1,5 +1,7 @@
 package org.hqu.lly.utils;
 
+import org.hqu.lly.struct.Pair;
+
 /**
  * <p>
  * 校验工具
@@ -11,18 +13,38 @@ package org.hqu.lly.utils;
  */
 public class ValidateUtil {
 
-    public static int checkPort(String port) {
-       boolean isNumeric =  port.matches("\\d+");
-       if (!isNumeric){
-           throw new IllegalArgumentException("illegal port text:" + port);
-       }
-       return checkPort(Integer.parseInt(port));
+    public static Pair<Integer, String> checkPortAndPath(String addr) {
+        int port = 0;
+        String path = "";
+        if (addr.contains("/")) {
+            String[] split = addr.split("/");
+            String _port = split[0];
+            path = split[1];
+            if (checkPort(_port)) {
+                return new Pair<>(port, path);
+            }
+        } else {
+            if (checkPort(addr)) {
+                return new Pair<>(CommonUtil.strToInt(addr), "");
+            }
+        }
+        return new Pair<>(port, path);
+    }
+
+
+    public static boolean checkPort(String port) {
+        boolean isNumeric = port.matches("\\d+");
+        if (!isNumeric) {
+            throw new IllegalArgumentException("illegal port text:" + port);
+        }
+        return checkPort(Integer.parseInt(port));
 
     }
-    public static int checkPort(int port) {
+
+    public static boolean checkPort(int port) {
         if (port < 0 || port > 0xFFFF)
             throw new IllegalArgumentException("port out of range:" + port);
-        return port;
+        return true;
     }
 
     public static String checkHost(String hostname) {
