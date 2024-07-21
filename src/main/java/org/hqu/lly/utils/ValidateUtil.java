@@ -17,15 +17,16 @@ public class ValidateUtil {
         int port = 0;
         String path = "";
         if (addr.contains("/")) {
-            String[] split = addr.split("/");
+            String[] split = addr.split("/",2);
             String _port = split[0];
             path = split[1];
             if (checkPort(_port)) {
+                port = Integer.parseInt(_port);
                 return new Pair<>(port, path);
             }
         } else {
             if (checkPort(addr)) {
-                return new Pair<>(CommonUtil.strToInt(addr), "");
+                return new Pair<>(Integer.parseInt(addr), "");
             }
         }
         return new Pair<>(port, path);
