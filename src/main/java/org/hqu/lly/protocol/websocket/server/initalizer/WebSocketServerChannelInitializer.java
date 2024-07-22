@@ -26,13 +26,15 @@ public class WebSocketServerChannelInitializer extends ChannelInitializer<Socket
 
     @Setter
     private ConnectedServerService serverService;
+    @Setter
+    private String wsPath;
 
     @Override
     protected void initChannel(SocketChannel ch) throws Exception {
         ch.pipeline().addLast("HttpServerCodec", new HttpServerCodec());
         ch.pipeline().addLast("HttpObjectAggregator", new HttpObjectAggregator(65536));
         ch.pipeline().addLast("ChunkedWriteHandler", new ChunkedWriteHandler());
-        ch.pipeline().addLast("WebSocketServerProtocolHandler", new WebSocketServerProtocolHandler("/", null, true, 65536 * 10));
+        ch.pipeline().addLast("WebSocketServerProtocolHandler", new WebSocketServerProtocolHandler(wsPath, null, true, 65536 * 10));
         ch.pipeline().addLast("WebSocketServerConnectHandler", new WebSocketServerConnectHandler(serverService));
         ch.pipeline().addLast("WebSocketServerMessageHandler", new WebSocketServerMessageHandler(serverService));
         ch.pipeline().addLast("WebSocketServerExceptionHandler", new WebSocketServerExceptionHandler());
