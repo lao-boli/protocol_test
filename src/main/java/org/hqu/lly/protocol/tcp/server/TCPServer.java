@@ -9,6 +9,7 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
+import io.netty.handler.timeout.IdleStateHandler;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
@@ -20,6 +21,7 @@ import org.hqu.lly.protocol.tcp.codec.MessageDecoderSelector;
 import org.hqu.lly.protocol.tcp.codec.MessageEncoderSelector;
 import org.hqu.lly.protocol.tcp.group.AppChannelGroup;
 import org.hqu.lly.protocol.tcp.server.handler.TCPServerExceptionHandler;
+import org.hqu.lly.protocol.tcp.server.handler.TCPServerIdleHandler;
 import org.hqu.lly.protocol.tcp.server.handler.TCPServerMessageHandler;
 import org.hqu.lly.service.impl.ConnectedServerService;
 import org.hqu.lly.service.impl.ServerService;
@@ -27,6 +29,7 @@ import org.hqu.lly.utils.CommonUtil;
 import org.hqu.lly.utils.MsgUtil;
 
 import java.net.BindException;
+import java.util.concurrent.TimeUnit;
 
 /**
  * <p>
@@ -61,6 +64,7 @@ public class TCPServer extends ConnectedServer {
             serverBootstrap.childHandler(new ChannelInitializer<SocketChannel>() {
                 @Override
                 protected void initChannel(SocketChannel ch) throws Exception {
+                    ch.pipeline().addLast(new IdleStateHandler(5, 0, 0, TimeUnit.SECONDS));
                     ch.pipeline().addLast("TCPServerConnectHandler", new BaseServerConnectHandler(serverService));
                     ch.pipeline().addLast("MessageDecoderSelector", new MessageDecoderSelector());
                     ch.pipeline().addLast("LTCDecoder", new LengthFieldBasedFrameDecoder(1024 * 100, 4, 4, 0, 8));
@@ -69,6 +73,7 @@ public class TCPServer extends ConnectedServer {
                     ch.pipeline().addLast("LTCEncoder", new LTCEncoder());
                     ch.pipeline().addLast("MessageEncoderSelector", new MessageEncoderSelector());
                     ch.pipeline().addLast("TCPServerMessageHandler", new TCPServerMessageHandler(serverService));
+                    ch.pipeline().addLast("TCPIdleHandler", new TCPServerIdleHandler());
                     ch.pipeline().addLast("TCPExceptionHandler", new TCPServerExceptionHandler());
                 }
             });
