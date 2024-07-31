@@ -11,5 +11,6 @@ package org.hqu.lly.enums;
  */
 public enum ConfigType {
     SERVER,
+    TCP_SERVER,
     CLIENT
 }

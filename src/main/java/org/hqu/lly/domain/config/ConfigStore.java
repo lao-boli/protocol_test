@@ -53,6 +53,10 @@ public class ConfigStore {
             config = new ServerSessionConfig();
             addSessionConfig(config);
         }
+        if (type == ConfigType.TCP_SERVER){
+            config = new TCPServerSessionConfig();
+            addSessionConfig(config);
+        }
         if (type == ConfigType.CLIENT){
             config = new ClientSessionConfig();
             addSessionConfig(config);

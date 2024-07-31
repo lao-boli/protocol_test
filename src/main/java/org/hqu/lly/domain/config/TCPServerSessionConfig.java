@@ -1,9 +1,11 @@
 package org.hqu.lly.domain.config;
 
-import com.fasterxml.jackson.annotation.JsonSubTypes;
+import io.netty.handler.timeout.IdleStateHandler;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.hqu.lly.enums.ConfigType;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * <p>
@@ -16,19 +18,14 @@ import org.hqu.lly.enums.ConfigType;
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
-@JsonSubTypes({
-        @JsonSubTypes.Type(value = TCPServerSessionConfig.class, name = "TCP_SERVER")
-})
-public class ServerSessionConfig extends SessionConfig {
+public class TCPServerSessionConfig extends  ServerSessionConfig{
 
-    /**
-     * 本地服务端口号
-     */
-    protected String port;
+    protected IdleStateHandler idleStateHandler;
 
-    public ServerSessionConfig() {
+    public TCPServerSessionConfig() {
         super();
-        type = ConfigType.SERVER;
+        type = ConfigType.TCP_SERVER;
+        idleStateHandler = new IdleStateHandler(0, 0, 0, TimeUnit.SECONDS);
     }
 
     public String toString() {
