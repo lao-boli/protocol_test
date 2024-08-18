@@ -12,6 +12,7 @@ import io.netty.handler.codec.string.StringEncoder;
 import io.netty.handler.timeout.IdleStateHandler;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.hqu.lly.domain.component.MsgLabel;
 import org.hqu.lly.protocol.base.ConnectedServer;
@@ -29,7 +30,6 @@ import org.hqu.lly.utils.CommonUtil;
 import org.hqu.lly.utils.MsgUtil;
 
 import java.net.BindException;
-import java.util.concurrent.TimeUnit;
 
 /**
  * <p>
@@ -53,6 +53,9 @@ public class TCPServer extends ConnectedServer {
 
     private NioEventLoopGroup workerGroup;
 
+    @Setter
+    private IdleStateHandler idleHandler;
+
     @Override
     public void init() {
         bossGroup = new NioEventLoopGroup();
@@ -64,7 +67,7 @@ public class TCPServer extends ConnectedServer {
             serverBootstrap.childHandler(new ChannelInitializer<SocketChannel>() {
                 @Override
                 protected void initChannel(SocketChannel ch) throws Exception {
-                    ch.pipeline().addLast(new IdleStateHandler(5, 0, 0, TimeUnit.SECONDS));
+                    ch.pipeline().addLast(idleHandler);
                     ch.pipeline().addLast("TCPServerConnectHandler", new BaseServerConnectHandler(serverService));
                     ch.pipeline().addLast("MessageDecoderSelector", new MessageDecoderSelector());
                     ch.pipeline().addLast("LTCDecoder", new LengthFieldBasedFrameDecoder(1024 * 100, 4, 4, 0, 8));
@@ -123,7 +126,7 @@ public class TCPServer extends ConnectedServer {
     @Override
     public void sendMessage(String msg, Channel channel) {
         channel.writeAndFlush(msg);
-        serverService.updateMsgList(new MsgLabel(MsgLabel.Type.SEND, channel.remoteAddress().toString(),msg));
+        serverService.updateMsgList(new MsgLabel(MsgLabel.Type.SEND, channel.remoteAddress().toString(), msg));
         log.info(MsgUtil.formatSendMsg(msg, channel.remoteAddress().toString()));
     }
 
@@ -140,4 +143,5 @@ public class TCPServer extends ConnectedServer {
     public void setService(ServerService serverService) {
         this.serverService = (ConnectedServerService) serverService;
     }
+
 }

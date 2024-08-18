@@ -9,6 +9,7 @@ import javafx.scene.control.Labeled;
 import javafx.scene.text.Font;
 import lombok.SneakyThrows;
 
+import java.lang.reflect.Field;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.util.ArrayList;
@@ -136,6 +137,20 @@ public class CommonUtil {
             }
         }
         return addrs;
+    }
+
+    public static Field[] getAllFields(Class<?> clazz,Class<?> topClazz) {
+        // 获取当前类的所有字段
+        Field[] fields = clazz.getDeclaredFields();
+        if (!clazz.equals(topClazz)) {
+            Field[] superFields = getAllFields(clazz.getSuperclass(), topClazz);
+             // 合并当前类的字段与超类的字段
+            Field[] combinedFields = new Field[fields.length + superFields.length];
+            System.arraycopy(fields, 0, combinedFields, 0, fields.length);
+            System.arraycopy(superFields, 0, combinedFields, fields.length, superFields.length);
+            return combinedFields;
+        }
+        return fields;
     }
 
 }

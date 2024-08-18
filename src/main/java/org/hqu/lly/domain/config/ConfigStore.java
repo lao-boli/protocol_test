@@ -3,6 +3,7 @@ package org.hqu.lly.domain.config;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.hqu.lly.enums.ConfigType;
+import org.hqu.lly.utils.ConfUpdateUtil;
 import org.hqu.lly.utils.ConfUtil;
 import org.hqu.lly.view.controller.BaseController;
 
@@ -30,6 +31,7 @@ public class ConfigStore {
      */
     public static Boolean isLoad = false;
 
+    @Getter
     private static ConfigSummary configSummary = new ConfigSummary();
     @Getter
     private static Map<String,SessionConfig> sessionConfigs = configSummary.getSessionConfigs();
@@ -73,6 +75,7 @@ public class ConfigStore {
     public static void load() throws FileNotFoundException {
         configSummary = ConfUtil.load();
         if (configSummary != null){
+            ConfUpdateUtil.updateConfig03to04(configSummary);
             sessionConfigs = configSummary.getSessionConfigs();
         }
         isLoad = true;

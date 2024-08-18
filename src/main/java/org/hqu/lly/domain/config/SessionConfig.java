@@ -25,7 +25,8 @@ import java.util.UUID;
 )
 @JsonSubTypes({
         @JsonSubTypes.Type(value = ClientSessionConfig.class,name = "CLIENT"),
-        @JsonSubTypes.Type(value = ServerSessionConfig.class,name = "SERVER")
+        @JsonSubTypes.Type(value = ServerSessionConfig.class,name = "SERVER"),
+        @JsonSubTypes.Type(value = TCPServerSessionConfig.class,name = "TCP_SERVER")
 })
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class SessionConfig extends Config {

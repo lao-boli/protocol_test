@@ -5,6 +5,7 @@ import org.hqu.lly.domain.config.ConfigSummary;
 import org.hqu.lly.domain.config.ServerSessionConfig;
 import org.hqu.lly.domain.config.SessionConfig;
 import org.hqu.lly.domain.config.TCPServerSessionConfig;
+import org.hqu.lly.enums.ConfigType;
 import org.hqu.lly.enums.PaneType;
 
 import java.util.Collection;
@@ -35,6 +36,7 @@ public class ConfUpdateUtil {
                 if (sessionConfig instanceof ServerSessionConfig && sessionConfig.getPaneType().equals(PaneType.TCP_SERVER)) {
                     try {
                         TCPServerSessionConfig tcpServerSessionConfig = sessionConfig.copyTo(new TCPServerSessionConfig());
+                        tcpServerSessionConfig.setType(ConfigType.TCP_SERVER);
                         return tcpServerSessionConfig;
                     } catch (IllegalAccessException e) {
                         log.error(e.toString());
@@ -45,6 +47,7 @@ public class ConfUpdateUtil {
                 }
             }).collect(Collectors.toMap(SessionConfig::getId, sessionConfig -> sessionConfig));
             config.setSessionConfigs(newConfigs);
+            config.setVersion("0.4");
 
         }
     }

@@ -1,6 +1,5 @@
 package org.hqu.lly.domain.config;
 
-import com.fasterxml.jackson.annotation.JsonSubTypes;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.hqu.lly.enums.ConfigType;
@@ -16,9 +15,6 @@ import org.hqu.lly.enums.ConfigType;
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
-@JsonSubTypes({
-        @JsonSubTypes.Type(value = TCPServerSessionConfig.class, name = "TCP_SERVER")
-})
 public class ServerSessionConfig extends SessionConfig {
 
     /**
