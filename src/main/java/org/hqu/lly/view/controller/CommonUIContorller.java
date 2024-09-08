@@ -58,6 +58,8 @@ public abstract class CommonUIContorller extends BaseController {
     @FXML
     protected Button recvFormatBtn;
     @FXML
+    protected Button exportBtn;
+    @FXML
     protected ListView<MsgLabel> msgList;
     //endregion
 
@@ -243,6 +245,7 @@ public abstract class CommonUIContorller extends BaseController {
 
         formatBtn.setTooltip(UIUtil.getTooltip("编码设置"));
     }
+
 
     @FXML
     protected void handleSoftWrap(MouseEvent event) {

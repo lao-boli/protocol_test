@@ -8,9 +8,11 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.hqu.lly.domain.component.MsgLabel;
 import org.hqu.lly.domain.component.TitleTab;
 import org.hqu.lly.domain.config.ConfigStore;
 import org.hqu.lly.domain.config.CustomDataConfig;
@@ -31,11 +33,18 @@ import org.hqu.lly.service.impl.ScheduledSendService;
 import org.hqu.lly.service.impl.ServerService;
 import org.hqu.lly.utils.*;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
+import java.util.stream.Collectors;
 
 import static org.hqu.lly.enums.DataType.HEX;
 import static org.hqu.lly.enums.DataType.PLAIN_TEXT;
@@ -352,6 +361,26 @@ public abstract class BaseServerController<T> extends CommonUIContorller impleme
         setupSendFormatBtn();
         setupRecvFormatBtn();
         setupMsgList();
+        if (exportBtn != null) {
+            exportBtn.setOnMouseClicked(event -> {
+                var msgs = msgList.getItems().stream().map(MsgLabel::getText).collect(Collectors.toList());
+                String logs = String.join("\n", msgs);
+                FileChooser fileChooser = new FileChooser();
+                fileChooser.setInitialDirectory(Paths.get("").toAbsolutePath().normalize().toFile());
+                fileChooser.setInitialFileName(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd-HH:mm:ss")) + ".txt");
+                File file = fileChooser.showSaveDialog(UIUtil.getPrimaryStage());
+                if (file == null) {
+                    return;
+                }
+                log.info(file.toString());
+                try {
+                    Files.writeString(file.toPath(), logs);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+                // BaseServerController.log.info(logs);
+            });
+        }
         // 消息上下文菜单
         msgList.setContextMenu(UIUtil.getMsgListMenu(msgList));
         clientListBox.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
