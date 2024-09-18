@@ -150,7 +150,7 @@
                                                 <StackPane>
                                                     <children>
                                                         <Region prefHeight="200.0" prefWidth="200.0"
-                                                                styleClass="icon-encode-setting"/>
+                                                                styleClass="icon-export"/>
                                                     </children>
                                                     <padding>
                                                         <Insets left="2.0"/>
