@@ -3,186 +3,238 @@
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<VBox spacing="10.0" stylesheets="@../css/TabPane.css" VBox.vgrow="ALWAYS" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.hqu.lly.view.controller.UDPServerController">
+<VBox spacing="10.0" stylesheets="@../css/TabPane.css" VBox.vgrow="ALWAYS" xmlns="http://javafx.com/javafx/17"
+      xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.hqu.lly.view.controller.UDPServerController">
     <children>
-        <SplitPane dividerPositions="0.7" orientation="VERTICAL" prefHeight="367.0" prefWidth="546.0" VBox.vgrow="ALWAYS">
-        <items>
-            <VBox spacing="10.0">
-               <children>
-                   <HBox alignment="CENTER_LEFT" maxHeight="100.0" prefHeight="81.0" prefWidth="520.0" spacing="5.0" VBox.vgrow="ALWAYS">
-                       <children>
-                           <VBox HBox.hgrow="ALWAYS">
-                               <children>
-                                   <HBox spacing="10.0">
-                                       <children>
-                                           <Label prefHeight="22.0"  prefWidth="30.0" text="port:" />
-                                           <TextField fx:id="serverPort" prefHeight="23.0" prefWidth="54.0" text="10250" HBox.hgrow="ALWAYS" />
-                                           <Button fx:id="confirmButton" mnemonicParsing="false" onMouseClicked="#startServer" text="确定" />
-                                           <Button fx:id="closeServerButton" disable="true" mnemonicParsing="false" onMouseClicked="#closeServer" text="关闭服务" />
-                                       </children>
-                                       <padding>
-                                           <Insets top="15.0" />
-                                       </padding>
-                                       <VBox.margin>
-                                           <Insets left="25.0" />
-                                       </VBox.margin>
-                                   </HBox>
-                                   <Label fx:id="errorMsgLabel" alignment="TOP_LEFT" prefHeight="15.0" prefWidth="174.0" textFill="#c65551">
-                                       <VBox.margin>
-                                           <Insets left="25.0" top="10.0" />
-                                       </VBox.margin>
-                                   </Label>
-                               </children>
-                           </VBox>
-                           <ListView fx:id="clientListBox" prefHeight="57.0" prefWidth="189.0" HBox.hgrow="ALWAYS" />
-                           <VBox fx:id="clientBoxToolBar" prefHeight="57.0" prefWidth="26.0" spacing="3.0" styleClass="sidebar">
-                               <children>
-                                   <Button fx:id="selectAllBtn" mnemonicParsing="false" onMouseClicked="#selectAllClient" prefHeight="20.0" prefWidth="20.0" styleClass="icon-button">
-                                       <padding>
-                                           <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
-                                       </padding>
-                                       <graphic>
-                                           <Region prefHeight="200.0" prefWidth="200.0" styleClass="icon-select-all" />
-                                       </graphic>
-                                   </Button>
-                                   <Button fx:id="removeClientBtn" mnemonicParsing="false" onMouseClicked="#removeClient" prefHeight="20.0" prefWidth="20.0" styleClass="icon-button">
-                                       <padding>
-                                           <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
-                                       </padding>
-                                       <graphic>
-                                           <Region prefHeight="200.0" prefWidth="200.0" styleClass="icon-delete" />
-                                       </graphic>
-                                   </Button>
-                               </children>
-                               <padding>
-                                   <Insets top="-1.0" />
-                               </padding>
-                               <HBox.margin>
-                                   <Insets top="2.0" />
-                               </HBox.margin>
-                           </VBox>
-                       </children>
-                   </HBox>
-                   <HBox VBox.vgrow="ALWAYS">
-                       <children>
-                           <VBox alignment="TOP_CENTER" prefHeight="159.0" prefWidth="24.0" spacing="3.0" styleClass="sidebar">
-                               <children>
-                                   <ToggleButton fx:id="softWrapBtn" contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" maxHeight="20.0" maxWidth="20.0" mnemonicParsing="false" onMouseClicked="#handleSoftWrap" prefHeight="17.0" prefWidth="18.0">
-                                       <graphic>
-                                           <Region prefHeight="20.0" prefWidth="20.0" styleClass="icon-wrap" />
-                                       </graphic>
-                                       <padding>
-                                           <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
-                                       </padding>
-                                   </ToggleButton>
-                                   <Button fx:id="clearBtn" mnemonicParsing="false" onMouseClicked="#clearMsg" prefHeight="20.0" prefWidth="20.0" styleClass="icon-button">
-                                       <graphic>
-                                           <Region prefHeight="200.0" prefWidth="200.0" styleClass="icon-clear" />
-                                       </graphic>
-                                       <padding>
-                                           <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
-                                       </padding>
-                                   </Button>
-                                   <Button fx:id="displaySettingBtn" mnemonicParsing="false" prefHeight="20.0" prefWidth="20.0" styleClass="icon-button">
-                                       <padding>
-                                           <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
-                                       </padding>
-                                       <graphic>
-                                           <Region prefHeight="200.0" prefWidth="200.0" styleClass="icon-display-setting" />
-                                       </graphic>
-                                   </Button>
-                                   <Button fx:id="recvFormatBtn" mnemonicParsing="false" prefHeight="20.0" prefWidth="20.0" styleClass="icon-button">
-                                       <padding>
-                                           <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
-                                       </padding>
-                                       <graphic>
-                                           <StackPane>
-                                               <children>
-                                                   <Region prefHeight="200.0" prefWidth="200.0" styleClass="icon-encode-setting" />
-                                               </children>
-                                               <padding>
-                                                   <Insets left="2.0" />
-                                               </padding>
-                                           </StackPane>
-                                       </graphic>
-                                   </Button>
-                              <ToggleButton fx:id="muteResBtn" contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" maxHeight="20.0" maxWidth="20.0" mnemonicParsing="false" onMouseClicked="#handleMuteRes" prefHeight="17.0" prefWidth="18.0">
-                                 <graphic>
-                                    <Region prefHeight="20.0" prefWidth="20.0" styleClass="icon-mute-req" />
-                                 </graphic>
-                                 <padding>
-                                    <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
-                                 </padding>
-                              </ToggleButton>
-                               </children>
-                               <padding>
-                                   <Insets top="-1.0" />
-                               </padding>
-                           </VBox>
-                           <ListView fx:id="msgList" prefHeight="159.0" prefWidth="425.0" HBox.hgrow="ALWAYS">
-                               <HBox.margin>
-                                   <Insets bottom="1.0" left="3.0" />
-                               </HBox.margin>
-                           </ListView>
-                       </children>
-                     <opaqueInsets>
-                        <Insets />
-                     </opaqueInsets>
-                   </HBox>
-               </children>
-                <VBox.margin>
-                    <Insets bottom="1.0" />
-                </VBox.margin>
-               <opaqueInsets>
-                  <Insets />
-               </opaqueInsets>
-            </VBox>
-            <VBox spacing="10.0">
-               <children>
-                   <HBox VBox.vgrow="ALWAYS">
-                       <children>
+        <SplitPane dividerPositions="0.7" orientation="VERTICAL" prefHeight="367.0" prefWidth="546.0"
+                   VBox.vgrow="ALWAYS">
+            <items>
+                <VBox spacing="10.0">
+                    <children>
+                        <HBox alignment="CENTER_LEFT" maxHeight="100.0" prefHeight="81.0" prefWidth="520.0"
+                              spacing="5.0" VBox.vgrow="ALWAYS">
+                            <children>
+                                <VBox HBox.hgrow="ALWAYS">
+                                    <children>
+                                        <HBox spacing="10.0">
+                                            <children>
+                                                <Label prefHeight="22.0" prefWidth="30.0" text="port:"/>
+                                                <TextField fx:id="serverPort" prefHeight="23.0" prefWidth="54.0"
+                                                           text="10250" HBox.hgrow="ALWAYS"/>
+                                                <Button fx:id="confirmButton" mnemonicParsing="false"
+                                                        onMouseClicked="#startServer" text="确定"/>
+                                                <Button fx:id="closeServerButton" disable="true" mnemonicParsing="false"
+                                                        onMouseClicked="#closeServer" text="关闭服务"/>
+                                            </children>
+                                            <padding>
+                                                <Insets top="15.0"/>
+                                            </padding>
+                                            <VBox.margin>
+                                                <Insets left="25.0"/>
+                                            </VBox.margin>
+                                        </HBox>
+                                        <Label fx:id="errorMsgLabel" alignment="TOP_LEFT" prefHeight="15.0"
+                                               prefWidth="174.0" textFill="#c65551">
+                                            <VBox.margin>
+                                                <Insets left="25.0" top="10.0"/>
+                                            </VBox.margin>
+                                        </Label>
+                                    </children>
+                                </VBox>
+                                <ListView fx:id="clientListBox" prefHeight="57.0" prefWidth="189.0"
+                                          HBox.hgrow="ALWAYS"/>
+                                <VBox fx:id="clientBoxToolBar" prefHeight="57.0" prefWidth="26.0" spacing="3.0"
+                                      styleClass="sidebar">
+                                    <children>
+                                        <Button fx:id="selectAllBtn" mnemonicParsing="false"
+                                                onMouseClicked="#selectAllClient" prefHeight="20.0" prefWidth="20.0"
+                                                styleClass="icon-button">
+                                            <padding>
+                                                <Insets bottom="1.0" left="1.0" right="1.0" top="1.0"/>
+                                            </padding>
+                                            <graphic>
+                                                <Region prefHeight="200.0" prefWidth="200.0"
+                                                        styleClass="icon-select-all"/>
+                                            </graphic>
+                                        </Button>
+                                        <Button fx:id="removeClientBtn" mnemonicParsing="false"
+                                                onMouseClicked="#removeClient" prefHeight="20.0" prefWidth="20.0"
+                                                styleClass="icon-button">
+                                            <padding>
+                                                <Insets bottom="1.0" left="1.0" right="1.0" top="1.0"/>
+                                            </padding>
+                                            <graphic>
+                                                <Region prefHeight="200.0" prefWidth="200.0" styleClass="icon-delete"/>
+                                            </graphic>
+                                        </Button>
+                                    </children>
+                                    <padding>
+                                        <Insets top="-1.0"/>
+                                    </padding>
+                                    <HBox.margin>
+                                        <Insets top="2.0"/>
+                                    </HBox.margin>
+                                </VBox>
+                            </children>
+                        </HBox>
+                        <HBox VBox.vgrow="ALWAYS">
+                            <children>
+                                <VBox alignment="TOP_CENTER" prefHeight="159.0" prefWidth="24.0" spacing="3.0"
+                                      styleClass="sidebar">
+                                    <children>
+                                        <ToggleButton fx:id="softWrapBtn" contentDisplay="GRAPHIC_ONLY"
+                                                      graphicTextGap="0.0" maxHeight="20.0" maxWidth="20.0"
+                                                      mnemonicParsing="false" onMouseClicked="#handleSoftWrap"
+                                                      prefHeight="17.0" prefWidth="18.0">
+                                            <graphic>
+                                                <Region prefHeight="20.0" prefWidth="20.0" styleClass="icon-wrap"/>
+                                            </graphic>
+                                            <padding>
+                                                <Insets bottom="1.0" left="1.0" right="1.0" top="1.0"/>
+                                            </padding>
+                                        </ToggleButton>
+                                        <Button fx:id="clearBtn" mnemonicParsing="false" onMouseClicked="#clearMsg"
+                                                prefHeight="20.0" prefWidth="20.0" styleClass="icon-button">
+                                            <graphic>
+                                                <Region prefHeight="200.0" prefWidth="200.0" styleClass="icon-clear"/>
+                                            </graphic>
+                                            <padding>
+                                                <Insets bottom="1.0" left="1.0" right="1.0" top="1.0"/>
+                                            </padding>
+                                        </Button>
+                                        <Button fx:id="displaySettingBtn" mnemonicParsing="false" prefHeight="20.0"
+                                                prefWidth="20.0" styleClass="icon-button">
+                                            <padding>
+                                                <Insets bottom="1.0" left="1.0" right="1.0" top="1.0"/>
+                                            </padding>
+                                            <graphic>
+                                                <Region prefHeight="200.0" prefWidth="200.0"
+                                                        styleClass="icon-display-setting"/>
+                                            </graphic>
+                                        </Button>
+                                        <Button fx:id="recvFormatBtn" mnemonicParsing="false" prefHeight="20.0"
+                                                prefWidth="20.0" styleClass="icon-button">
+                                            <padding>
+                                                <Insets bottom="1.0" left="1.0" right="1.0" top="1.0"/>
+                                            </padding>
+                                            <graphic>
+                                                <StackPane>
+                                                    <children>
+                                                        <Region prefHeight="200.0" prefWidth="200.0"
+                                                                styleClass="icon-encode-setting"/>
+                                                    </children>
+                                                    <padding>
+                                                        <Insets left="2.0"/>
+                                                    </padding>
+                                                </StackPane>
+                                            </graphic>
+                                        </Button>
+                                        <ToggleButton fx:id="muteResBtn" contentDisplay="GRAPHIC_ONLY"
+                                                      graphicTextGap="0.0" maxHeight="20.0" maxWidth="20.0"
+                                                      mnemonicParsing="false" onMouseClicked="#handleMuteRes"
+                                                      prefHeight="17.0" prefWidth="18.0">
+                                            <graphic>
+                                                <Region prefHeight="20.0" prefWidth="20.0" styleClass="icon-mute-req"/>
+                                            </graphic>
+                                            <padding>
+                                                <Insets bottom="1.0" left="1.0" right="1.0" top="1.0"/>
+                                            </padding>
+                                        </ToggleButton>
 
-                           <VBox spacing="3.0">
-                               <children>
-                                   <Button fx:id="sendSettingBtn" mnemonicParsing="false" onMouseClicked="#showSendSetting" prefHeight="20.0" prefWidth="20.0" styleClass="icon-button">
-                                       <padding>
-                                           <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
-                                       </padding>
-                                       <graphic>
-                                           <Region prefHeight="200.0" prefWidth="200.0" styleClass="icon-send-setting" />
-                                       </graphic>
-                                   </Button>
-                                   <Button fx:id="sendFormatBtn" mnemonicParsing="false" prefHeight="20.0" prefWidth="20.0" styleClass="icon-button">
-                                       <padding>
-                                           <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
-                                       </padding>
-                                       <graphic>
-                                           <Region prefHeight="200.0" prefWidth="200.0" styleClass="icon-encode-setting" />
-                                       </graphic>
-                                   </Button>
-                               </children>
-                           </VBox>
-                           <TextArea fx:id="msgInput" disable="true" prefHeight="52.0" prefWidth="425.0" text="test text 123" wrapText="true" HBox.hgrow="ALWAYS">
-                               <HBox.margin>
-                                   <Insets left="3.0" />
-                               </HBox.margin>
-                           </TextArea>
-                       </children>
-                   </HBox>
-                   <HBox alignment="TOP_RIGHT" spacing="10.0">
-                       <children>
-                           <ToggleButton fx:id="scheduleSendBtn" disable="true" mnemonicParsing="false" onMouseClicked="#scheduleSend" text="定时发送">
-                               <HBox.margin>
-                                   <Insets />
-                               </HBox.margin>
-                           </ToggleButton>
-                           <Button fx:id="sendMsgButton" disable="true" mnemonicParsing="false" onMouseClicked="#sendMsg" text="发送消息" />
-                       </children>
-                   </HBox>
+                                        <Button fx:id="exportBtn" mnemonicParsing="false" prefHeight="20.0"
+                                                prefWidth="20.0" styleClass="icon-button">
+                                            <padding>
+                                                <Insets bottom="1.0" left="1.0" right="1.0" top="1.0"/>
+                                            </padding>
+                                            <graphic>
+                                                <StackPane>
+                                                    <children>
+                                                        <Region prefHeight="200.0" prefWidth="200.0"
+                                                                styleClass="icon-export"/>
+                                                    </children>
+                                                    <padding>
+                                                        <Insets left="2.0"/>
+                                                    </padding>
+                                                </StackPane>
+                                            </graphic>
+                                        </Button>
+                                    </children>
+                                    <padding>
+                                        <Insets top="-1.0"/>
+                                    </padding>
+                                </VBox>
+                                <ListView fx:id="msgList" prefHeight="159.0" prefWidth="425.0" HBox.hgrow="ALWAYS">
+                                    <HBox.margin>
+                                        <Insets bottom="1.0" left="3.0"/>
+                                    </HBox.margin>
+                                </ListView>
+                            </children>
+                            <opaqueInsets>
+                                <Insets/>
+                            </opaqueInsets>
+                        </HBox>
+                    </children>
+                    <VBox.margin>
+                        <Insets bottom="1.0"/>
+                    </VBox.margin>
+                    <opaqueInsets>
+                        <Insets/>
+                    </opaqueInsets>
+                </VBox>
+                <VBox spacing="10.0">
+                    <children>
+                        <HBox VBox.vgrow="ALWAYS">
+                            <children>
 
-               </children>
-            </VBox>
-        </items>
-      </SplitPane>
+                                <VBox spacing="3.0">
+                                    <children>
+                                        <Button fx:id="sendSettingBtn" mnemonicParsing="false"
+                                                onMouseClicked="#showSendSetting" prefHeight="20.0" prefWidth="20.0"
+                                                styleClass="icon-button">
+                                            <padding>
+                                                <Insets bottom="1.0" left="1.0" right="1.0" top="1.0"/>
+                                            </padding>
+                                            <graphic>
+                                                <Region prefHeight="200.0" prefWidth="200.0"
+                                                        styleClass="icon-send-setting"/>
+                                            </graphic>
+                                        </Button>
+                                        <Button fx:id="sendFormatBtn" mnemonicParsing="false" prefHeight="20.0"
+                                                prefWidth="20.0" styleClass="icon-button">
+                                            <padding>
+                                                <Insets bottom="1.0" left="1.0" right="1.0" top="1.0"/>
+                                            </padding>
+                                            <graphic>
+                                                <Region prefHeight="200.0" prefWidth="200.0"
+                                                        styleClass="icon-encode-setting"/>
+                                            </graphic>
+                                        </Button>
+                                    </children>
+                                </VBox>
+                                <TextArea fx:id="msgInput" disable="true" prefHeight="52.0" prefWidth="425.0"
+                                          text="test text 123" wrapText="true" HBox.hgrow="ALWAYS">
+                                    <HBox.margin>
+                                        <Insets left="3.0"/>
+                                    </HBox.margin>
+                                </TextArea>
+                            </children>
+                        </HBox>
+                        <HBox alignment="TOP_RIGHT" spacing="10.0">
+                            <children>
+                                <ToggleButton fx:id="scheduleSendBtn" disable="true" mnemonicParsing="false"
+                                              onMouseClicked="#scheduleSend" text="定时发送">
+                                    <HBox.margin>
+                                        <Insets/>
+                                    </HBox.margin>
+                                </ToggleButton>
+                                <Button fx:id="sendMsgButton" disable="true" mnemonicParsing="false"
+                                        onMouseClicked="#sendMsg" text="发送消息"/>
+                            </children>
+                        </HBox>
+
+                    </children>
+                </VBox>
+            </items>
+        </SplitPane>
     </children>
 </VBox>
