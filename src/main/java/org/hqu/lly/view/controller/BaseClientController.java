@@ -11,7 +11,6 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
-import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -32,20 +31,12 @@ import org.hqu.lly.service.impl.ScheduledSendService;
 import org.hqu.lly.utils.DataUtil;
 import org.hqu.lly.utils.JSParser;
 import org.hqu.lly.utils.MsgUtil;
-import org.hqu.lly.utils.UIUtil;
 
-import java.io.File;
-import java.io.IOException;
 import java.net.URI;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
-import java.util.stream.Collectors;
 
 import static org.hqu.lly.enums.DataType.HEX;
 import static org.hqu.lly.enums.DataType.PLAIN_TEXT;
@@ -370,27 +361,7 @@ public abstract class BaseClientController<T extends BaseClient> extends CommonU
         // 多格式设置
         setupSendFormatBtn();
         setupRecvFormatBtn();
-        if (exportBtn != null) {
-            exportBtn.setOnMouseClicked(event -> {
-                var msgs = msgList.getItems().stream().map(MsgLabel::getText).collect(Collectors.toList());
-                String logs = String.join("\n", msgs);
-                FileChooser fileChooser = new FileChooser();
-                fileChooser.setInitialDirectory(Paths.get("").toAbsolutePath().normalize().toFile());
-                fileChooser.setInitialFileName(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd-HH:mm:ss")) + ".txt");
-                File file = fileChooser.showSaveDialog(UIUtil.getPrimaryStage());
-                if (file == null) {
-                    return;
-                }
-                log.info(file.toString());
-                try {
-                    Files.writeString(file.toPath(), logs);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-                // BaseServerController.log.info(logs);
-            });
-        }
-
+        setupExportBtn();
 
         setupMsgList();
 

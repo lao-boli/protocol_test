@@ -10,12 +10,21 @@ import javafx.fxml.FXML;
 import javafx.geometry.Side;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
+import javafx.stage.FileChooser;
 import lombok.extern.slf4j.Slf4j;
 import org.hqu.lly.domain.component.MessagePopup;
 import org.hqu.lly.domain.component.MsgLabel;
 import org.hqu.lly.enums.DataType;
 import org.hqu.lly.utils.MsgUtil;
 import org.hqu.lly.utils.UIUtil;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.stream.Collectors;
 
 import static org.hqu.lly.enums.DataType.*;
 
@@ -177,6 +186,31 @@ public abstract class CommonUIContorller extends BaseController {
             msgInput.setText(converted);
         });
         setupFormatBtn(toggleGroup, sendFormatBtn);
+    }
+
+    protected void setupExportBtn() {
+        if (exportBtn != null) {
+            exportBtn.setOnMouseClicked(event -> {
+                var msgs = msgList.getItems().stream().map(MsgLabel::getText).collect(Collectors.toList());
+                String logs = String.join("\n", msgs);
+                FileChooser fileChooser = new FileChooser();
+                fileChooser.setInitialDirectory(Paths.get("").toAbsolutePath().normalize().toFile());
+                fileChooser.setInitialFileName(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd-HH:mm:ss")) + ".txt");
+                File file = fileChooser.showSaveDialog(UIUtil.getPrimaryStage());
+                if (file == null) {
+                    return;
+                }
+                log.info(file.toString());
+                try {
+                    Files.writeString(file.toPath(), logs);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+                // BaseServerController.log.info(logs);
+            });
+        }
+
+
     }
 
 
