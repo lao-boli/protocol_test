@@ -195,7 +195,7 @@ public abstract class CommonUIContorller extends BaseController {
                 String logs = String.join("\n", msgs);
                 FileChooser fileChooser = new FileChooser();
                 fileChooser.setInitialDirectory(Paths.get("").toAbsolutePath().normalize().toFile());
-                fileChooser.setInitialFileName(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd-HH:mm:ss")) + ".txt");
+                fileChooser.setInitialFileName(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd-HH_mm_ss")) + ".txt");
                 File file = fileChooser.showSaveDialog(UIUtil.getPrimaryStage());
                 if (file == null) {
                     return;
