@@ -9,17 +9,20 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
+import io.netty.handler.timeout.IdleStateHandler;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.hqu.lly.domain.bean.ConnectedServer;
 import org.hqu.lly.domain.component.MsgLabel;
-import org.hqu.lly.protocol.BaseHandler.BaseServerConnectHandler;
+import org.hqu.lly.protocol.base.ConnectedServer;
+import org.hqu.lly.protocol.base.handler.BaseServerConnectHandler;
 import org.hqu.lly.protocol.tcp.codec.LTCEncoder;
 import org.hqu.lly.protocol.tcp.codec.MessageDecoderSelector;
 import org.hqu.lly.protocol.tcp.codec.MessageEncoderSelector;
 import org.hqu.lly.protocol.tcp.group.AppChannelGroup;
 import org.hqu.lly.protocol.tcp.server.handler.TCPServerExceptionHandler;
+import org.hqu.lly.protocol.tcp.server.handler.TCPServerIdleHandler;
 import org.hqu.lly.protocol.tcp.server.handler.TCPServerMessageHandler;
 import org.hqu.lly.service.impl.ConnectedServerService;
 import org.hqu.lly.service.impl.ServerService;
@@ -50,6 +53,9 @@ public class TCPServer extends ConnectedServer {
 
     private NioEventLoopGroup workerGroup;
 
+    @Setter
+    private IdleStateHandler idleHandler;
+
     @Override
     public void init() {
         bossGroup = new NioEventLoopGroup();
@@ -61,6 +67,7 @@ public class TCPServer extends ConnectedServer {
             serverBootstrap.childHandler(new ChannelInitializer<SocketChannel>() {
                 @Override
                 protected void initChannel(SocketChannel ch) throws Exception {
+                    ch.pipeline().addLast(idleHandler);
                     ch.pipeline().addLast("TCPServerConnectHandler", new BaseServerConnectHandler(serverService));
                     ch.pipeline().addLast("MessageDecoderSelector", new MessageDecoderSelector());
                     ch.pipeline().addLast("LTCDecoder", new LengthFieldBasedFrameDecoder(1024 * 100, 4, 4, 0, 8));
@@ -69,6 +76,7 @@ public class TCPServer extends ConnectedServer {
                     ch.pipeline().addLast("LTCEncoder", new LTCEncoder());
                     ch.pipeline().addLast("MessageEncoderSelector", new MessageEncoderSelector());
                     ch.pipeline().addLast("TCPServerMessageHandler", new TCPServerMessageHandler(serverService));
+                    ch.pipeline().addLast("TCPIdleHandler", new TCPServerIdleHandler());
                     ch.pipeline().addLast("TCPExceptionHandler", new TCPServerExceptionHandler());
                 }
             });
@@ -118,7 +126,7 @@ public class TCPServer extends ConnectedServer {
     @Override
     public void sendMessage(String msg, Channel channel) {
         channel.writeAndFlush(msg);
-        serverService.updateMsgList(new MsgLabel(MsgLabel.Type.SEND, channel.remoteAddress().toString(),msg));
+        serverService.updateMsgList(new MsgLabel(MsgLabel.Type.SEND, channel.remoteAddress().toString(), msg));
         log.info(MsgUtil.formatSendMsg(msg, channel.remoteAddress().toString()));
     }
 
@@ -135,4 +143,5 @@ public class TCPServer extends ConnectedServer {
     public void setService(ServerService serverService) {
         this.serverService = (ConnectedServerService) serverService;
     }
+
 }

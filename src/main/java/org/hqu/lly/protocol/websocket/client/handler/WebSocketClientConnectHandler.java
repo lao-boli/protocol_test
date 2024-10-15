@@ -5,7 +5,7 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.websocketx.WebSocketClientProtocolHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.hqu.lly.domain.component.MsgLabel;
-import org.hqu.lly.protocol.BaseHandler.BaseClientConnectHandler;
+import org.hqu.lly.protocol.base.handler.BaseClientConnectHandler;
 import org.hqu.lly.service.impl.ClientService;
 
 /**

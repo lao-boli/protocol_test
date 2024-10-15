@@ -2,8 +2,6 @@ package org.hqu.lly.service.impl;
 
 import javafx.concurrent.ScheduledService;
 import javafx.concurrent.Task;
-import javafx.concurrent.WorkerStateEvent;
-import javafx.event.EventHandler;
 import javafx.util.Duration;
 import lombok.extern.slf4j.Slf4j;
 import org.hqu.lly.domain.config.ScheduledSendConfig;
@@ -60,35 +58,24 @@ public class ScheduledSendService {
         scheduledService.setExecutor(executorService);
         scheduledService.setPeriod(new Duration(config.getInterval()));
         scheduledService.setRestartOnFailure(false);
-        scheduledService.setOnFailed(new EventHandler<WorkerStateEvent>() {
-            @Override
-            public void handle(WorkerStateEvent event) {
-                log.info(event.toString());
-            }
-        });
+        scheduledService.setOnFailed(event -> log.info(event.toString()));
     }
 
     private void initTimesScheduleService() {
         // 获取定时任务
         initScheduledService();
         // 设置按次数发送消息回调
-        scheduledService.setOnCancelled(new EventHandler<WorkerStateEvent>() {
-            @Override
-            public void handle(WorkerStateEvent event) {
-                if (sendCount > 0) {
-                    sendCount = 0;
-                }
+        scheduledService.setOnCancelled(event -> {
+            if (sendCount > 0) {
+                sendCount = 0;
             }
         });
-        scheduledService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
-            @Override
-            public void handle(WorkerStateEvent event) {
-                if (sendCount > 0) {
-                    sendCount--;
-                } else {
-                    scheduledService.cancel();
-                    scheduledTaskService.onAllTasksCompleted();
-                }
+        scheduledService.setOnSucceeded(event -> {
+            if (sendCount > 0) {
+                sendCount--;
+            } else {
+                scheduledService.cancel();
+                scheduledTaskService.onAllTasksCompleted();
             }
         });
     }

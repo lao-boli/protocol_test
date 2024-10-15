@@ -182,6 +182,23 @@
                                                 </StackPane>
                                             </graphic>
                                         </Button>
+                                        <Button fx:id="exportBtn" mnemonicParsing="false" prefHeight="20.0"
+                                                prefWidth="20.0" styleClass="icon-button">
+                                            <padding>
+                                                <Insets bottom="1.0" left="1.0" right="1.0" top="1.0"/>
+                                            </padding>
+                                            <graphic>
+                                                <StackPane>
+                                                    <children>
+                                                        <Region prefHeight="200.0" prefWidth="200.0"
+                                                                styleClass="icon-export"/>
+                                                    </children>
+                                                    <padding>
+                                                        <Insets left="2.0"/>
+                                                    </padding>
+                                                </StackPane>
+                                            </graphic>
+                                        </Button>
                                     </children>
                                 </VBox>
                                 <TextArea fx:id="msgInput" disable="true" prefHeight="52.0" prefWidth="425.0"

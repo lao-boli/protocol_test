@@ -1,5 +1,7 @@
 package org.hqu.lly.domain.component;
 
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
@@ -11,12 +13,12 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.stage.Window;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.hqu.lly.constant.ResLoc;
 import org.hqu.lly.utils.DragUtil;
 import org.hqu.lly.utils.ThemeUtil;
 import org.hqu.lly.utils.UIUtil;
-import org.hqu.lly.view.handler.DragWindowHandler;
 
 /**
  * <p>
@@ -27,19 +29,54 @@ import org.hqu.lly.view.handler.DragWindowHandler;
  * @version 1.0
  * @date 2023-07-15 09:32
  */
+@Slf4j
 public class MyDialog<T extends Node> {
 
     protected TitleBar titleBar;
-    protected Stage stage = new Stage();
+    public Stage stage = new Stage();
 
     protected T content;
     protected BorderPane pane = new BorderPane();
+
+    protected double xCache = -1;
+    protected double yCache = -1;
+
+    protected boolean moved = false;
+
+    protected DoubleProperty prefWidth = new SimpleDoubleProperty();
+    protected DoubleProperty prefHeight = new SimpleDoubleProperty();
+
+
+    protected void defaultPos() {
+        Stage primaryStage = UIUtil.getPrimaryStage();
+        if (primaryStage == null) {
+            return;
+        }
+        double windowX = primaryStage.getX();
+        double windowY = primaryStage.getY();
+        double windowWidth = primaryStage.getWidth();
+        double windowHeight = primaryStage.getHeight();
+
+        // 计算提示框应该显示的位置
+        double popupX = windowX + (windowWidth - prefWidth.get()) / 2;
+        double popupY = windowY + (windowHeight - prefHeight.get()) / 2;
+        xCache = popupX;
+        yCache = popupY;
+
+    }
 
     public void close() {
         stage.close();
     }
 
     public void show() {
+        if (!moved) {
+            defaultPos();
+            if (xCache != -1 || yCache != -1) {
+                stage.setX(xCache);
+                stage.setY(yCache);
+            }
+        }
         stage.show();
     }
 
@@ -70,6 +107,8 @@ public class MyDialog<T extends Node> {
     }
 
     protected Scene initScene(double width, double height) {
+        prefWidth.set(width);
+        prefHeight.set(height);
         val scene = UIUtil.getShadowScene(pane, width, height);
         return scene;
     }
@@ -97,15 +136,24 @@ public class MyDialog<T extends Node> {
 
         MyDialog dialog;
 
+        private double dragOffsetX;
+        private double dragOffsetY;
+
         public TitleBar(MyDialog dialog, String title) {
             this.dialog = dialog;
             this.getStyleClass().add("alert-title-bar");
             this.getStylesheets().add(ResLoc.ALERT_TITLE_BAR_CSS.toExternalForm());
 
-            // todo perf ugly
-            DragWindowHandler dragWindowHandler = new DragWindowHandler(dialog.stage);
-            setOnMousePressed(dragWindowHandler);
-            setOnMouseDragged(dragWindowHandler);
+
+            setOnMousePressed(e -> {
+                dragOffsetX = e.getScreenX() - stage.getX();
+                dragOffsetY = e.getScreenY() - stage.getY();
+            });
+            setOnMouseDragged(e -> {
+                dialog.moved = true;
+                stage.setX(e.getScreenX() - dragOffsetX);
+                stage.setY(e.getScreenY() - dragOffsetY);
+            });
 
             setupClose();
             setupTitle(title);

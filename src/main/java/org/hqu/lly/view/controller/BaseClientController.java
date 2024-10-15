@@ -14,7 +14,6 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.hqu.lly.domain.base.BaseClient;
 import org.hqu.lly.domain.component.ListItemPopup;
 import org.hqu.lly.domain.component.MessagePopup;
 import org.hqu.lly.domain.component.MsgLabel;
@@ -24,6 +23,7 @@ import org.hqu.lly.enums.ConfigType;
 import org.hqu.lly.exception.UnSetBoundException;
 import org.hqu.lly.factory.SendSettingPaneFactory;
 import org.hqu.lly.factory.SendTaskFactory;
+import org.hqu.lly.protocol.base.BaseClient;
 import org.hqu.lly.service.MyInitialize;
 import org.hqu.lly.service.ScheduledTaskService;
 import org.hqu.lly.service.impl.ClientService;
@@ -159,13 +159,15 @@ public abstract class BaseClientController<T extends BaseClient> extends CommonU
         });
     }
 
+
+    //region history
     @FXML
     public void addHistory(MouseEvent mouseEvent) {
         if (historyPopup == null) {
             setUpHistory();
         }
         historyPopup.addData(remoteAddressInput.getText());
-        new MessagePopup("已添加到历史记录").showPopup(30,0.8);
+        new MessagePopup("已添加到历史记录").showPopup(30, 0.8);
     }
 
     @FXML
@@ -176,7 +178,7 @@ public abstract class BaseClientController<T extends BaseClient> extends CommonU
         if (!remoteAddressInput.isFocused()) {
             remoteAddressInput.requestFocus();
         }
-        historyPopup.showPopup(2,remoteAddressInput);
+        historyPopup.showPopup(2, remoteAddressInput);
 
     }
 
@@ -201,6 +203,7 @@ public abstract class BaseClientController<T extends BaseClient> extends CommonU
 
     }
 
+    //endregion
 
     @FXML
     void disconnect(MouseEvent event) {
@@ -209,6 +212,7 @@ public abstract class BaseClientController<T extends BaseClient> extends CommonU
     }
 
 
+    //region message
     @FXML
     void sendMsg(MouseEvent event) {
         sendMsg();
@@ -230,41 +234,44 @@ public abstract class BaseClientController<T extends BaseClient> extends CommonU
             errorMsgLabel.setText("");
         }
 
-        // 普通文本模式
         String text = msgInput.getText();
+        // 普通文本模式
         if (sendSettingConfig.isTextMode()) {
-            if (sendMsgType == HEX) {
-                client.sendMessage(MsgUtil.convertText(HEX, PLAIN_TEXT, text));
-            } else {
-                client.sendMessage(text);
-            }
+            handleSend(text);
         }
-
         // 自定义格式模式
+        if (sendSettingConfig.isCustomMode()) {
+            customModeSend();
+        }
+        // js mode
+        if (sendSettingConfig.isJSMode()) {
+            jsModeSend();
+        }
+    }
+
+    private void customModeSend() {
         try {
-            if (sendSettingConfig.isCustomMode()) {
-                CustomDataConfig customDataConfig = sendSettingConfig.getCustomDataConfig();
-                String msg = DataUtil.createMsg(customDataConfig.getCustomDataPattern(), customDataConfig.getBoundList());
-                if (sendMsgType == HEX) {
-                    client.sendMessage(MsgUtil.convertText(HEX, PLAIN_TEXT, msg));
-                } else {
-                    client.sendMessage(msg);
-                }
-            }
+            CustomDataConfig customDataConfig = sendSettingConfig.getCustomDataConfig();
+            String msg = DataUtil.createMsg(customDataConfig.getCustomDataPattern(), customDataConfig.getBoundList());
+            handleSend(msg);
         } catch (UnSetBoundException e) {
             log.warn(e.getMessage());
             Platform.runLater(() -> errorMsgLabel.setText("未定义数据边界!"));
         }
-        // js mode
-        if (sendSettingConfig.isJSMode()) {
-            JSCodeConfig jsCodeConfig = sendSettingConfig.getJsCodeConfig();
-            Object res = JSParser.evalScript(jsCodeConfig.getEngine(), jsCodeConfig.getScript());
-            String msg = res == null ? "" : res.toString();
-            if (sendMsgType == HEX) {
-                client.sendMessage(MsgUtil.convertText(HEX, PLAIN_TEXT, msg));
-            } else {
-                client.sendMessage(msg);
-            }
+    }
+
+    private void jsModeSend() {
+        JSCodeConfig jsCodeConfig = sendSettingConfig.getJsCodeConfig();
+        Object res = JSParser.evalScript(jsCodeConfig.getEngine(), jsCodeConfig.getScript());
+        String msg = res == null ? "" : res.toString();
+        handleSend(msg);
+    }
+
+    private void handleSend(String text) {
+        if (sendMsgType == HEX) {
+            client.sendMessage(MsgUtil.convertText(HEX, PLAIN_TEXT, text));
+        } else {
+            client.sendMessage(text);
         }
     }
 
@@ -288,6 +295,8 @@ public abstract class BaseClientController<T extends BaseClient> extends CommonU
             scheduledService.cancel();
         }
     }
+    //endregion
+
 
     @FXML
     void showSendSetting(MouseEvent event) {
@@ -296,6 +305,8 @@ public abstract class BaseClientController<T extends BaseClient> extends CommonU
         }
         sendSettingPane.show();
     }
+
+    //region destroy
 
     /**
      * <p>
@@ -327,35 +338,9 @@ public abstract class BaseClientController<T extends BaseClient> extends CommonU
         }
         client.destroy();
     }
+    //endregion
 
-    protected void setActiveUI() {
-        Platform.runLater(() -> {
-            remoteAddressInput.setDisable(true);
-            addrHistoryBtn.setDisable(true);
-            showHistoryBtn.setDisable(true);
-            if (sendSettingConfig.isTextMode()) {
-                msgInput.setDisable(false);
-            }
-            connectButton.setDisable(true);
-            disconnectButton.setDisable(false);
-            sendMsgButton.setDisable(false);
-            scheduleSendBtn.setDisable(false);
-        });
-    }
-
-    protected void setInactiveUI() {
-        Platform.runLater(() -> {
-            remoteAddressInput.setDisable(false);
-            addrHistoryBtn.setDisable(false);
-            showHistoryBtn.setDisable(false);
-            msgInput.setDisable(true);
-            connectButton.setDisable(false);
-            disconnectButton.setDisable(true);
-            sendMsgButton.setDisable(true);
-            scheduleSendBtn.setDisable(true);
-        });
-    }
-
+    //region init
     @FXML
     public void initialize() {
         tabContainer.addEventFilter(MouseEvent.MOUSE_CLICKED, event -> {
@@ -376,6 +361,7 @@ public abstract class BaseClientController<T extends BaseClient> extends CommonU
         // 多格式设置
         setupSendFormatBtn();
         setupRecvFormatBtn();
+        setupExportBtn();
 
         setupMsgList();
 
@@ -420,7 +406,11 @@ public abstract class BaseClientController<T extends BaseClient> extends CommonU
         });
 
         // 创建发送设置面板
-        sendSettingPane = SendSettingPaneFactory.create(sendSettingConfig);
+        // new a stage must be in FX app thread
+        Platform.runLater(() -> {
+            sendSettingPane = SendSettingPaneFactory.create(sendSettingConfig);
+        });
+
     }
 
 
@@ -465,6 +455,36 @@ public abstract class BaseClientController<T extends BaseClient> extends CommonU
         setClient();
         sendSettingConfig = clientConfig.getSendSettingConfig();
         initSendSetting();
+    }
+    //endregion
+
+
+    protected void setActiveUI() {
+        Platform.runLater(() -> {
+            remoteAddressInput.setDisable(true);
+            addrHistoryBtn.setDisable(true);
+            showHistoryBtn.setDisable(true);
+            if (sendSettingConfig.isTextMode()) {
+                msgInput.setDisable(false);
+            }
+            connectButton.setDisable(true);
+            disconnectButton.setDisable(false);
+            sendMsgButton.setDisable(false);
+            scheduleSendBtn.setDisable(false);
+        });
+    }
+
+    protected void setInactiveUI() {
+        Platform.runLater(() -> {
+            remoteAddressInput.setDisable(false);
+            addrHistoryBtn.setDisable(false);
+            showHistoryBtn.setDisable(false);
+            msgInput.setDisable(true);
+            connectButton.setDisable(false);
+            disconnectButton.setDisable(true);
+            sendMsgButton.setDisable(true);
+            scheduleSendBtn.setDisable(true);
+        });
     }
 
     private class BaseClientService extends ClientService {

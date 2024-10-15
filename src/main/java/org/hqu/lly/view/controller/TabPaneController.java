@@ -9,7 +9,6 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.input.MouseEvent;
 import lombok.extern.slf4j.Slf4j;
-import org.hqu.lly.constant.ContentPaneConsts;
 import org.hqu.lly.domain.config.SessionConfig;
 import org.hqu.lly.enums.PaneType;
 import org.hqu.lly.enums.TabFactoryEnum;
@@ -38,11 +37,6 @@ public class TabPaneController extends BaseController implements Initializable {
     @FXML
     private Tab createTab;
     private BaseTabFactory tabFactory;
-    /**
-     * 标签页面板名称<br>
-     * 应为 {@link ContentPaneConsts}中的一种.
-     */
-    private String tabPaneName;
 
     public TabPaneController() {
     }

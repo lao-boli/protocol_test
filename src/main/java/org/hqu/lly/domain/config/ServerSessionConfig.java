@@ -15,11 +15,12 @@ import org.hqu.lly.enums.ConfigType;
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class ServerSessionConfig extends  SessionConfig{
+public class ServerSessionConfig extends SessionConfig {
+
     /**
      * 本地服务端口号
      */
-    private String port;
+    protected String port;
 
     public ServerSessionConfig() {
         super();

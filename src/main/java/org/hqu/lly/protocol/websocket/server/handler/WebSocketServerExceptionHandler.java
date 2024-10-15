@@ -2,7 +2,7 @@ package org.hqu.lly.protocol.websocket.server.handler;
 
 import io.netty.channel.ChannelHandlerContext;
 import lombok.extern.slf4j.Slf4j;
-import org.hqu.lly.protocol.BaseHandler.BaseExceptionHandler;
+import org.hqu.lly.protocol.base.handler.BaseExceptionHandler;
 
 /**
  * <p>

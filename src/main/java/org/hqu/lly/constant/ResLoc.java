@@ -31,12 +31,16 @@ public class ResLoc {
     public static final URL COMMON_CSS = realPath("css/Common.css");
 
     public static final URL MY_ALERT_CSS = realPath("css/MyAlert.css");
+    public static final URL SEND_SETTING_PANE_CSS = realPath("css/SendSettingPane.css");
 
     public static final URL DATA_SETTING_PANE_CSS = realPath("css/DataSettingPane.css");
 
     public static final URL HELP_DOC_DIALOG_CSS = realPath("css/HelpDocDialog.css");
 
+    public static final URL PROGRESS_BAR_DIALOG_CSS = realPath("css/ProgressBarDialog.css");
+
     public static final URL ALERT_TITLE_BAR_CSS = realPath("css/alertTitleBar.css");
+    public static final URL NEW_TITLE_BAR_CSS = realPath("css/newTitleBar.css");
 
     public static final URL MESSAGE_POPUP_CSS = realPath("css/MessagePopup.css");
     public static final URL LIST_ITEM_POPUP_CSS = realPath("css/ListItemPopup.css");

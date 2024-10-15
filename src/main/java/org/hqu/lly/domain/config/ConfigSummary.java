@@ -22,7 +22,7 @@ public class ConfigSummary {
     Map<String, SessionConfig> sessionConfigs;
 
     public ConfigSummary() {
-        version="0.3.0";
+        version="0.4.0";
         sessionConfigs = new HashMap<>();
     }
 

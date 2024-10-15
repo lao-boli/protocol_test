@@ -1,6 +1,4 @@
-package org.hqu.lly.domain.bean;
-
-import org.hqu.lly.domain.base.BaseServer;
+package org.hqu.lly.protocol.base;
 
 import java.net.InetSocketAddress;
 

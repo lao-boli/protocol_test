@@ -1,4 +1,4 @@
-package org.hqu.lly.protocol.BaseHandler;
+package org.hqu.lly.protocol.base.handler;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;

@@ -11,7 +11,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.hqu.lly.domain.base.BaseServer;
 import org.hqu.lly.domain.component.TitleTab;
 import org.hqu.lly.domain.config.ConfigStore;
 import org.hqu.lly.domain.config.CustomDataConfig;
@@ -22,6 +21,7 @@ import org.hqu.lly.enums.ConfigType;
 import org.hqu.lly.exception.UnSetBoundException;
 import org.hqu.lly.factory.SendSettingPaneFactory;
 import org.hqu.lly.factory.SendTaskFactory;
+import org.hqu.lly.protocol.base.BaseServer;
 import org.hqu.lly.protocol.tcp.server.TCPServer;
 import org.hqu.lly.protocol.udp.server.UDPServer;
 import org.hqu.lly.protocol.websocket.server.WebSocketServer;
@@ -195,6 +195,7 @@ public abstract class BaseServerController<T> extends CommonUIContorller impleme
         setInactiveUI();
     }
 
+    //region client box
     @FXML
     void removeClient(MouseEvent event) {
         ObservableList<T> removeItems = clientListBox.getSelectionModel().getSelectedItems();
@@ -212,29 +213,14 @@ public abstract class BaseServerController<T> extends CommonUIContorller impleme
         }
         selectAll = !selectAll;
     }
+    //endregion
 
-    protected void setActiveUI() {
-        Platform.runLater(() -> {
-            serverPort.setDisable(true);
-            if (sendSettingConfig.isTextMode()){
-                msgInput.setDisable(false);
-            }
-            confirmButton.setDisable(true);
-            closeServerButton.setDisable(false);
-        });
-    }
+    //region sidebar
+    @FXML
+    void clearMsg(MouseEvent event) {
+        msgList.getItems().remove(0, msgList.getItems().size());
+        msgList.refresh();
 
-    protected void setInactiveUI() {
-        Platform.runLater(() -> {
-            serverPort.setDisable(false);
-            if (!server.isActive()){
-                msgInput.setDisable(true);
-            }
-            confirmButton.setDisable(false);
-            closeServerButton.setDisable(true);
-            sendMsgButton.setDisable(true);
-            scheduleSendBtn.setDisable(true);
-        });
     }
 
     @FXML
@@ -244,8 +230,10 @@ public abstract class BaseServerController<T> extends CommonUIContorller impleme
         // so no need to judge if muteResBtn was being selected.
         muteRes = !muteRes;
     }
+    //endregion
 
 
+    //region message
     @FXML
     void sendMsg(MouseEvent event) {
         sendMsg();
@@ -258,44 +246,46 @@ public abstract class BaseServerController<T> extends CommonUIContorller impleme
         }
 
         if (!targetClientSet.isEmpty()) {
-            // text mode
             targetClientSet.forEach((client) -> {
                 String text = msgInput.getText();
+                // text mode
                 if (sendSettingConfig.isTextMode()) {
-                    if (sendMsgType == HEX) {
-                        server.sendMessage(MsgUtil.convertText(HEX, PLAIN_TEXT, text), client);
-                    } else {
-                        server.sendMessage(text, client);
-                    }
+                    handleSend(client, text);
                 }
-
                 // custom mode
-                try {
-                    if (sendSettingConfig.isCustomMode()) {
-                        CustomDataConfig customDataConfig = sendSettingConfig.getCustomDataConfig();
-                        String msg = DataUtil.createMsg(customDataConfig.getCustomDataPattern(), customDataConfig.getBoundList());
-                        if (sendMsgType == HEX) {
-                            server.sendMessage(MsgUtil.convertText(HEX, PLAIN_TEXT, msg), client);
-                        } else {
-                            server.sendMessage(msg, client);
-                        }
-                    }
-                } catch (UnSetBoundException e) {
-                    log.warn(e.getMessage());
-                    Platform.runLater(() -> errorMsgLabel.setText("未定义数据边界!"));
+                if (sendSettingConfig.isCustomMode()) {
+                    customModeSend(client);
                 }
-
                 // js mode
                 if (sendSettingConfig.isJSMode()) {
-                    Object res = JSParser.evalScript(sendSettingConfig.getJsCodeConfig().getEngine(),sendSettingConfig.getJsCodeConfig().getScript());
-                    String msg = res == null ? "" : res.toString();
-                    if (sendMsgType == HEX) {
-                        server.sendMessage(MsgUtil.convertText(HEX, PLAIN_TEXT, msg),client);
-                    } else {
-                        server.sendMessage(msg,client);
-                    }
+                    jsModeSend(client);
                 }
             });
+        }
+    }
+
+    private void customModeSend(T client) {
+        try {
+            CustomDataConfig customDataConfig = sendSettingConfig.getCustomDataConfig();
+            String msg = DataUtil.createMsg(customDataConfig.getCustomDataPattern(), customDataConfig.getBoundList());
+            handleSend(client, msg);
+        } catch (UnSetBoundException e) {
+            log.warn(e.getMessage());
+            Platform.runLater(() -> errorMsgLabel.setText("未定义数据边界!"));
+        }
+    }
+
+    private void jsModeSend(T client) {
+        Object res = JSParser.evalScript(sendSettingConfig.getJsCodeConfig().getEngine(), sendSettingConfig.getJsCodeConfig().getScript());
+        String msg = res == null ? "" : res.toString();
+        handleSend(client, msg);
+    }
+
+    private void handleSend(T client, String text) {
+        if (sendMsgType == HEX) {
+            server.sendMessage(MsgUtil.convertText(HEX, PLAIN_TEXT, text), client);
+        } else {
+            server.sendMessage(text, client);
         }
     }
 
@@ -310,22 +300,21 @@ public abstract class BaseServerController<T> extends CommonUIContorller impleme
             scheduledService.cancel();
         }
     }
+    // endregion
+
 
     @FXML
     void showSendSetting(MouseEvent event) {
         sendSettingPane.show();
     }
 
-    @FXML
-    void clearMsg(MouseEvent event) {
-        msgList.getItems().remove(0, msgList.getItems().size());
-        msgList.refresh();
 
-    }
+    //region destroy
 
     /**
      * 销毁server并在做一些清理工作
-     *  @date 2023-07-12 20:16
+     *
+     * @date 2023-07-12 20:16
      */
     public void destroyTask() {
         // 如果有定时任务正在执行,则取消
@@ -335,6 +324,7 @@ public abstract class BaseServerController<T> extends CommonUIContorller impleme
         }
         server.destroy();
     }
+
     /**
      * <p>
      * 标签页关闭前的回调函数。<br>
@@ -348,11 +338,12 @@ public abstract class BaseServerController<T> extends CommonUIContorller impleme
         ConfigStore.controllers.remove(this);
         ConfigStore.removeSessionConfig(serverConfig.getId());
     }
+    //endregion
 
 
+    //region init
     @FXML
     public void initialize() {
-        System.out.println(this);
         // 初始化客户端列表盒子
         setClientBox();
         // 功能按钮悬浮tip提示
@@ -361,6 +352,7 @@ public abstract class BaseServerController<T> extends CommonUIContorller impleme
         setupSendFormatBtn();
         setupRecvFormatBtn();
         setupMsgList();
+        setupExportBtn();
         // 消息上下文菜单
         msgList.setContextMenu(UIUtil.getMsgListMenu(msgList));
         clientListBox.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
@@ -427,7 +419,11 @@ public abstract class BaseServerController<T> extends CommonUIContorller impleme
             }
         });
 
-        sendSettingPane = SendSettingPaneFactory.create(sendSettingConfig);
+        // new a stage must be in FX app thread
+        Platform.runLater(() -> {
+            sendSettingPane = SendSettingPaneFactory.create(sendSettingConfig);
+        });
+
     }
 
     /**
@@ -499,6 +495,31 @@ public abstract class BaseServerController<T> extends CommonUIContorller impleme
         setServerService();
         initSendSetting();
 
+    }
+    //region init
+
+    protected void setActiveUI() {
+        Platform.runLater(() -> {
+            serverPort.setDisable(true);
+            if (sendSettingConfig.isTextMode()) {
+                msgInput.setDisable(false);
+            }
+            confirmButton.setDisable(true);
+            closeServerButton.setDisable(false);
+        });
+    }
+
+    protected void setInactiveUI() {
+        Platform.runLater(() -> {
+            serverPort.setDisable(false);
+            if (!server.isActive()) {
+                msgInput.setDisable(true);
+            }
+            confirmButton.setDisable(false);
+            closeServerButton.setDisable(true);
+            sendMsgButton.setDisable(true);
+            scheduleSendBtn.setDisable(true);
+        });
     }
 
 }
